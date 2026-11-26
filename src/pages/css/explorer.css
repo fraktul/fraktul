@@ -217,18 +217,26 @@ pre.code:not(.numbered) { padding: 10px 12px; }
 :root[data-style="chrome"] .brand-text, :root:not([data-style]) .brand-text { letter-spacing: 0.06em; text-transform: lowercase; font-size: 14px; }
 :root[data-style="chrome"] .panel h2, :root:not([data-style]) .panel h2 { font-size: 17px; letter-spacing: 0.02em; }
 :root[data-style="chrome"] .btn.primary, :root:not([data-style]) .btn.primary { background: var(--ink); color: var(--sheet); border-color: var(--ink); }
-/* hud: square frames, corner ticks, mono labels */
-:root[data-style="hud"] .btn, :root[data-style="hud"] .chip, :root[data-style="hud"] .eyebrow, :root[data-style="hud"] .panel h3 { font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.08em; }
-:root[data-style="hud"] .panel h3::before { content: "// "; color: var(--accent); }
-:root[data-style="hud"] .bar { border-bottom: 1px solid var(--accent); }
-:root[data-style="hud"] .tour-card, :root[data-style="hud"] .peek, :root[data-style="hud"] .live { box-shadow: none; border-color: var(--accent); background-image: linear-gradient(var(--accent), var(--accent)), linear-gradient(var(--accent), var(--accent)), linear-gradient(var(--accent), var(--accent)), linear-gradient(var(--accent), var(--accent)); background-size: 12px 2px, 2px 12px, 12px 2px, 2px 12px; background-position: 0 0, 0 0, 100% 100%, 100% 100%; background-repeat: no-repeat; background-color: var(--sheet); }
-:root[data-style="hud"] .brand-text { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; }
-:root[data-style="hud"] .panel h2 { font-size: 16px; letter-spacing: 0.04em; }
-/* candy: frosted panels, bubbly type, jelly buttons */
-:root[data-style="candy"] .panel, :root[data-style="candy"] .tour-card, :root[data-style="candy"] .peek { background: color-mix(in srgb, var(--sheet) 94%, transparent); backdrop-filter: blur(14px); }
-:root[data-style="candy"] .btn.primary { background: var(--accent); box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35), 0 4px 0 color-mix(in srgb, var(--accent) 55%, black); }
-:root[data-style="candy"] .brand-text { font-size: 18px; font-weight: 600; }
-:root[data-style="candy"] .panel h2 { font-size: 22px; font-weight: 600; }
-:root[data-style="candy"] .live { border-radius: var(--r-md); }
+/* chrome, pushed further: mirror nav, chrome crumbs bar, foil logo with a slow shimmer, silver pills, wide titles */
+:root[data-style="chrome"] .crumbs, :root:not([data-style]) .crumbs { background: var(--btn); box-shadow: var(--gloss); }
+:root[data-style="chrome"] .brand-mark, :root:not([data-style]) .brand-mark { width: 26px; height: 26px; background-size: 300% 100%; filter: drop-shadow(0.9px 0 0 var(--ink)) drop-shadow(-0.9px 0 0 var(--ink)) drop-shadow(0 0.9px 0 var(--ink)) drop-shadow(0 -0.9px 0 var(--ink)); }
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-style="chrome"] .brand-mark, :root:not([data-style]) .brand-mark { animation: foil 9s linear infinite; }
+  @keyframes foil { to { background-position: 300% 0; } }
+}
+:root[data-style="chrome"] .panel h2, :root[data-style="chrome"] .tour-card h3, :root[data-style="chrome"] .tours-head h2, :root[data-style="chrome"] .peek-head strong,
+:root:not([data-style]) .panel h2 { font-family: var(--display); letter-spacing: 0.03em; font-weight: 400; }
+:root[data-style="chrome"] .tour-card h3 { font-size: 15px; line-height: 1.45; }
+:root[data-style="chrome"] .panel h2 { font-size: 16px; line-height: 1.45; }
+:root[data-style="chrome"] .eyebrow, :root[data-style="chrome"] .panel h3 { font-family: var(--display); font-weight: 400; font-size: 10px; letter-spacing: 0.14em; }
+:root[data-style="chrome"] .chip { background: var(--btn); box-shadow: var(--gloss); }
+:root[data-style="chrome"] .tour-card::before { height: 5px; background-size: 300% 100%; }
+@media (prefers-reduced-motion: no-preference) { :root[data-style="chrome"] .tour-card::before { animation: foil 9s linear infinite; } }
+/* minimal: flat, quiet, no material */
+:root[data-style="minimal"] .bar { box-shadow: none; }
+:root[data-style="minimal"] .btn, :root[data-style="minimal"] .style-pick { box-shadow: none; }
+:root[data-style="minimal"] .tour-card::before { background: var(--accent); height: 3px; }
+:root[data-style="minimal"] .brand-text { font-weight: 600; letter-spacing: -0.01em; font-size: 15px; }
+:root[data-style="minimal"] .panel h2 { font-weight: 600; letter-spacing: -0.015em; }
 /* Box corners follow the style (Mermaid draws plain rects). */
 .board g.node rect.label-container, .board g.node > rect { rx: var(--r-sm); ry: var(--r-sm); }

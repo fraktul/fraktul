@@ -7,3 +7,4 @@ voice/.venv/
 voice/samples/
 .fraktul/
 site-dist/
+.out/

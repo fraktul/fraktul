@@ -1,0 +1,18 @@
+<!-- @bascik
+How to run fraktul on a project.
+-->
+<style>
+  .sec { max-width: 900px; margin: 0 auto; padding: 56px max(20px, env(safe-area-inset-right, 0px)) 88px max(20px, env(safe-area-inset-left, 0px)); text-align: center; }
+  .head { font: 400 clamp(22px, 3vw, 30px)/1.3 var(--display); letter-spacing: 0.03em; margin: 0 0 10px; color: var(--ink); }
+  p { color: var(--ink-2); font-size: 17px; margin: 0 auto 24px; max-width: 56ch; }
+  pre { text-align: left; margin: 0; padding: 20px 22px; border-radius: 16px; background: #0b0c0f; color: #e6e8ec; font: 13px/1.8 var(--mono); overflow-x: auto; border: 1px solid #2a2d33; }
+  .c { color: #7f8792; }
+</style>
+<section class="sec" data-testid="get-started">
+  <h2 class="head">Map your own system</h2>
+  <p>fraktul runs from a checkout next to your project. Node 24 and, for voices, an Apple silicon Mac.</p>
+  <pre>git clone git@github.com:rinsesoft/fraktul.git ~/github/fraktul
+node ~/github/fraktul/bin/fraktul.ts check docs/arch/model.yaml   <span class="c"># every anchor, box and step must exist</span>
+node ~/github/fraktul/bin/fraktul.ts dev   docs/arch/model.yaml   <span class="c"># the live map</span>
+node ~/github/fraktul/bin/fraktul.ts voice docs/arch/model.yaml   <span class="c"># speak the tours, locally</span></pre>
+</section>

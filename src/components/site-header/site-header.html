@@ -1,0 +1,44 @@
+<!-- @bascik
+fraktul.dev navigation: the chrome bar, the foil star, page links, and the style and theme switches.
+-->
+<style>
+  .nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; display: flex; align-items: center; gap: 20px; padding: 12px max(20px, env(safe-area-inset-right, 0px)) 12px max(20px, env(safe-area-inset-left, 0px)); background: var(--bar); box-shadow: var(--gloss); border-bottom: 1px solid var(--line); }
+  .logo { display: flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; font: 400 17px/1 var(--display); letter-spacing: 0.08em; }
+  .star { width: 26px; height: 26px; background: var(--brand); background-size: 300% 100%; clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); filter: drop-shadow(0.9px 0 0 var(--ink)) drop-shadow(-0.9px 0 0 var(--ink)) drop-shadow(0 0.9px 0 var(--ink)) drop-shadow(0 -0.9px 0 var(--ink)); }
+  .links { display: flex; gap: 6px; margin-left: auto; }
+  .links a { color: var(--ink); text-decoration: none; font: 600 13px var(--body); padding: 8px 14px; border-radius: var(--r-pill); }
+  .links a:hover { background: var(--btn); box-shadow: var(--gloss); }
+  .switch { font: 600 12px var(--body); padding: 7px 12px; border-radius: var(--r-pill); border: 1px solid var(--line); background: var(--btn); color: var(--ink); box-shadow: var(--gloss); cursor: pointer; }
+  @media (prefers-reduced-motion: no-preference) { .star { animation: foil 9s linear infinite; } @keyframes foil { to { background-position: 300% 0; } } }
+  @media (max-width: 640px) { .links a.hide-sm { display: none; } }
+</style>
+<header class="nav" data-testid="site-header">
+  <a class="logo" href="/" data-testid="site-header-home"><span class="star" aria-hidden="true"></span>fraktul</a>
+  <nav class="links" aria-label="Main">
+    <a href="/map" data-testid="site-header-map">Map</a>
+    <a class="hide-sm" href="/design" data-testid="site-header-design">Design</a>
+  </nav>
+  <button class="switch" id="style" type="button" data-testid="site-header-style">Chrome</button>
+  <button class="switch" id="theme" type="button" aria-label="Theme" data-testid="site-header-theme">◐</button>
+</header>
+<script type="text/typescript">
+  const root = document.documentElement;
+  const styleBtn = document.getElementById("style") as HTMLButtonElement;
+  const themeBtn = document.getElementById("theme") as HTMLButtonElement;
+  const show = () => {
+    styleBtn.textContent = root.dataset.style === "minimal" ? "Minimal" : "Chrome";
+    themeBtn.textContent = root.dataset.theme === "light" ? "☀" : root.dataset.theme === "dark" ? "☾" : "◐";
+  };
+  styleBtn.addEventListener("click", () => {
+    root.dataset.style = root.dataset.style === "minimal" ? "chrome" : "minimal";
+    try { localStorage.setItem("fraktul-style", root.dataset.style); } catch (e) { /* private window */ }
+    show();
+  });
+  themeBtn.addEventListener("click", () => {
+    const next = !root.dataset.theme ? "light" : root.dataset.theme === "light" ? "dark" : "";
+    if (next) root.dataset.theme = next; else delete root.dataset.theme;
+    try { if (next) localStorage.setItem("fraktul-theme", next); else localStorage.removeItem("fraktul-theme"); } catch (e) { /* private window */ }
+    show();
+  });
+  show();
+</script>

@@ -11,6 +11,7 @@
 // [model] defaults to ./model.yaml, then ./docs/arch/model.yaml.
 
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -38,16 +39,17 @@ function ensureDeps() {
     if (r.status) process.exit(r.status);
   }
 }
+const outFor = (model: string) => join(FRAKTUL, ".out", process.env.FRAKTUL_SITE ? "site" : createHash("sha1").update(model).digest("hex").slice(0, 10));
 function bascik(model: string, bArgs: string[]) {
   ensureDeps();
   const bin = join(FRAKTUL, "node_modules", "@bascik", "bascik", "bin", "bascik.js");
-  return spawnSync(process.execPath, [bin, ...bArgs], { cwd: FRAKTUL, stdio: "inherit", env: { ...process.env, FRAKTUL_MODEL: model } });
+  return spawnSync(process.execPath, [bin, ...bArgs], { cwd: FRAKTUL, stdio: "inherit", env: { ...process.env, FRAKTUL_MODEL: model, FRAKTUL_OUT: outFor(model) } });
 }
 function build(model: string, out: string) {
   const r = bascik(model, ["--build"]);
   if (r.status) process.exit(r.status);
   rmSync(out, { recursive: true, force: true });
-  cpSync(join(FRAKTUL, "dist"), out, { recursive: true });
+  cpSync(outFor(model), out, { recursive: true });
   console.log(`fraktul: built ${join(out, "index.html")}`);
 }
 

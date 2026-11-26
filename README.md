@@ -131,9 +131,16 @@ Blocks can carry `rows`, `bar` (tones good, warn, bad, neutral), `list` (items w
 
 ## Design system
 
-Three Y2K-futurism styles share one token structure (`src/pages/css/tokens.css`): **liquid chrome**, **cyber HUD** and
-**candy**, each with light and dark. Components read only tokens. Readability rules for all three: body text sits on a
-flat surface; gradients are for bars, buttons and the brand; every text colour meets WCAG AA.
+Two styles share one token structure (`src/pages/css/tokens.css`), each in light and dark:
+**chrome** (Y2K liquid chrome: mirror-silver bars and buttons, wide Michroma titles, a holographic foil logo) and
+**minimal** (a quiet modern UI: flat neutral surfaces, one blue accent, Inter). Components read only tokens. Rules:
+body text sits on a flat surface; gradients are for bars, buttons, the logo and the tour strip; every text colour meets
+WCAG AA. The live reference is the design page of fraktul.dev (`npm run site:dev`, then /design).
+
+## fraktul.dev
+
+`npm run site:dev` serves the home page, the design system and fraktul's own map; `npm run site:build` writes
+`site-dist/`.
 
 ## Develop
 

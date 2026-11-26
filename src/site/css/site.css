@@ -1,0 +1,5 @@
+/* fraktul.dev pages (not the map): the page scrolls, and inherits the design tokens. */
+body.site { height: auto; min-height: 100%; background: var(--paper); color: var(--ink); font: 400 16px/1.55 var(--body); }
+:where(body.site) a { color: var(--accent); }
+body.site code { font-family: var(--mono); }
+html:has(body.site) { height: auto; }

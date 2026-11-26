@@ -7,11 +7,11 @@
     <script>
       // Theme before first paint: the saved choice, else the system's.
       try { var t = localStorage.getItem("fraktul-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
-      try { var s = localStorage.getItem("fraktul-style"); document.documentElement.dataset.style = s === "hud" || s === "candy" || s === "chrome" ? s : (document.documentElement.dataset.defaultStyle || "chrome"); } catch (e) { document.documentElement.dataset.style = "chrome"; }
+      try { var s = localStorage.getItem("fraktul-style"); document.documentElement.dataset.style = s === "minimal" || s === "chrome" ? s : (document.documentElement.dataset.defaultStyle || "chrome"); } catch (e) { document.documentElement.dataset.style = "chrome"; }
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=Share+Tech+Mono&family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" />
     <script src="https://cdn.jsdelivr.net/npm/mermaid@11.12.0/dist/mermaid.min.js"></script>
   </head>
   <body>

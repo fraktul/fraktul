@@ -7,7 +7,8 @@ const model = resolve(process.env.FRAKTUL_MODEL ?? "example/model.yaml");
 const site = !!process.env.FRAKTUL_SITE;
 
 export default defineConfig({
-  directory: { pages: site ? "src/site" : "src/pages" },
+  // Each model (and the site) builds into its own folder, so several maps can run at once.
+  directory: { pages: site ? "src/site" : "src/pages", out: process.env.FRAKTUL_OUT ?? "dist" },
   // A tool page, not a public site: no sitemap or robots.txt, so no site URL is needed.
   generate: { sitemap: false, robots: false },
   assets: {
