@@ -1,6 +1,6 @@
 // The page title and description come from the model (title:, and the root node's summary).
 import { html } from "@bascik/bascik/html";
-import { loadModel } from "../lib/model.ts";
+import { loadModel } from "./model.ts";
 
 export default function () {
   const m = loadModel();

@@ -13,3 +13,5 @@ example/.fraktul/*
 example/.fraktul/voice/cache/
 site-dist/
 .out/
+package/
+*.tgz
