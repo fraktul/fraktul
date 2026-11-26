@@ -137,6 +137,11 @@ liquid-chrome nav, wide Michroma titles, a holographic foil logo, brushed-metal 
 body text sits on a flat surface; gradients are for bars, buttons, the logo and the tour strip; every text colour meets
 WCAG AA. The live reference is the design page of fraktul.dev (`npm run site:dev`, then /design).
 
+## Logo
+
+Dive, golden: a frame with a smaller frame and a solid square tucked into its corner, sized by the golden
+ratio, in a pastel iridescent foil (`--mark-shape` and `--foil` in tokens.css). The candidates are kept on /design.
+
 ## fraktul.dev
 
 `npm run site:dev` serves the home page, the design system and fraktul's own map; `npm run site:build` writes

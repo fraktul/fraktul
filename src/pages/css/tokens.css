@@ -306,7 +306,7 @@
   --mark-dive-3-open: path(evenodd, 'M0.00 0.00H28.00V28.00H0.00Z M3.00 3.00H25.00V25.00H3.00Z M4.60 4.60H25.00V25.00H4.60Z M7.40 7.40H22.20V22.20H7.40Z M9.00 9.00H22.20V22.20H9.00Z M11.60 11.60H19.60V19.60H11.60Z M13.20 13.20H19.60V19.60H13.20Z');
   --mark-sierpinski: path(evenodd, 'M14 1L27 26H1Z M7.5 13.5H20.5L14 26Z M10.75 7.25H17.25L14 13.5Z M4.25 19.75H10.75L7.5 26Z M17.25 19.75H23.75L20.5 26Z');
   --mark-steps: path('M0 0H15V15H0Z M15 15H24V24H15Z M24 24H28V28H24Z');
-  --mark-shape: var(--mark-dive);
+  --mark-shape: var(--mark-dive-c);
   /* Chrome rim for card borders and bezels (y2k); a plain line elsewhere. */
   --rim: linear-gradient(var(--line), var(--line));
   --chrome-text: linear-gradient(var(--ink), var(--ink));
