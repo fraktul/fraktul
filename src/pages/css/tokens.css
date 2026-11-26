@@ -29,7 +29,7 @@
   --magenta:#c4237f;
   --bar:linear-gradient(180deg,#ffffff 0%,#e6e8ec 38%,#a9aeb6 50%,#dfe2e6 62%,#ffffff 100%);
   --btn:rgba(255,255,255,0.72);
-  --brand:linear-gradient(100deg,#ff5cc4 0%,#6f8dff 22%,#2fd8c8 42%,#ffd84a 62%,#ff6fd0 82%,#6f8dff 100%);
+  --brand:linear-gradient(115deg,#cbb9ff 0%,#a9d6ff 28%,#b6f0e2 52%,#ffeab4 74%,#ffc6e6 100%);
   --canvas:radial-gradient(rgba(10,11,13,0.08) 1.2px, transparent 1.4px) 0 0 / 22px 22px;
   --gloss:inset 0 1px 0 rgba(255,255,255,0.7);
   --metal-0:#ffffff;
@@ -78,7 +78,7 @@
   --magenta:#ff6bbd;
   --bar:linear-gradient(180deg,#5d626b 0%,#2a2d32 40%,#121316 52%,#2e3237 70%,#4a4e55 100%);
   --btn:rgba(255,255,255,0.06);
-  --brand:linear-gradient(100deg,#ff9ad5 0%,#a8c8ff 25%,#9ff7e6 45%,#fff3a1 65%,#ffb0e0 85%);
+  --brand:linear-gradient(115deg,#cbb9ff 0%,#a9d6ff 28%,#b6f0e2 52%,#ffeab4 74%,#ffc6e6 100%);
   --canvas:radial-gradient(rgba(243,244,246,0.07) 1.2px, transparent 1.4px) 0 0 / 22px 22px;
   --gloss:inset 0 1px 0 rgba(255,255,255,0.06);
   --metal-0:#4c515a;
@@ -127,7 +127,7 @@
   --magenta:#ff6bbd;
   --bar:linear-gradient(180deg,#5d626b 0%,#2a2d32 40%,#121316 52%,#2e3237 70%,#4a4e55 100%);
   --btn:rgba(255,255,255,0.06);
-  --brand:linear-gradient(100deg,#ff9ad5 0%,#a8c8ff 25%,#9ff7e6 45%,#fff3a1 65%,#ffb0e0 85%);
+  --brand:linear-gradient(115deg,#cbb9ff 0%,#a9d6ff 28%,#b6f0e2 52%,#ffeab4 74%,#ffc6e6 100%);
   --canvas:radial-gradient(rgba(243,244,246,0.07) 1.2px, transparent 1.4px) 0 0 / 22px 22px;
   --gloss:inset 0 1px 0 rgba(255,255,255,0.06);
   --metal-0:#4c515a;
@@ -310,7 +310,7 @@
   /* Chrome rim for card borders and bezels (y2k); a plain line elsewhere. */
   --rim: linear-gradient(var(--line), var(--line));
   --chrome-text: linear-gradient(var(--ink), var(--ink));
-  --foil: linear-gradient(100deg,#ff5cc4 0%,#6f8dff 22%,#2fd8c8 42%,#ffd84a 62%,#ff6fd0 82%,#6f8dff 100%);
+  --foil: linear-gradient(100deg,#d995cf 0%,#93a3ef 25%,#76cfc5 48%,#e4cf86 70%,#d995cf 100%);
 }
 
 :root[data-style="y2k"] {
