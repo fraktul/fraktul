@@ -5,8 +5,8 @@ fraktul.dev is one Cloudflare Worker, `fraktul`, serving the built site as stati
 
 | Push to | Build | Goes to |
 |---|---|---|
-| any branch except `main` | `npm run site:build:preview` (pages marked `noindex`) | a preview version at `https://<branch>-fraktul.<account>.workers.dev`, posted on the branch's pull request and in the run summary |
-| `main` (a merged pull request) | `npm run site:build` (with sitemap and robots.txt for https://fraktul.dev) | production: https://fraktul.dev and https://www.fraktul.dev |
+| any branch except `main` | `npm run site:build:preview` (pages marked `noindex`) | a preview version at `https://<branch>-fraktul.<account>.workers.dev` (the same URL for every push to that branch), posted on the branch's pull request and in the run summary |
+| `main` (a merged pull request) | `npm run site:build` (with sitemap and robots.txt for https://fraktul.dev) | production: https://fraktul.dev and https://www.fraktul.dev (Worker routes; the Worker itself is also at https://fraktul.<account>.workers.dev) |
 
 Both builds are public (`FRAKTUL_PUBLIC=1`): fraktul's own map on /map keeps its blocks, files, functions and who
 calls whom, but leaves out source code and links into the private repo. Drop `FRAKTUL_PUBLIC=1` from the two
