@@ -98,6 +98,16 @@ host instead, pinned to the commit that was read, so a deployed map keeps pointi
   asks them to sign in. This is separate from `private: true`, which keeps a repo's contents out of the page.
 - A repo that is not checked out links to its default branch, since there is no commit to pin to.
 
+### The 3D view
+
+**3D** (or the <kbd>3</kbd> key) shows the level on screen as a place you can fly through: the same boxes and arrows,
+standing where Mermaid drew them. Drag to look, <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to move,
+<kbd>Q</kbd>/<kbd>E</kbd> down and up, click a block to go inside, <kbd>Esc</kbd> to come back out, <kbd>0</kbd> to replay
+the level rising. Shape follows `kind` (towers, data crystals, people as pillars of light, external systems as sealed
+monoliths), height follows lines of code, planned blocks are holograms, and each block's crown and windows come from a
+hash of its id, so it keeps its silhouette when the code changes. Tour steps light their boxes with a beam.
+three.js loads from cdn.jsdelivr.net the first time 3D is switched on. The design is in `docs/3d-view.md`.
+
 ### Tours, narration and recordings
 
 ```yaml

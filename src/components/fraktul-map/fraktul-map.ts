@@ -244,6 +244,7 @@ async function draw(keepZoom = false) {
   applyTourFocus();
   drawPanel();
   logEvent({ kind: "view", stack: JSON.parse(JSON.stringify(stack)) });
+  after3d();
 }
 
 function ridOf(elem: Element): string | null {
@@ -378,7 +379,9 @@ function boxFromEvent(e: Event): Box | null {
 // One way down: click a box with the badge to open it. A plain box shows what it is on the right.
 board.addEventListener("click", (e) => {
   if (drag?.moved) return;
-  const b = boxFromEvent(e);
+  clickBox(boxFromEvent(e));
+});
+function clickBox(b: Box | null) {
   if (!b) { if (selected) { selected = null; drawPanel(); markSelected(); } return; }
   hidePeek();
   if (b.target && openable(b.target) && b.target !== view().key) { openKey(b.target); return; }
@@ -386,7 +389,7 @@ board.addEventListener("click", (e) => {
   drawPanel();
   markSelected(b.rid);
   logEvent({ kind: "select", key: selected });
-});
+}
 board.addEventListener("keydown", (e) => {
   const b = boxFromEvent(e);
   if (!b) return;
@@ -771,6 +774,7 @@ function player(nar: Narration, caption: HTMLElement): HTMLElement {
 function setFocus(list: string[]) {
   current.svg?.querySelectorAll(".is-focus").forEach((x) => x.classList.remove("is-focus"));
   for (const f of list) current.els.get(f.replace("/", "__"))?.classList.add("is-focus");
+  if (in3d) F3D.focus(list.map((f) => f.replace("/", "__")));
 }
 audio.addEventListener("play", () => { if (playerBits) playerBits.btn.textContent = "❚❚"; });
 audio.addEventListener("pause", () => { if (playerBits) playerBits.btn.textContent = "▶"; });
@@ -802,6 +806,7 @@ function applyTourFocus() {
   if (replay) return;
   svg.classList.toggle("in-tour", !!tour && view().key === `node:${tour.step.view}`);
   svg.querySelectorAll(".is-focus").forEach((x) => x.classList.remove("is-focus"));
+  if (in3d) F3D.focus([]);
   if (!tour || view().key !== `node:${tour.step.view}`) { if (tour) tourCard.classList.add("is-min"); return; }
   tourCard.classList.remove("is-min");
   setFocus(tour.step.focus ?? []);
@@ -968,6 +973,105 @@ search.addEventListener("keydown", (e) => {
 });
 search.addEventListener("blur", () => setTimeout(() => { hits = []; drawHits(); }, 120));
 
+// ───────────── 3D: the same level as a place to fly through (map3d.ts, docs/3d-view.md) ─────────────
+type Family = "tower" | "stack" | "crystal" | "orb" | "island" | "pillar" | "tablet" | "gate" | "monolith" | "terrain" | "slab" | "core" | "plain";
+const F3D = (window as any).Fraktul3D;
+const space = document.getElementById("space") as HTMLElement;
+const btn3d = document.getElementById("view-3d") as HTMLButtonElement;
+let in3d = false, entry3d = false, want3d = false;
+try { want3d = localStorage.getItem("fraktul-3d") === "1"; } catch { /* private window */ }
+
+/** FNV-1a: a block's identity in 3D (crown, setbacks, windows) comes from its id, so it survives code changes. */
+function fnv(str: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  return h >>> 0;
+}
+const CATS = ["model", "code", "human", "data", "ext", "fn", "fnx", "file", "district"];
+const KIND_SHAPE: Record<string, Family> = { district: "terrain", component: "tower", module: "stack", data: "crystal", person: "pillar", service: "orb", repo: "island", doc: "tablet", step: "gate" };
+const CLASS_SHAPE: Record<string, Family> = { human: "pillar", data: "crystal", ext: "monolith", model: "orb", code: "tower", file: "slab", fn: "core", fnx: "core", district: "terrain" };
+const SHAPE_TONE: Partial<Record<Family, string>> = { pillar: "human", crystal: "data", monolith: "ext", slab: "file", core: "fn", terrain: "district", orb: "model", tablet: "plain", gate: "code" };
+/** Lines of code behind a box: a file's lines, a function's span, or the files a block is anchored to. */
+function linesOf(target: string | null): number | null {
+  if (!target) return null;
+  if (SITE.files[target]) return SITE.files[target].lines || null;
+  if (SITE.fns[target]) return SITE.fns[target].end - SITE.fns[target].line + 1;
+  const n = nodeOf(target);
+  if (!n) return null;
+  const sum = n.anchors.filter((a) => a.key.startsWith("file:")).reduce((t, a) => t + (SITE.files[a.key]?.lines ?? 0), 0);
+  return sum || null;
+}
+function shapeOf(b: Box, cls: string | undefined): Family {
+  const n = b.target ? nodeOf(b.target) : undefined;
+  if (n?.status === "external") return "monolith";
+  if (n?.kind && KIND_SHAPE[n.kind]) return KIND_SHAPE[n.kind];
+  if (b.target?.startsWith("file:")) return "slab";
+  if (b.target?.startsWith("fn:")) return "core";
+  if (b.target?.startsWith("adr:")) return "tablet";
+  if (cls && CLASS_SHAPE[cls]) return CLASS_SHAPE[cls];
+  return b.target ? "tower" : "plain";
+}
+/** What 3D needs from the diagram on screen: every box and arrow, placed where Mermaid drew it. */
+function scene3d() {
+  const svg = current.svg!;
+  const toSvg = svg.getScreenCTM()!.inverse();
+  const place = (g: SVGGraphicsElement) => {
+    const m = toSvg.multiply(g.getScreenCTM()!), bb = g.getBBox();
+    const a = new DOMPoint(bb.x, bb.y).matrixTransform(m), c = new DOMPoint(bb.x + bb.width, bb.y + bb.height).matrixTransform(m);
+    return { x: (a.x + c.x) / 2, y: (a.y + c.y) / 2, w: Math.abs(c.x - a.x), h: Math.abs(c.y - a.y) };
+  };
+  const items: any[] = [], groups: any[] = [], edges: any[] = [];
+  for (const [rid, g] of current.els) {
+    const b = current.boxes.get(rid);
+    if (!b) continue;
+    const p = place(g as SVGGraphicsElement);
+    if (g.classList.contains("cluster")) { groups.push({ rid, title: b.title, ...p }); continue; }
+    const cls = CATS.find((c) => g.classList.contains(c));
+    const family = shapeOf(b, cls);
+    const st = b.target ? statusOf(b.target) : undefined;
+    const lines = linesOf(b.target);
+    const drill = openable(b.target) && b.target !== view().key;
+    const title = b.target ? b.title : (g.textContent || b.box).trim().replace(/\s+/g, " ");
+    const sub = [st && st !== "built" ? st : "", lines ? `${lines.toLocaleString()} lines` : "", drill ? "click to enter" : ""].filter(Boolean).join(" · ");
+    const tone = cls ?? SHAPE_TONE[family] ?? (b.target ? "code" : "plain");
+    items.push({ rid, title, sub, family, status: st, tone, ...p, size: lines ? Math.max(0.08, Math.min(1, Math.log10(lines + 1) / 4)) : null, hash: fnv(b.target ?? rid), drill });
+  }
+  svg.querySelectorAll("path.flowchart-link").forEach((path) => {
+    const pe = path as SVGPathElement, len = pe.getTotalLength();
+    if (!len) return;
+    const m = toSvg.multiply(pe.getScreenCTM()!);
+    const n = Math.max(4, Math.min(24, Math.round(len / 25)));
+    const pts: [number, number][] = [];
+    for (let i = 0; i <= n; i++) { const q = pe.getPointAtLength((len * i) / n).matrixTransform(m); pts.push([q.x, q.y]); }
+    edges.push({ pts, tone: "auto" });
+  });
+  return { key: view().key, items, groups, edges };
+}
+function after3d() {
+  if (want3d) { want3d = false; set3d(true); return; }
+  if (in3d && F3D.shown) { F3D.build(scene3d(), { entry: entry3d }); entry3d = false; if (tour) applyTourFocus(); }
+}
+async function set3d(on: boolean) {
+  if (on === in3d) return;
+  in3d = on;
+  btn3d.setAttribute("aria-pressed", String(on));
+  btn3d.title = on ? "Back to the flat map (3)" : "Fly through this level in 3D (3)";
+  canvas.classList.toggle("is-3d", on);
+  space.hidden = !on;
+  try { localStorage.setItem("fraktul-3d", on ? "1" : "0"); } catch { /* private window */ }
+  hidePeek();
+  if (!on) { F3D.hide(); return; }
+  try {
+    await F3D.show(space, { pick: (rid: string | null) => clickBox(rid ? current.boxes.get(rid) ?? null : null) });
+  } catch {
+    space.append(el("p", "space-error", "The 3D view needs three.js, which comes from cdn.jsdelivr.net. Check the connection and try again."));
+    return;
+  }
+  entry3d = true;
+  if (current.svg) after3d();
+}
+btn3d.addEventListener("click", () => set3d(!in3d));
+
 // ───────────── keys, hash, theme, start ─────────────
 document.addEventListener("keydown", (e) => {
   const t = e.target as HTMLElement;
@@ -975,7 +1079,8 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "/") { e.preventDefault(); search.focus(); }
   if (e.key === "Backspace") { e.preventDefault(); back(); }
   if (e.key === "Escape") { if (!peek.hidden) hidePeek(); else if (selected) { selected = null; drawPanel(); markSelected(); } else back(); }
-  if (e.key === "0") fit();
+  if (e.key === "0" && !in3d) fit();
+  if (e.key === "3") set3d(!in3d);
   if (e.key === " " && (tour || replay) && audio.src) { e.preventDefault(); if (audio.paused) audio.play(); else audio.pause(); }
   if (e.key === "ArrowRight" && tour) { const n = nextOf(); if (n) go(n); }
 });
