@@ -6,5 +6,10 @@ node_modules/
 voice/.venv/
 voice/samples/
 .fraktul/
+# The example map's narration ships with fraktul.dev (CI cannot speak it); its sentence cache does not.
+!example/.fraktul/
+example/.fraktul/*
+!example/.fraktul/voice/
+example/.fraktul/voice/cache/
 site-dist/
 .out/

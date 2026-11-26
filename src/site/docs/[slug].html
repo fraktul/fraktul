@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <site-head />
+    <script data-bascik-build type="text/typescript">
+      import { html } from "@bascik/bascik/html";
+      import { loadDocs } from "@/lib/docs.ts";
+      export default function () {
+        const { slug } = JSON.parse(process.env.BASCIK_ROUTE || "{}").params ?? {};
+        const doc = loadDocs().find((d) => d.slug === slug);
+        return html`<title>${doc?.title ?? "Docs"} · fraktul</title><meta name="description" content="${doc?.summary ?? ""}" />`;
+      }
+    </script>
+  </head>
+  <body class="site">
+    <site-header />
+    <main id="main" class="docs-main">
+      <script data-bascik-build type="text/typescript">
+        import { docPage } from "@/lib/docs.ts";
+        export default function () {
+          return docPage(JSON.parse(process.env.BASCIK_ROUTE || "{}").params.slug);
+        }
+      </script>
+    </main>
+    <site-footer />
+    <script data-bascik-routes type="text/typescript">
+      import { loadDocs } from "@/lib/docs.ts";
+      export default function () {
+        return loadDocs().map((d) => ({ params: { slug: d.slug }, data: { title: d.title } }));
+      }
+    </script>
+  </body>
+</html>

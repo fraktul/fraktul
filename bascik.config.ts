@@ -9,8 +9,8 @@ const site = !!process.env.FRAKTUL_SITE;
 export default defineConfig({
   // Each model (and the site) builds into its own folder, so several maps can run at once.
   directory: { pages: site ? "src/site" : "src/pages", out: process.env.FRAKTUL_OUT ?? "dist" },
-  // A tool page, not a public site: no sitemap or robots.txt, so no site URL is needed.
-  generate: { sitemap: false, robots: false },
+  // A project's map is a tool page: no sitemap or robots.txt. fraktul.dev gets both (the deploy sets BASCIK_SITE_URL).
+  generate: { sitemap: site && !!process.env.BASCIK_SITE_URL, robots: site && !!process.env.BASCIK_SITE_URL },
   assets: {
     // One self-contained page: it is also published as a single file.
     inlineStyles: site
@@ -19,7 +19,7 @@ export default defineConfig({
   },
   pipeline: {
     // Rebuild in dev when the model, its live module or fraktul's own code changes.
-    watchPaths: ["src/lib/", dirname(model)],
+    watchPaths: ["src/lib/", "content/", dirname(model)],
     exec: [
       // Narration audio and recorded walkthroughs are copied next to the page.
       { script: "scripts/copy-media.ts", phase: "post", watch: [dirname(model)] },

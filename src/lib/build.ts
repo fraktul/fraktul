@@ -141,8 +141,14 @@ export async function buildSite(model: Model = loadModel()): Promise<Site> {
     nodes[id] = { id, ...rest, anchors, usedIn: usedIn[id] ?? [] };
   }
 
+  // A public build (FRAKTUL_PUBLIC=1, used for fraktul.dev while its repos are private) keeps the structure of the map,
+  // files, functions and who calls whom, but leaves out source code, file excerpts and links into the repos.
+  if (process.env.FRAKTUL_PUBLIC) {
+    for (const f of Object.values(fns)) { f.code = ""; f.url = null; }
+    for (const f of Object.values(files)) { delete f.excerpt; f.url = null; }
+  }
   const repos: Site["meta"]["repos"] = {};
-  for (const [k, r] of Object.entries(model.repos)) repos[k] = { title: r.title ?? k, github: r.github ?? null, present: !!repoRoot(model, k) };
+  for (const [k, r] of Object.entries(model.repos)) repos[k] = { title: r.title ?? k, github: process.env.FRAKTUL_PUBLIC ? null : r.github ?? null, present: !!repoRoot(model, k) };
   const voicePath = join(model.dir, ".fraktul", "voice", "voice.json");
   const voice = existsSync(voicePath) ? JSON.parse(readFileSync(voicePath, "utf8")).tours ?? {} : {};
   // Narration rendered for steps that no longer exist (or whose text changed) is dropped, not shown out of date.

@@ -1,0 +1,83 @@
+{
+ "tours": {
+  "how-it-works": {
+   "voice": "bf_emma",
+   "model": "mlx-community/Kokoro-82M-bf16",
+   "rendered": "2026-11-26T05:13:04.005Z",
+   "steps": {
+    "how-it-works-1": {
+     "file": "voice/how-it-works/how-it-works-1.mp3",
+     "duration": 16.67,
+     "cues": [
+      {
+       "t": 3.2,
+       "focus": [
+        "author",
+        "model_file"
+       ]
+      },
+      {
+       "t": 11.45,
+       "focus": [
+        "check"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.7,
+       "text": "Everything starts with one file."
+      },
+      {
+       "t": 3.2,
+       "end": 10.95,
+       "text": "You describe your system as blocks: each one has a title, a status, a short summary, and the files and functions it lives in."
+      },
+      {
+       "t": 11.45,
+       "end": 16.35,
+       "text": "Before anything is drawn, the check makes sure every one of those still exists."
+      }
+     ]
+    },
+    "how-it-works-2": {
+     "file": "voice/how-it-works/how-it-works-2.mp3",
+     "duration": 14.87,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "build"
+       ]
+      },
+      {
+       "t": 10.92,
+       "focus": [
+        "page",
+        "reader"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.5,
+       "text": "The build reads the model and the code it points at."
+      },
+      {
+       "t": 3.82,
+       "end": 10.42,
+       "text": "It finds the functions, who calls whom, and the source, so the deepest levels of the map are never out of date."
+      },
+      {
+       "t": 10.92,
+       "end": 14.54,
+       "text": "Then anyone can open the map and click their way down."
+      }
+     ]
+    }
+   }
+  }
+ }
+}

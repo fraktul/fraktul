@@ -574,7 +574,7 @@ function fnPanel(f: FnInfo): HTMLElement[] {
   if (f.url) out.push(el("p", null, ext("Open on GitHub ↗", f.url)));
   if (f.calls.length) out.push(el("h3", null, "Calls"), el("ul", "anchors cols", ...f.calls.map((c) => el("li", null, link(`${SITE.fns[c].name}()`, c, "a mono")))));
   if (f.calledBy.length) out.push(el("h3", null, "Called by"), el("ul", "anchors cols", ...f.calledBy.map((c) => el("li", null, link(`${SITE.fns[c].name}()`, c, "a mono")))));
-  out.push(el("h3", null, "Source"), codeView(f));
+  out.push(el("h3", null, "Source"), f.code ? codeView(f) : el("p", "muted", "Source is not included in this public copy of the map."));
   return out;
 }
 

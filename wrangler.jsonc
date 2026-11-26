@@ -1,0 +1,18 @@
+// fraktul.dev: a static-assets Worker. Production deploys from main (`npm run deploy`); every other branch uploads a
+// preview version with its own URL (`npm run deploy:preview`). See .github/workflows/site.yml and docs/DEPLOY.md.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fraktul",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./site-dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  },
+  "workers_dev": true,
+  "preview_urls": true,
+  "routes": [
+    { "pattern": "fraktul.dev", "custom_domain": true },
+    { "pattern": "www.fraktul.dev", "custom_domain": true }
+  ]
+}
