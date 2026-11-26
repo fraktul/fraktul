@@ -987,15 +987,16 @@ new MutationObserver(() => { mermaidReady = false; peekCache.clear(); if (stack.
 // Theme: system → light → dark, remembered in this browser.
 const themeBtn = document.getElementById("theme-btn") as HTMLButtonElement;
 function showTheme() {
-  const t = document.documentElement.dataset.theme;
-  themeBtn.textContent = t === "light" ? "☀" : t === "dark" ? "☾" : "◐";
-  themeBtn.title = `Theme: ${t ?? "follow the system"} (click to change)`;
+  const isDark = document.documentElement.dataset.theme === "dark" || (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  themeBtn.textContent = isDark ? "☾" : "☀";
+  themeBtn.title = isDark ? "Switch to light" : "Switch to dark";
 }
 themeBtn.addEventListener("click", () => {
-  const t = document.documentElement.dataset.theme;
-  const next = !t ? "light" : t === "light" ? "dark" : null;
-  if (next) document.documentElement.dataset.theme = next; else delete document.documentElement.dataset.theme;
-  try { if (next) localStorage.setItem("fraktul-theme", next); else localStorage.removeItem("fraktul-theme"); } catch { /* private window */ }
+  // Flip to the opposite of what is on screen, whether that came from a saved choice or the system.
+  const isDark = document.documentElement.dataset.theme === "dark" || (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  const next = isDark ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem("fraktul-theme", next); } catch { /* private window */ }
   showTheme();
 });
 showTheme();

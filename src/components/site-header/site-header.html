@@ -25,12 +25,16 @@ fraktul.dev navigation: the bar (liquid chrome in y2k), the foil star, page link
   const root = document.documentElement;
   const themeBtn = document.getElementById("theme") as HTMLButtonElement;
   const show = () => {
-    themeBtn.textContent = root.dataset.theme === "light" ? "☀" : root.dataset.theme === "dark" ? "☾" : "◐";
+    const isDark = root.dataset.theme === "dark" || (!root.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+    themeBtn.textContent = isDark ? "☾" : "☀";
+    themeBtn.setAttribute("aria-label", isDark ? "Switch to light" : "Switch to dark");
   };
   themeBtn.addEventListener("click", () => {
-    const next = !root.dataset.theme ? "light" : root.dataset.theme === "light" ? "dark" : "";
-    if (next) root.dataset.theme = next; else delete root.dataset.theme;
-    try { if (next) localStorage.setItem("fraktul-theme", next); else localStorage.removeItem("fraktul-theme"); } catch (e) { /* private window */ }
+    // Flip to the opposite of what is on screen, whether that came from a saved choice or the system.
+    const dark = root.dataset.theme === "dark" || (!root.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+    const next = dark ? "light" : "dark";
+    root.dataset.theme = next;
+    try { localStorage.setItem("fraktul-theme", next); } catch (e) { /* private window */ }
     show();
   });
   show();

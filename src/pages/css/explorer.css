@@ -211,7 +211,9 @@ pre.code:not(.numbered) { padding: 10px 12px; }
 .notice { margin: 0 0 12px; padding: 10px 12px; border: 1px solid var(--safe); border-radius: 8px; background: var(--paper); font-size: 13px; }
 
 /* ── Style touches (data-style on <html>). Shape and type only; colours all come from tokens.css. ── */
-.style-pick { font: 600 12px var(--body); padding: 7px 10px; border-radius: var(--r-pill); border: 1px solid var(--line); background: var(--btn); color: var(--ink); box-shadow: var(--gloss); }
+.style-pick { appearance: none; -webkit-appearance: none; font: 600 12px/1 var(--body); height: 32px; padding: 0 30px 0 12px; border-radius: var(--r-pill); border: 1px solid var(--line); color: var(--ink); box-shadow: var(--gloss); cursor: pointer;
+  background-color: var(--btn); background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 16px) 55%, calc(100% - 11px) 55%; background-size: 5px 5px; background-repeat: no-repeat; }
 .brand-text { font-family: var(--display); }
 /* y2k: mirror-polished bars and pills, extended display type */
 :root[data-style="y2k"] .brand-text, :root[data-style="y2k"] .brand-text { letter-spacing: 0.06em; text-transform: lowercase; font-size: 14px; }
@@ -264,11 +266,12 @@ pre.code:not(.numbered) { padding: 10px 12px; }
 :root[data-style="y2k"] .tour-card .eyebrow { font-size: 9.5px; color: var(--ink); }
 /* Controls: modern glass pills. Hairline border, a soft blur, no metal; the primary is solid ink with a foil ring on
    hover. The chrome stays on the nav bar, the logo, the titles and the diagram boxes. */
+:root[data-style="y2k"] .btn { background: var(--btn); }
 :root[data-style="y2k"] .btn, :root[data-style="y2k"] .style-pick {
-  background: var(--btn); border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); box-shadow: var(--gloss);
+  background-color: var(--btn); border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); box-shadow: var(--gloss);
   backdrop-filter: blur(10px) saturate(1.4); -webkit-backdrop-filter: blur(10px) saturate(1.4); transition: background 0.15s, border-color 0.15s, transform 0.1s;
 }
-:root[data-style="y2k"] .btn:hover, :root[data-style="y2k"] .style-pick:hover { border-color: color-mix(in srgb, var(--ink) 30%, transparent); background: color-mix(in srgb, var(--sheet) 90%, transparent); }
+:root[data-style="y2k"] .btn:hover, :root[data-style="y2k"] .style-pick:hover { border-color: color-mix(in srgb, var(--ink) 30%, transparent); background-color: color-mix(in srgb, var(--sheet) 90%, transparent); }
 :root[data-style="y2k"] .btn:active { transform: scale(0.98); }
 :root[data-style="y2k"] .btn.primary, :root[data-style="y2k"] .tours-btn {
   color: var(--sheet); border: 1.5px solid transparent;
