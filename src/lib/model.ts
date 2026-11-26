@@ -6,6 +6,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
+import { originOf, parseRemote, type HostKind, type Remote } from "./remote.ts";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
 
@@ -53,7 +54,20 @@ export type TourStep = {
 };
 
 export type Tour = { id: string; title: string; summary: string; steps: TourStep[]; voice?: Voice };
-export type RepoConf = { path: string; github?: string; title?: string; include?: string[]; private?: boolean };
+export type RepoConf = {
+  path: string;
+  /** Shorthand for `remote: https://github.com/<owner/repo>`. */
+  github?: string;
+  /** Where the repo lives on the web (clone or web URL, any host). Default: the checkout's `origin`. */
+  remote?: string;
+  /** Host type for a self-hosted server whose name does not say it. */
+  remote_kind?: HostKind;
+  /** The remote needs access most readers may not have: the map marks its links with a lock. */
+  remote_private?: boolean;
+  title?: string;
+  include?: string[];
+  private?: boolean;
+};
 export type Voice = { engine?: "kokoro"; model?: string; voice?: string; speed?: number };
 export type Model = {
   version: number;
@@ -161,6 +175,20 @@ function walk(root: string, dir: string, depth = 0): string[] {
     else out.push(relative(root, p));
   }
   return out;
+}
+
+/**
+ * A repo's web home for source links: `remote`, else `github`, else the checkout's `origin`. `given` is the URL the
+ * model or the checkout supplied, so the check can report one it cannot read.
+ */
+export function remoteOf(m: Model, repo: string): { remote: Remote | null; given: string | null; from: "model" | "origin" | null } {
+  const conf = m.repos[repo];
+  if (!conf) return { remote: null, given: null, from: null };
+  const stated = conf.remote ?? (conf.github ? `https://github.com/${conf.github}` : null);
+  if (stated) return { remote: parseRemote(stated, conf.remote_kind), given: stated, from: "model" };
+  const root = repoRoot(m, repo);
+  const origin = root ? originOf(root) : null;
+  return { remote: origin ? parseRemote(origin, conf.remote_kind) : null, given: origin, from: origin ? "origin" : null };
 }
 
 export function headOf(m: Model, repo: string): string | null {

@@ -4,7 +4,8 @@
 import { readCode } from "./code.ts";
 import { readAdrs } from "./live.ts";
 import { parseFlowchart } from "./mermaid.ts";
-import { anchorsOf, filesOf, matches, parseRef, repoRoot, type Model, type Ref } from "./model.ts";
+import { anchorsOf, filesOf, matches, parseRef, remoteOf, repoRoot, type Model, type Ref } from "./model.ts";
+import { HOST_KINDS, redact } from "./remote.ts";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -53,6 +54,13 @@ export function checkModel(model: Model): Report {
       if (!names?.includes(r.fn)) errors.push(`${where}: function ${r.fn}() is not in ${r.path} (renamed or removed?)`);
     }
   };
+
+  for (const [k, r] of Object.entries(model.repos ?? {})) {
+    if (r.remote_kind && !HOST_KINDS.includes(r.remote_kind)) errors.push(`repo ${k}: remote_kind "${r.remote_kind}" is not one of ${HOST_KINDS.join(", ")}`);
+    const { remote, given, from } = remoteOf(model, k);
+    // Only a URL the model states is an error; an origin fraktul cannot read just means no source links.
+    if (from === "model" && !remote) errors.push(`repo ${k}: cannot tell how to link to ${redact(given!)}; set remote_kind (${HOST_KINDS.join(", ")})`);
+  }
 
   if (!model.nodes[model.root]) errors.push(`root "${model.root}" is not a node`);
   const inDiagrams = new Set<string>([model.root]);

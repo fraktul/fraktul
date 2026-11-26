@@ -13,7 +13,7 @@ import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { repoRoot, type Model } from "./model.ts";
 
-export type Adr = { num: string; title: string; status: string; file: string; text: string };
+export type Adr = { num: string; title: string; status: string; file: string; text: string; /** Source link, set by the build. */ url?: string | null };
 export type LiveBlock = {
   title: string;
   /** Label/value pairs, shown as a small table. */

@@ -11,7 +11,7 @@ type FnInfo = { key: string; file: string; name: string; line: number; end: numb
 type Step = { id: string; view: string; focus?: string[]; expand?: string[]; title: string; text: string; next?: string; branches?: { label: string; to: string }[] };
 type Tour = { id: string; title: string; summary: string; steps: Step[] };
 type Site = {
-  meta: { built: string; commit: string | null; root: string; repos: Record<string, { title: string; github: string | null; present: boolean }>; defaultRepo: string; title: string; brand: string; voice: any };
+  meta: { built: string; commit: string | null; root: string; repos: Record<string, { title: string; github: string | null; present: boolean; remote: string | null; host: string | null; restricted: boolean }>; defaultRepo: string; title: string; brand: string; voice: any };
   nodes: Record<string, NodeInfo>;
   diagrams: Record<string, Diagram>;
   files: Record<string, FileInfo>;
@@ -491,6 +491,13 @@ function link(label: string, key: string, cls = "a"): HTMLElement {
   if (!openable(key)) b.disabled = true;
   return b;
 }
+/** "Open on GitLab ↗" for a repo's source link; a private remote says so, since many readers cannot open it. */
+function sourceLink(repo: string, href: string): HTMLElement {
+  const r = SITE.meta.repos[repo];
+  const p = el("p", null, ext(`Open on ${r?.host ?? "the repo host"} ↗`, href));
+  if (r?.restricted) p.append(el("span", "muted small", " 🔒 private repo: needs access"));
+  return p;
+}
 function ext(label: string, href: string): HTMLElement {
   const a = el("a", "ext", label) as HTMLAnchorElement;
   a.href = href; a.target = "_blank"; a.rel = "noopener";
@@ -558,7 +565,7 @@ function filePanel(f: FileInfo): HTMLElement[] {
   const out: HTMLElement[] = [el("h2", "mono", f.path), el("p", "muted", `${repo?.title ?? f.repo}${f.lines ? ` · ${f.lines} lines` : ""}${f.lang !== "other" ? ` · ${f.functions.length} functions` : ""}`)];
   if (!f.exists) out.push(el("p", "muted", SITE.meta.repos[f.repo]?.present ? "Listed by name only (this folder is kept private)." : "This repo was not on the machine that built the site."));
   if (f.doc) out.push(el("p", "summary", f.doc));
-  if (f.url) out.push(el("p", null, ext("Open on GitHub ↗", f.url)));
+  if (f.url) out.push(sourceLink(f.repo, f.url));
   if (f.functions.length) out.push(el("h3", null, "Functions"), el("ul", "anchors cols", ...f.functions.map((n) => el("li", null, link(`${n}()`, `${f.key.replace(/^file:/, "fn:")}#${n}`, "a mono")))));
   if (f.imports.length) out.push(el("h3", null, "Imports"), el("ul", "anchors", ...f.imports.map((i) => el("li", null, link(SITE.files[i]?.path ?? i, i, "a mono")))));
   if (f.importedBy.length) out.push(el("h3", null, "Imported by"), el("ul", "anchors", ...f.importedBy.map((i) => el("li", null, link(SITE.files[i]?.path ?? i, i, "a mono")))));
@@ -571,7 +578,7 @@ function fnPanel(f: FnInfo): HTMLElement[] {
   const out: HTMLElement[] = [el("h2", "mono", `${f.name}(${f.params.length > 60 ? "…" : f.params})`)];
   out.push(el("p", "muted", link(`${file.path}`, f.file, "a mono"), ` · lines ${f.line}–${f.end}${f.exported ? " · exported" : ""}`));
   if (f.doc) out.push(el("p", "summary", f.doc));
-  if (f.url) out.push(el("p", null, ext("Open on GitHub ↗", f.url)));
+  if (f.url) out.push(sourceLink(file.repo, f.url));
   if (f.calls.length) out.push(el("h3", null, "Calls"), el("ul", "anchors cols", ...f.calls.map((c) => el("li", null, link(`${SITE.fns[c].name}()`, c, "a mono")))));
   if (f.calledBy.length) out.push(el("h3", null, "Called by"), el("ul", "anchors cols", ...f.calledBy.map((c) => el("li", null, link(`${SITE.fns[c].name}()`, c, "a mono")))));
   out.push(el("h3", null, "Source"), f.code ? codeView(f) : el("p", "muted", "Source is not included in this public copy of the map."));
@@ -605,8 +612,7 @@ function adrPanel(a: any): HTMLElement[] {
   if (!a) return [el("p", null, "This ADR is not in docs/adr/.")];
   const out: HTMLElement[] = [el("h2", null, `ADR ${a.num}: ${a.title}`)];
   out.push(el("p", "muted mono", a.file));
-  const gh = SITE.meta.repos[SITE.meta.defaultRepo]?.github;
-  if (gh && SITE.meta.commit) out.push(el("p", null, ext("Open on GitHub ↗", `https://github.com/${gh}/blob/${SITE.meta.commit}/${a.file}`)));
+  if (a.url) out.push(sourceLink(SITE.meta.defaultRepo, a.url));
   out.push(markdown(a.text.replace(/^#.*\n/, "")));
   const users = Object.values(SITE.nodes).filter((n) => n.anchors.some((x) => x.key === `adr:${a.num}`));
   if (users.length) out.push(el("h3", null, "Where it applies"), el("ul", "anchors", ...users.map((n) => el("li", null, button(n.title, "a", () => goTo(n.id))))));

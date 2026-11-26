@@ -6,14 +6,17 @@ import { join } from "node:path";
 import { callsOf, langOf, readCode, type CodeFile } from "./code.ts";
 import { readLive, type Live } from "./live.ts";
 import { parseFlowchart, type Parsed } from "./mermaid.ts";
-import { anchorsOf, fileKey, filesOf, fnKey, headOf, loadModel, parseRef, repoRoot, type Model, type ModelNode, type Ref, type Tour } from "./model.ts";
+import { sourceUrl, type Remote } from "./remote.ts";
+import { anchorsOf, fileKey, filesOf, fnKey, headOf, loadModel, parseRef, remoteOf, repoRoot, type Model, type ModelNode, type Ref, type Tour } from "./model.ts";
 
+/** A repo as the page sees it: `remote` is its web home (null when unknown), `host` labels links ("GitHub"). */
+export type SiteRepo = { title: string; github: string | null; present: boolean; remote: string | null; host: string | null; restricted: boolean };
 export type Diagram = Parsed & { title: string; targets: Record<string, string>; generated?: boolean };
 export type FileInfo = { key: string; repo: string; path: string; lang: string; lines: number; doc: string; functions: string[]; imports: string[]; importedBy: string[]; url: string | null; excerpt?: string; exists: boolean };
 export type FnInfo = { key: string; file: string; name: string; line: number; end: number; doc: string; params: string; exported: boolean; code: string; calls: string[]; calledBy: string[]; url: string | null };
 export type NodeInfo = Omit<ModelNode, "diagram" | "anchors"> & { id: string; anchors: { kind: string; key: string; label: string; missing?: boolean }[]; usedIn: string[] };
 export type Site = {
-  meta: { built: string; commit: string | null; root: string; repos: Record<string, { title: string; github: string | null; present: boolean }>; defaultRepo: string; title: string; brand: string; voice: unknown };
+  meta: { built: string; commit: string | null; root: string; repos: Record<string, SiteRepo>; defaultRepo: string; title: string; brand: string; voice: unknown };
   nodes: Record<string, NodeInfo>;
   diagrams: Record<string, Diagram>;
   files: Record<string, FileInfo>;
@@ -39,13 +42,14 @@ export function targetOf(a: string, defaultRepo: string): string {
 export async function buildSite(model: Model = loadModel()): Promise<Site> {
   const D = model.default_repo!;
   const live = await readLive(model);
-  const heads: Record<string, string | null> = {};
+  // Links are pinned to the commit that was read; a repo not checked out links to its default branch.
+  const remotes: Record<string, { remote: Remote | null; head: string | null }> = {};
+  const remoteFor = (repo: string) => (remotes[repo] ??= { remote: remoteOf(model, repo).remote, head: headOf(model, repo) });
   const urlOf = (repo: string, path: string, from?: number, to?: number) => {
-    const gh = model.repos[repo]?.github;
-    if (!gh) return null;
-    heads[repo] ??= headOf(model, repo) ?? "main";
-    return `https://github.com/${gh}/blob/${heads[repo]}/${path}${from ? `#L${from}-L${to ?? from}` : ""}`;
+    const { remote, head } = remoteFor(repo);
+    return remote ? sourceUrl(remote, path, head, from, to) : null;
   };
+  for (const a of live.adrs) a.url = urlOf(D, a.file);
 
   // 1. Files: every file an anchor names, then the code files they import (same repo), a few levels deep.
   const files: Record<string, FileInfo> = {};
@@ -148,7 +152,14 @@ export async function buildSite(model: Model = loadModel()): Promise<Site> {
     for (const f of Object.values(files)) { delete f.excerpt; f.url = null; }
   }
   const repos: Site["meta"]["repos"] = {};
-  for (const [k, r] of Object.entries(model.repos)) repos[k] = { title: r.title ?? k, github: process.env.FRAKTUL_PUBLIC ? null : r.github ?? null, present: !!repoRoot(model, k) };
+  for (const [k, r] of Object.entries(model.repos)) {
+    const { remote } = remoteFor(k);
+    const github = remote?.kind === "github" && remote.web.startsWith("https://github.com/") ? remote.web.slice("https://github.com/".length) : null;
+    repos[k] = process.env.FRAKTUL_PUBLIC
+      ? { title: r.title ?? k, github: null, present: !!repoRoot(model, k), remote: null, host: null, restricted: true }
+      : { title: r.title ?? k, github, present: !!repoRoot(model, k), remote: remote?.web ?? null, host: remote?.label ?? null, restricted: !!r.remote_private };
+  }
+  if (process.env.FRAKTUL_PUBLIC) for (const a of live.adrs) a.url = null;
   const voicePath = join(model.dir, ".fraktul", "voice", "voice.json");
   const voice = existsSync(voicePath) ? JSON.parse(readFileSync(voicePath, "utf8")).tours ?? {} : {};
   // Narration rendered for steps that no longer exist (or whose text changed) is dropped, not shown out of date.
