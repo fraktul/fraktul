@@ -16,7 +16,10 @@ type Edge3D = { pts: [number, number][]; tone: string };
 type Scene3D = { key: string; items: Item3D[]; groups: Group3D[]; edges: Edge3D[] };
 type Hooks3D = { pick: (rid: string | null) => void };
 
-const THREE_URL = "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js";
+// fraktul ships its own three.js beside the page (vendor/); the CDN is only a fallback for hosts that serve the page
+// alone (a claude.ai Artifact), where the local file is not there.
+const THREE_LOCAL = "vendor/three.module.min.js";
+const THREE_CDN = "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js";
 const UNIT = 1 / 40; // SVG px → world units
 let T: any = null;
 
@@ -47,7 +50,8 @@ let T: any = null;
 
   async function load() {
     if (T) return T;
-    T = await import(/* @vite-ignore */ THREE_URL);
+    try { T = await import(/* @vite-ignore */ new URL(THREE_LOCAL, document.baseURI).href); }
+    catch { T = await import(/* @vite-ignore */ THREE_CDN); }
     return T;
   }
 

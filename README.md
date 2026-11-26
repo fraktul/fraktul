@@ -106,7 +106,7 @@ standing where Mermaid drew them. Drag to look, <kbd>W</kbd><kbd>A</kbd><kbd>S</
 the level rising. Shape follows `kind` (towers, data crystals, people as pillars of light, external systems as sealed
 monoliths), height follows lines of code, planned blocks are holograms, and each block's crown and windows come from a
 hash of its id, so it keeps its silhouette when the code changes. Tour steps light their boxes with a beam.
-three.js loads from cdn.jsdelivr.net the first time 3D is switched on. The design is in `docs/3d-view.md`.
+three.js ships with fraktul (served beside the map, like Mermaid) and loads the first time 3D is switched on. The design is in `docs/3d-view.md`.
 
 ### Tours, narration and recordings
 

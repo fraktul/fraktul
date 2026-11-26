@@ -44,6 +44,7 @@ jobs:
           npm i "$GITHUB_WORKSPACE"/package/fraktul-*.tgz --no-audit --no-fund
           npx fraktul build "$GITHUB_WORKSPACE/example/model.yaml" --out "$RUNNER_TEMP/try/out"
           test -s "$RUNNER_TEMP/try/out/index.html"
+          test -s "$RUNNER_TEMP/try/out/vendor/mermaid.min.js"
 
   deploy:
     name: Deploy fraktul.dev
@@ -136,6 +137,17 @@ jobs:
           URL: ${{ steps.upload.outputs.url }}
         run: node .github/scripts/smoke-test.mjs "$URL" /=200 /docs=200 /docs/model=200 /map=200 /design=200 /favicon.svg=200 /no-such-page=404
 
+      # Status codes pass a page whose script fails; this opens the pages in Chromium and waits for the map to draw.
+      - name: Install Chromium for the render test
+        if: steps.newest.outputs.newest == 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Render-test the Preview
+        if: github.ref != 'refs/heads/main' && steps.newest.outputs.newest == 'true'
+        env:
+          URL: ${{ steps.upload.outputs.url }}
+        run: node .github/scripts/render-test.mjs "$URL" /map=map / /docs /docs/model /design
+
       - name: Comment the Preview on the pull request
         if: github.ref != 'refs/heads/main' && steps.newest.outputs.newest == 'true' && steps.alias.outputs.pr != ''
         env:
@@ -159,3 +171,7 @@ jobs:
       - name: Smoke-test production
         if: github.ref == 'refs/heads/main' && steps.newest.outputs.newest == 'true'
         run: node .github/scripts/smoke-test.mjs https://fraktul.dev /=200 /docs=200 /map=200 /no-such-page=404
+
+      - name: Render-test production
+        if: github.ref == 'refs/heads/main' && steps.newest.outputs.newest == 'true'
+        run: node .github/scripts/render-test.mjs https://fraktul.dev /map=map / /docs
