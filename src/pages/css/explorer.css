@@ -213,79 +213,79 @@ pre.code:not(.numbered) { padding: 10px 12px; }
 /* ── Style touches (data-style on <html>). Shape and type only; colours all come from tokens.css. ── */
 .style-pick { font: 600 12px var(--body); padding: 7px 10px; border-radius: var(--r-pill); border: 1px solid var(--line); background: var(--btn); color: var(--ink); box-shadow: var(--gloss); }
 .brand-text { font-family: var(--display); }
-/* chrome: mirror-polished bars and pills, extended display type */
-:root[data-style="chrome"] .brand-text, :root:not([data-style]) .brand-text { letter-spacing: 0.06em; text-transform: lowercase; font-size: 14px; }
-:root[data-style="chrome"] .panel h2, :root:not([data-style]) .panel h2 { font-size: 17px; letter-spacing: 0.02em; }
-:root[data-style="chrome"] .btn.primary, :root:not([data-style]) .btn.primary { background: var(--ink); color: var(--sheet); border-color: var(--ink); }
-/* chrome, pushed further: mirror nav, chrome crumbs bar, foil logo with a slow shimmer, silver pills, wide titles */
-:root[data-style="chrome"] .crumbs, :root:not([data-style]) .crumbs { background: var(--btn); box-shadow: var(--gloss); }
-:root[data-style="chrome"] .brand-mark, :root:not([data-style]) .brand-mark { width: 28px; height: 28px; background-size: 300% 100%; filter: drop-shadow(1.1px 0 0 var(--ink)) drop-shadow(-1.1px 0 0 var(--ink)) drop-shadow(0 1.1px 0 var(--ink)) drop-shadow(0 -1.1px 0 var(--ink)) drop-shadow(0 2px 3px rgba(0,0,0,0.25)); }
+/* y2k: mirror-polished bars and pills, extended display type */
+:root[data-style="y2k"] .brand-text, :root[data-style="y2k"] .brand-text { letter-spacing: 0.06em; text-transform: lowercase; font-size: 14px; }
+:root[data-style="y2k"] .panel h2, :root[data-style="y2k"] .panel h2 { font-size: 17px; letter-spacing: 0.02em; }
+:root[data-style="y2k"] .btn.primary, :root[data-style="y2k"] .btn.primary { background: var(--ink); color: var(--sheet); border-color: var(--ink); }
+/* y2k, pushed further: mirror nav, chrome crumbs bar, foil logo with a slow shimmer, silver pills, wide titles */
+:root[data-style="y2k"] .crumbs, :root[data-style="y2k"] .crumbs { background: var(--btn); box-shadow: var(--gloss); }
+:root[data-style="y2k"] .brand-mark, :root[data-style="y2k"] .brand-mark { width: 28px; height: 28px; background-size: 300% 100%; filter: drop-shadow(1.1px 0 0 var(--ink)) drop-shadow(-1.1px 0 0 var(--ink)) drop-shadow(0 1.1px 0 var(--ink)) drop-shadow(0 -1.1px 0 var(--ink)) drop-shadow(0 2px 3px rgba(0,0,0,0.25)); }
 @media (prefers-reduced-motion: no-preference) {
-  :root[data-style="chrome"] .brand-mark, :root:not([data-style]) .brand-mark { animation: foil 9s linear infinite; }
+  :root[data-style="y2k"] .brand-mark, :root[data-style="y2k"] .brand-mark { animation: foil 9s linear infinite; }
   @keyframes foil { to { background-position: 300% 0; } }
 }
-:root[data-style="chrome"] .panel h2, :root[data-style="chrome"] .tour-card h3, :root[data-style="chrome"] .tours-head h2, :root[data-style="chrome"] .peek-head strong,
-:root:not([data-style]) .panel h2 { font-family: var(--display); letter-spacing: 0.03em; font-weight: 400; }
-:root[data-style="chrome"] .tour-card h3 { font-size: 15px; line-height: 1.45; }
-:root[data-style="chrome"] .panel h2 { font-size: 16px; line-height: 1.45; }
-:root[data-style="chrome"] .eyebrow, :root[data-style="chrome"] .panel h3 { font-family: var(--display); font-weight: 400; font-size: 10px; letter-spacing: 0.14em; }
-:root[data-style="chrome"] .chip { background: var(--btn); box-shadow: var(--gloss); }
-:root[data-style="chrome"] .tour-card::before { height: 5px; background-size: 300% 100%; }
-@media (prefers-reduced-motion: no-preference) { :root[data-style="chrome"] .tour-card::before { animation: foil 9s linear infinite; } }
-/* minimal: flat, quiet, no material */
-:root[data-style="minimal"] .bar { box-shadow: none; }
-:root[data-style="minimal"] .btn, :root[data-style="minimal"] .style-pick { box-shadow: none; }
-:root[data-style="minimal"] .tour-card::before { background: var(--accent); height: 3px; }
-:root[data-style="minimal"] .brand-text { font-weight: 600; letter-spacing: -0.01em; font-size: 15px; }
-:root[data-style="minimal"] .panel h2 { font-weight: 600; letter-spacing: -0.015em; }
+:root[data-style="y2k"] .panel h2, :root[data-style="y2k"] .tour-card h3, :root[data-style="y2k"] .tours-head h2, :root[data-style="y2k"] .peek-head strong,
+:root[data-style="y2k"] .panel h2 { font-family: var(--display); letter-spacing: 0.03em; font-weight: 400; }
+:root[data-style="y2k"] .tour-card h3 { font-size: 15px; line-height: 1.45; }
+:root[data-style="y2k"] .panel h2 { font-size: 16px; line-height: 1.45; }
+:root[data-style="y2k"] .eyebrow, :root[data-style="y2k"] .panel h3 { font-family: var(--display); font-weight: 400; font-size: 10px; letter-spacing: 0.14em; }
+:root[data-style="y2k"] .chip { background: var(--btn); box-shadow: var(--gloss); }
+:root[data-style="y2k"] .tour-card::before { height: 5px; background-size: 300% 100%; }
+@media (prefers-reduced-motion: no-preference) { :root[data-style="y2k"] .tour-card::before { animation: foil 9s linear infinite; } }
+/* flat: quiet, no material */
+:root:not([data-style="y2k"]) .bar { box-shadow: none; }
+:root[data-style="flat"] .btn, :root:not([data-style="y2k"]) .style-pick { box-shadow: none; }
+:root:not([data-style="y2k"]) .tour-card::before { background: var(--accent); height: 3px; }
+:root:not([data-style="y2k"]) .brand-text { font-weight: 600; letter-spacing: -0.01em; font-size: 15px; }
+:root:not([data-style="y2k"]) .panel h2 { font-weight: 600; letter-spacing: -0.015em; }
 /* Box corners follow the style (Mermaid draws plain rects). */
 .board g.node rect.label-container, .board g.node > rect { rx: var(--r-sm); ry: var(--r-sm); }
 
-/* ── Chrome, round two: Y2K window title bars, bevelled controls, chrome scrollbars, a 3D foil star ── */
-:root:not([data-style="minimal"]) .brand-mark {
+/* ── y2k, round two: Y2K window title bars, bevelled controls, chrome scrollbars, a 3D foil star ── */
+:root[data-style="y2k"] .brand-mark {
   background: linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0) 44%, rgba(0,0,0,0.28) 52%, rgba(255,255,255,0.35) 100%), var(--brand);
   background-size: 100% 100%, 300% 100%;
 }
 @media (prefers-reduced-motion: no-preference) {
-  :root:not([data-style="minimal"]) .brand-mark { animation: foil2 9s linear infinite; }
+  :root[data-style="y2k"] .brand-mark { animation: foil2 9s linear infinite; }
   @keyframes foil2 { to { background-position: 0 0, 300% 0; } }
 }
 /* Windows: the card's head is a brushed title bar with a foil line under it. */
-:root:not([data-style="minimal"]) .tour-card { padding-top: 0; overflow: hidden; }
-:root:not([data-style="minimal"]) .tour-card::before { display: none; }
-:root:not([data-style="minimal"]) .tour-card .tour-head,
-:root:not([data-style="minimal"]) .peek .peek-head,
-:root:not([data-style="minimal"]) .tours-head {
+:root[data-style="y2k"] .tour-card { padding-top: 0; overflow: hidden; }
+:root[data-style="y2k"] .tour-card::before { display: none; }
+:root[data-style="y2k"] .tour-card .tour-head,
+:root[data-style="y2k"] .peek .peek-head,
+:root[data-style="y2k"] .tours-head {
   background: var(--bar); box-shadow: var(--gloss); border-bottom: 3px solid transparent; border-image: var(--brand) 1;
 }
-:root:not([data-style="minimal"]) .tour-card .tour-head { margin: 0 -18px 12px; padding: 7px 10px 7px 18px; }
-:root:not([data-style="minimal"]) .peek { padding-top: 0; overflow: hidden; }
-:root:not([data-style="minimal"]) .peek .peek-head { margin: 0 -14px 10px; padding: 9px 12px 9px 14px; }
-:root:not([data-style="minimal"]) .tour-card .eyebrow { font-size: 9.5px; color: var(--ink); }
+:root[data-style="y2k"] .tour-card .tour-head { margin: 0 -18px 12px; padding: 7px 10px 7px 18px; }
+:root[data-style="y2k"] .peek { padding-top: 0; overflow: hidden; }
+:root[data-style="y2k"] .peek .peek-head { margin: 0 -14px 10px; padding: 9px 12px 9px 14px; }
+:root[data-style="y2k"] .tour-card .eyebrow { font-size: 9.5px; color: var(--ink); }
 /* Controls: modern glass pills. Hairline border, a soft blur, no metal; the primary is solid ink with a foil ring on
    hover. The chrome stays on the nav bar, the logo, the titles and the diagram boxes. */
-:root:not([data-style="minimal"]) .btn, :root:not([data-style="minimal"]) .style-pick {
+:root[data-style="y2k"] .btn, :root[data-style="y2k"] .style-pick {
   background: var(--btn); border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); box-shadow: var(--gloss);
   backdrop-filter: blur(10px) saturate(1.4); -webkit-backdrop-filter: blur(10px) saturate(1.4); transition: background 0.15s, border-color 0.15s, transform 0.1s;
 }
-:root:not([data-style="minimal"]) .btn:hover, :root:not([data-style="minimal"]) .style-pick:hover { border-color: color-mix(in srgb, var(--ink) 30%, transparent); background: color-mix(in srgb, var(--sheet) 90%, transparent); }
-:root:not([data-style="minimal"]) .btn:active { transform: scale(0.98); }
-:root:not([data-style="minimal"]) .btn.primary, :root:not([data-style="minimal"]) .tours-btn {
+:root[data-style="y2k"] .btn:hover, :root[data-style="y2k"] .style-pick:hover { border-color: color-mix(in srgb, var(--ink) 30%, transparent); background: color-mix(in srgb, var(--sheet) 90%, transparent); }
+:root[data-style="y2k"] .btn:active { transform: scale(0.98); }
+:root[data-style="y2k"] .btn.primary, :root[data-style="y2k"] .tours-btn {
   color: var(--sheet); border: 1.5px solid transparent;
   background: linear-gradient(var(--ink), var(--ink)) padding-box, linear-gradient(var(--ink), var(--ink)) border-box;
 }
-:root:not([data-style="minimal"]) .btn.primary:hover, :root:not([data-style="minimal"]) .tours-btn:hover {
+:root[data-style="y2k"] .btn.primary:hover, :root[data-style="y2k"] .tours-btn:hover {
   background: linear-gradient(var(--ink), var(--ink)) padding-box, var(--brand) border-box; filter: none;
 }
-:root:not([data-style="minimal"]) .chip { background: transparent; box-shadow: none; }
-:root:not([data-style="minimal"]) .search input { background: color-mix(in srgb, var(--sheet) 80%, transparent); border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); box-shadow: none; backdrop-filter: blur(10px); }
-:root:not([data-style="minimal"]) .crumbs { background: color-mix(in srgb, var(--paper-2) 85%, transparent); box-shadow: none; }
+:root[data-style="y2k"] .chip { background: transparent; box-shadow: none; }
+:root[data-style="y2k"] .search input { background: color-mix(in srgb, var(--sheet) 80%, transparent); border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); box-shadow: none; backdrop-filter: blur(10px); }
+:root[data-style="y2k"] .crumbs { background: color-mix(in srgb, var(--paper-2) 85%, transparent); box-shadow: none; }
 /* Chrome scrollbars. */
-:root:not([data-style="minimal"]) .panel::-webkit-scrollbar, :root:not([data-style="minimal"]) .code::-webkit-scrollbar { width: 12px; height: 12px; }
-:root:not([data-style="minimal"]) .panel::-webkit-scrollbar-track, :root:not([data-style="minimal"]) .code::-webkit-scrollbar-track { background: var(--paper); }
-:root:not([data-style="minimal"]) .panel::-webkit-scrollbar-thumb, :root:not([data-style="minimal"]) .code::-webkit-scrollbar-thumb { background: linear-gradient(90deg, var(--metal-1), var(--metal-0) 30%, var(--metal-2) 70%, var(--metal-1)); border: 2px solid var(--paper); border-radius: 999px; }
+:root[data-style="y2k"] .panel::-webkit-scrollbar, :root[data-style="y2k"] .code::-webkit-scrollbar { width: 12px; height: 12px; }
+:root[data-style="y2k"] .panel::-webkit-scrollbar-track, :root[data-style="y2k"] .code::-webkit-scrollbar-track { background: var(--paper); }
+:root[data-style="y2k"] .panel::-webkit-scrollbar-thumb, :root[data-style="y2k"] .code::-webkit-scrollbar-thumb { background: linear-gradient(90deg, var(--metal-1), var(--metal-0) 30%, var(--metal-2) 70%, var(--metal-1)); border: 2px solid var(--paper); border-radius: 999px; }
 /* Metal boxes keep dark text in both themes. */
-:root:not([data-style="minimal"]) .board g.node.is-metal .nodeLabel { color: var(--ink); }
+:root[data-style="y2k"] .board g.node.is-metal .nodeLabel { color: var(--ink); }
 /* Title bar label: one line, never under the close button. */
 .tour-card .tour-head .eyebrow, .peek-head strong { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-:root:not([data-style="minimal"]) .tour-card .tour-head .eyebrow { letter-spacing: 0.08em; }
+:root[data-style="y2k"] .tour-card .tour-head .eyebrow { letter-spacing: 0.08em; }

@@ -1,5 +1,5 @@
 <!-- @bascik
-fraktul.dev navigation: the chrome bar, the foil star, page links, and the style and theme switches.
+fraktul.dev navigation: the bar (liquid chrome in y2k), the foil star, page links, and the light and dark switch.
 -->
 <style>
   .nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; display: flex; align-items: center; gap: 20px; padding: 12px max(20px, env(safe-area-inset-right, 0px)) 12px max(20px, env(safe-area-inset-left, 0px)); background: var(--bar); box-shadow: var(--gloss); border-bottom: 1px solid var(--line); }
@@ -19,22 +19,14 @@ fraktul.dev navigation: the chrome bar, the foil star, page links, and the style
     <a href="/map" data-testid="site-header-map">Map</a>
     <a class="hide-sm" href="/design" data-testid="site-header-design">Design</a>
   </nav>
-  <button class="switch" id="style" type="button" data-testid="site-header-style">Chrome</button>
   <button class="switch" id="theme" type="button" aria-label="Theme" data-testid="site-header-theme">◐</button>
 </header>
 <script type="text/typescript">
   const root = document.documentElement;
-  const styleBtn = document.getElementById("style") as HTMLButtonElement;
   const themeBtn = document.getElementById("theme") as HTMLButtonElement;
   const show = () => {
-    styleBtn.textContent = root.dataset.style === "minimal" ? "Minimal" : "Chrome";
     themeBtn.textContent = root.dataset.theme === "light" ? "☀" : root.dataset.theme === "dark" ? "☾" : "◐";
   };
-  styleBtn.addEventListener("click", () => {
-    root.dataset.style = root.dataset.style === "minimal" ? "chrome" : "minimal";
-    try { localStorage.setItem("fraktul-style", root.dataset.style); } catch (e) { /* private window */ }
-    show();
-  });
   themeBtn.addEventListener("click", () => {
     const next = !root.dataset.theme ? "light" : root.dataset.theme === "light" ? "dark" : "";
     if (next) root.dataset.theme = next; else delete root.dataset.theme;

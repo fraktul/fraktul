@@ -252,9 +252,9 @@ function ridOf(elem: Element): string | null {
 }
 
 let gradientCount = 0;
-/** Chrome style: district and plain boxes get a brushed-metal fill (an SVG gradient made from the --metal-* tokens). */
+/** y2k style: district and plain boxes get a brushed-metal fill (an SVG gradient made from the --metal-* tokens). */
 function chromeMetal(svg: SVGSVGElement) {
-  if (document.documentElement.dataset.style === "minimal") return;
+  if (document.documentElement.dataset.style !== "y2k") return;
   const NS = "http://www.w3.org/2000/svg";
   const cs = getComputedStyle(document.documentElement);
   const stops = [0, 1, 2, 3, 4].map((i) => cs.getPropertyValue(`--metal-${i}`).trim()).filter(Boolean);
@@ -1000,7 +1000,7 @@ themeBtn.addEventListener("click", () => {
 });
 showTheme();
 const stylePick = document.getElementById("style-pick") as HTMLSelectElement;
-stylePick.value = document.documentElement.dataset.style ?? "chrome";
+stylePick.value = document.documentElement.dataset.style === "y2k" ? "y2k" : "flat";
 stylePick.addEventListener("change", () => {
   document.documentElement.dataset.style = stylePick.value;
   try { localStorage.setItem("fraktul-style", stylePick.value); } catch { /* private window */ }

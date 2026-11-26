@@ -1,11 +1,11 @@
 /* fraktul design system: two styles (data-style on <html>), each light and dark, with one token structure, so
    components only ever read these tokens.
-     chrome   Y2K liquid chrome, the fun one: mirror-silver bars and buttons, wide Michroma titles, black and white,
-              a holographic foil on the logo and the tour strip.
-     minimal  a quiet modern UI: flat neutral surfaces, one blue accent, Inter, no gradients.
+     flat  the default: a quiet modern UI, flat neutral surfaces, one blue accent, Inter, no gradients.
+     y2k   the fun one, opt-in: liquid chrome nav, wide Michroma titles, a holographic foil logo, brushed-metal
+           diagram boxes, modern glass controls.
    Readability rules for both: body text sits on flat --sheet or --paper; gradients are for bars, buttons and the
    brand only; every text colour meets WCAG AA on its surface. */
-:root, :root[data-style="chrome"] {
+:root[data-style="y2k"] {
   --display:"Michroma", "Manrope", system-ui, sans-serif;
   --body:"Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
@@ -60,7 +60,7 @@
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark) {
-:root:not([data-theme="light"]):not([data-style]), :root:not([data-theme="light"])[data-style="chrome"] {
+:root:not([data-theme="light"])[data-style="y2k"] {
   --paper:#050506;
   --paper-2:#0d0e10;
   --sheet:#141518;
@@ -109,7 +109,7 @@
   color-scheme:dark;
 }
 }
-:root[data-theme="dark"]:not([data-style]), :root[data-theme="dark"][data-style="chrome"] {
+:root[data-theme="dark"][data-style="y2k"] {
   --paper:#050506;
   --paper-2:#0d0e10;
   --sheet:#141518;
@@ -157,7 +157,7 @@
   --n-plain-line:#9096a0;
   color-scheme:dark;
 }
-:root[data-style="minimal"] {
+:root, :root[data-style="flat"] {
   --display:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
@@ -207,7 +207,7 @@
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark) {
-:root:not([data-theme="light"])[data-style="minimal"] {
+:root:not([data-theme="light"]):not([data-style="y2k"]) {
   --paper:#0b0b0d;
   --paper-2:#131316;
   --sheet:#17171a;
@@ -251,7 +251,7 @@
   color-scheme:dark;
 }
 }
-:root[data-theme="dark"][data-style="minimal"] {
+:root[data-theme="dark"]:not([data-style="y2k"]) {
   --paper:#0b0b0d;
   --paper-2:#131316;
   --sheet:#17171a;
