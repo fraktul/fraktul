@@ -1,0 +1,44 @@
+<!-- @bascik
+Small helpers for the documentation pages: copy buttons on code blocks, the sidebar folded on a phone, and "On this
+page" marking the section being read. The pages work without it.
+-->
+<script type="text/typescript">
+  // Copy buttons: copy the code text, say so for a moment.
+  for (const btn of document.querySelectorAll<HTMLButtonElement>(".code-block .copy")) {
+    btn.addEventListener("click", async () => {
+      const el = btn.closest(".code-block")?.querySelector("code");
+      try {
+        await navigator.clipboard.writeText(el?.textContent ?? "");
+        btn.textContent = "Copied";
+        btn.classList.add("done");
+      } catch {
+        // No clipboard access (an old browser or a locked-down page): select the code so the reader can copy it.
+        if (el) getSelection()?.selectAllChildren(el);
+        btn.textContent = "Selected";
+      }
+      setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("done"); }, 1600);
+    });
+  }
+
+  // The sidebar is one folded row on a phone; open on wider screens.
+  const fold = document.querySelector<HTMLDetailsElement>(".docs-nav-fold");
+  const narrow = matchMedia("(max-width: 900px)");
+  const setFold = () => { if (fold) fold.open = !narrow.matches; };
+  setFold();
+  narrow.addEventListener("change", setFold);
+
+  // "On this page": mark the last heading that has scrolled past the top bar.
+  const links = [...document.querySelectorAll<HTMLAnchorElement>(".docs-toc a")];
+  const heads = links.map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1)))).filter((h): h is HTMLElement => !!h);
+  if (heads.length) {
+    let ticking = false;
+    const mark = () => {
+      ticking = false;
+      let current = heads[0];
+      for (const h of heads) if (h.getBoundingClientRect().top < Math.max(140, innerHeight * 0.3)) current = h;
+      for (const a of links) { if (a.hash === `#${current.id}`) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); }
+    };
+    addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(mark); } }, { passive: true });
+    mark();
+  }
+</script>
