@@ -1,0 +1,161 @@
+name: CI
+
+# Same shape as Bascik's CI (DEPLOYMENT.md has the runbook):
+#   a push to any branch except main  → tests, then a Preview of fraktul.dev under one alias (pr-<number> when the
+#                                       branch has an open pull request, else the branch name), smoke-tested, with the
+#                                       URL in the run summary and in a single comment on the pull request
+#   a push to main                     → no tests (the pull request's branch was tested before the merge); deploys
+#                                       fraktul.dev only when the commit came from a merged pull request and is still
+#                                       the newest commit on main, then smoke-tests production
+#   a tag v*.*.*                       → release.yml publishes to npm
+on:
+  push:
+    branches: ["**"]
+
+concurrency:
+  # Branch runs cancel an older run of the same branch; main runs never wait or get canceled (see deploy).
+  group: ${{ github.ref == 'refs/heads/main' && format('ci-main-{0}', github.run_id) || format('ci-{0}', github.ref) }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: 24, cache: npm }
+      - run: npm ci
+      - name: Unit tests and the example model's check
+        run: npm test
+      - name: Build fraktul.dev
+        run: npm run site:build:preview
+      # The npm package is JavaScript (Node does not strip TypeScript in node_modules): build it, install it into an
+      # empty project, and map the example with the installed CLI.
+      - name: Package, install and run
+        run: |
+          node --no-warnings scripts/build-package.ts
+          (cd package && npm pack --silent)
+          mkdir -p "$RUNNER_TEMP/try" && cd "$RUNNER_TEMP/try" && npm init -y >/dev/null
+          npm i "$GITHUB_WORKSPACE"/package/fraktul-*.tgz --no-audit --no-fund
+          npx fraktul build "$GITHUB_WORKSPACE/example/model.yaml" --out "$RUNNER_TEMP/try/out"
+          test -s "$RUNNER_TEMP/try/out/index.html"
+
+  deploy:
+    name: Deploy fraktul.dev
+    needs: test
+    # Branch pushes deploy after the tests pass; main deploys without them (see the merged pull request check).
+    if: >-
+      !cancelled() && github.repository == 'rinsesoft/fraktul' &&
+      (github.ref == 'refs/heads/main' || needs.test.result == 'success')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v5
+        with: { node-version: 24, cache: npm }
+      - run: npm ci
+
+      - name: Check Cloudflare credentials
+        env:
+          HAS_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          [ "$HAS_TOKEN" = "true" ] || { echo "::error::Repository secret CLOUDFLARE_API_TOKEN is not set (see DEPLOYMENT.md)"; exit 1; }
+          [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || { echo "::error::Repository variable CLOUDFLARE_ACCOUNT_ID is not set (see DEPLOYMENT.md)"; exit 1; }
+
+      - name: Build fraktul.dev
+        run: |
+          if [ "$GITHUB_REF" = "refs/heads/main" ]; then npm run site:build; else npm run site:build:preview; fi
+
+      # A commit pushed straight to main was never tested on a branch, so it must not deploy. GitHub can take a few
+      # seconds to link a fresh merge commit to its pull request: ask up to three times, 10 s apart.
+      - name: Check the commit came from a merged pull request
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          PULLS: ${{ runner.temp }}/pulls.json
+        run: |
+          for attempt in 1 2 3; do
+            gh api "repos/$REPO/commits/$SHA/pulls" > "$PULLS"
+            [ "$(tr -d '[:space:]' < "$PULLS")" = "[]" ] && [ "$attempt" -lt 3 ] || break
+            echo "No pull request lists $SHA yet (try $attempt of 3); asking again in 10 s."
+            sleep 10
+          done
+          node .github/scripts/merged-pull-request.mjs "$SHA" "$PULLS"
+
+      # Right before Wrangler: skip when the branch has moved on, so an older commit never replaces a newer one.
+      - name: Check this is still the newest commit
+        id: newest
+        env:
+          REF: ${{ github.ref }}
+          SHA: ${{ github.sha }}
+        run: echo "newest=$(node .github/scripts/newest-commit.mjs "$REF" "$SHA")" >> "$GITHUB_OUTPUT"
+
+      - name: Compute the Preview alias
+        if: github.ref != 'refs/heads/main'
+        id: alias
+        env:
+          BRANCH: ${{ github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          pr="$(gh pr list --repo "$REPO" --head "$BRANCH" --state open --json number,isCrossRepository --jq '[.[] | select(.isCrossRepository == false)][0].number // empty')"
+          name="$BRANCH"
+          [ -z "$pr" ] || name="pr-$pr"
+          echo "alias=$(node .github/scripts/preview-alias.mjs "$name" fraktul)" >> "$GITHUB_OUTPUT"
+          echo "pr=$pr" >> "$GITHUB_OUTPUT"
+
+      - name: Upload a Preview version
+        if: github.ref != 'refs/heads/main' && steps.newest.outputs.newest == 'true'
+        id: upload
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler.ndjson
+          ALIAS: ${{ steps.alias.outputs.alias }}
+          MESSAGE: "Preview ${{ steps.alias.outputs.alias }} at ${{ github.sha }}"
+        run: |
+          npx wrangler versions upload --preview-alias "$ALIAS" --message "$MESSAGE"
+          url="$(node .github/scripts/wrangler-preview-url.mjs "$WRANGLER_OUTPUT_FILE_PATH")"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "fraktul.dev Preview: $url" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Smoke-test the Preview
+        if: github.ref != 'refs/heads/main' && steps.newest.outputs.newest == 'true'
+        env:
+          URL: ${{ steps.upload.outputs.url }}
+        run: node .github/scripts/smoke-test.mjs "$URL" /=200 /docs=200 /docs/model=200 /map=200 /design=200 /favicon.svg=200 /no-such-page=404
+
+      - name: Comment the Preview on the pull request
+        if: github.ref != 'refs/heads/main' && steps.newest.outputs.newest == 'true' && steps.alias.outputs.pr != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.alias.outputs.pr }}
+          URL: ${{ steps.upload.outputs.url }}
+        run: |
+          body="**fraktul.dev Preview:** $URL (\`${GITHUB_SHA::7}\`, noindex). Updated on every push to this branch."
+          gh pr comment "$PR" --edit-last --create-if-none --body "$body" || gh pr comment "$PR" --body "$body"
+
+      - name: Deploy to production
+        if: github.ref == 'refs/heads/main' && steps.newest.outputs.newest == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          MESSAGE: "main at ${{ github.sha }}"
+        run: |
+          npx wrangler deploy --message "$MESSAGE"
+          echo "Deployed https://fraktul.dev" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Smoke-test production
+        if: github.ref == 'refs/heads/main' && steps.newest.outputs.newest == 'true'
+        run: node .github/scripts/smoke-test.mjs https://fraktul.dev /=200 /docs=200 /map=200 /no-such-page=404

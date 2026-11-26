@@ -9,9 +9,11 @@
 //   fraktul import-recording <file.json> [model] a walkthrough saved from the map's recorder → recordings/
 //
 // [model] defaults to ./model.yaml, then ./docs/arch/model.yaml.
+// Installed from npm: `npx fraktul check`, or `fraktul` from a package.json script.
 
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
+import { createRequire } from "node:module";
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -32,17 +34,29 @@ function modelPath(arg?: string): string {
   console.error(`No model file: ${c.join(" or ")}. Pass its path: fraktul ${cmd} path/to/model.yaml`);
   process.exit(2);
 }
+/** Bascik's CLI: found the way Node finds packages, so it works from a checkout and from an installed package. */
+function bascikBin(): string | null {
+  try {
+    let dir = dirname(createRequire(import.meta.url).resolve("@bascik/bascik"));
+    while (dir !== dirname(dir) && !existsSync(join(dir, "bin", "bascik.js"))) dir = dirname(dir);
+    return existsSync(join(dir, "bin", "bascik.js")) ? join(dir, "bin", "bascik.js") : null;
+  } catch { return null; }
+}
 function ensureDeps() {
-  if (!existsSync(join(FRAKTUL, "node_modules", "@bascik", "bascik"))) {
+  // A fresh checkout installs its own dependencies once; an installed package already has them.
+  if (!bascikBin() && existsSync(join(FRAKTUL, "package-lock.json"))) {
     console.log("fraktul: installing its dependencies (npm ci)…");
     const r = spawnSync("npm", ["ci", "--no-audit", "--no-fund"], { cwd: FRAKTUL, stdio: "inherit" });
     if (r.status) process.exit(r.status);
   }
 }
+/** .ts in a checkout, .js in the published package. */
+const EXT = import.meta.url.endsWith(".js") ? ".js" : ".ts";
 const outFor = (model: string) => join(FRAKTUL, ".out", process.env.FRAKTUL_SITE ? "site" : createHash("sha1").update(model).digest("hex").slice(0, 10));
 function bascik(model: string, bArgs: string[]) {
   ensureDeps();
-  const bin = join(FRAKTUL, "node_modules", "@bascik", "bascik", "bin", "bascik.js");
+  const bin = bascikBin();
+  if (!bin) { console.error("fraktul: cannot find @bascik/bascik. Run npm install."); process.exit(1); }
   return spawnSync(process.execPath, [bin, ...bArgs], { cwd: FRAKTUL, stdio: "inherit", env: { ...process.env, FRAKTUL_MODEL: model, FRAKTUL_OUT: outFor(model) } });
 }
 function build(model: string, out: string) {
@@ -56,7 +70,7 @@ function build(model: string, out: string) {
 switch (cmd) {
   case "check": {
     const model = modelPath(args[0]);
-    const r = spawnSync(process.execPath, [join(FRAKTUL, "scripts", "check-model.ts"), ...rest.filter((a) => a.startsWith("--"))], { stdio: "inherit", env: { ...process.env, FRAKTUL_MODEL: model } });
+    const r = spawnSync(process.execPath, [join(FRAKTUL, "scripts", `check-model${EXT}`), ...rest.filter((a) => a.startsWith("--"))], { stdio: "inherit", env: { ...process.env, FRAKTUL_MODEL: model } });
     process.exit(r.status ?? 1);
   }
   case "dev": {
@@ -91,7 +105,7 @@ switch (cmd) {
       ];
       for (const [c, a] of steps) { const r = spawnSync(c, a, { stdio: "inherit" }); if (r.status) process.exit(r.status); }
     }
-    const r = spawnSync(process.execPath, [join(FRAKTUL, "scripts", "voice.ts"), ...rest.filter((a) => a !== args[0])], { stdio: "inherit", env: { ...process.env, FRAKTUL_MODEL: model, FRAKTUL_PY: py } });
+    const r = spawnSync(process.execPath, [join(FRAKTUL, "scripts", `voice${EXT}`), ...rest.filter((a) => a !== args[0])], { stdio: "inherit", env: { ...process.env, FRAKTUL_MODEL: model, FRAKTUL_PY: py } });
     process.exit(r.status ?? 1);
   }
   case "import-recording": {

@@ -1,4 +1,5 @@
 import { defineConfig } from "@bascik/bascik/config";
+import { existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 
 // bin/fraktul.ts sets FRAKTUL_MODEL to the project's model file; without it the example in this repo is used.
@@ -19,10 +20,10 @@ export default defineConfig({
   },
   pipeline: {
     // Rebuild in dev when the model, its live module or fraktul's own code changes.
-    watchPaths: ["src/lib/", "content/", dirname(model)],
+    watchPaths: ["src/lib/", "content/", dirname(model)].filter((p) => existsSync(p)),
     exec: [
       // Narration audio and recorded walkthroughs are copied next to the page.
-      { script: "scripts/copy-media.ts", phase: "post", watch: [dirname(model)] },
+      { script: existsSync("scripts/copy-media.ts") ? "scripts/copy-media.ts" : "scripts/copy-media.js", phase: "post", watch: [dirname(model)] },
     ],
   },
   scripts: {

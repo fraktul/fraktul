@@ -1,0 +1,45 @@
+name: Release
+
+# The tag must be v<version in package.json>, on a commit that is on main (`npm run release -- <version>` does it).
+# Stable versions (1.0.0) publish under the latest dist-tag. A prerelease (1.1.0-rc.1) publishes under the dist-tag
+# named by its identifier (rc), never latest. npm uses OIDC trusted publishing: no npm token is stored (RELEASING.md).
+on:
+  push:
+    tags: ["v*.*.*"]
+
+jobs:
+  release:
+    name: Publish fraktul to npm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
+
+      # Before anything is built or published: fails unless the tagged commit is on main.
+      - name: Check the tagged commit is on main
+        run: node .github/scripts/release-on-main.mjs "$GITHUB_REF_NAME" "$GITHUB_SHA"
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          registry-url: "https://registry.npmjs.org"
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+      - name: Build the package
+        run: node --no-warnings scripts/build-package.ts
+
+      - name: Publish to npm
+        working-directory: package
+        run: ${{ github.workspace }}/.github/scripts/publish-npm.sh v
+
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          pre=""; case "$GITHUB_REF_NAME" in *-*) pre="--prerelease";; esac
+          gh release create "$GITHUB_REF_NAME" --generate-notes --verify-tag $pre || echo "Release $GITHUB_REF_NAME already exists."
