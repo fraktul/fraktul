@@ -4,11 +4,12 @@ fraktul.dev navigation: the chrome bar, the foil star, page links, and the style
 <style>
   .nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; display: flex; align-items: center; gap: 20px; padding: 12px max(20px, env(safe-area-inset-right, 0px)) 12px max(20px, env(safe-area-inset-left, 0px)); background: var(--bar); box-shadow: var(--gloss); border-bottom: 1px solid var(--line); }
   .logo { display: flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; font: 400 17px/1 var(--display); letter-spacing: 0.08em; }
-  .star { width: 26px; height: 26px; background: var(--brand); background-size: 300% 100%; clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); filter: drop-shadow(0.9px 0 0 var(--ink)) drop-shadow(-0.9px 0 0 var(--ink)) drop-shadow(0 0.9px 0 var(--ink)) drop-shadow(0 -0.9px 0 var(--ink)); }
+  .star { width: 26px; height: 26px; background: var(--brand); background-size: 300% 100%; clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); filter: drop-shadow(1.1px 0 0 var(--ink)) drop-shadow(-1.1px 0 0 var(--ink)) drop-shadow(0 1.1px 0 var(--ink)) drop-shadow(0 -1.1px 0 var(--ink)) drop-shadow(0 2px 3px rgba(0,0,0,0.25)); }
   .links { display: flex; gap: 6px; margin-left: auto; }
-  .links a { color: var(--ink); text-decoration: none; font: 600 13px var(--body); padding: 8px 14px; border-radius: var(--r-pill); }
-  .links a:hover { background: var(--btn); box-shadow: var(--gloss); }
-  .switch { font: 600 12px var(--body); padding: 7px 12px; border-radius: var(--r-pill); border: 1px solid var(--line); background: var(--btn); color: var(--ink); box-shadow: var(--gloss); cursor: pointer; }
+  .links a { color: var(--ink-2); text-decoration: none; font: 500 14px var(--body); padding: 8px 12px; border-radius: 10px; transition: color 0.15s, background 0.15s; }
+  .links a:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 7%, transparent); }
+  .switch { font: 500 13px var(--body); padding: 7px 12px; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); background: var(--btn); color: var(--ink); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); cursor: pointer; transition: border-color 0.15s; }
+  .switch:hover { border-color: color-mix(in srgb, var(--ink) 30%, transparent); }
   @media (prefers-reduced-motion: no-preference) { .star { animation: foil 9s linear infinite; } @keyframes foil { to { background-position: 300% 0; } } }
   @media (max-width: 640px) { .links a.hide-sm { display: none; } }
 </style>

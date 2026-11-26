@@ -251,8 +251,38 @@ function ridOf(elem: Element): string | null {
   return m ? m[1] : null;
 }
 
+let gradientCount = 0;
+/** Chrome style: district and plain boxes get a brushed-metal fill (an SVG gradient made from the --metal-* tokens). */
+function chromeMetal(svg: SVGSVGElement) {
+  if (document.documentElement.dataset.style === "minimal") return;
+  const NS = "http://www.w3.org/2000/svg";
+  const cs = getComputedStyle(document.documentElement);
+  const stops = [0, 1, 2, 3, 4].map((i) => cs.getPropertyValue(`--metal-${i}`).trim()).filter(Boolean);
+  if (stops.length < 5) return;
+  const id = `fk-metal-${++gradientCount}`;
+  const defs = document.createElementNS(NS, "defs");
+  const lg = document.createElementNS(NS, "linearGradient");
+  lg.setAttribute("id", id);
+  lg.setAttribute("x1", "0"); lg.setAttribute("y1", "0"); lg.setAttribute("x2", "0"); lg.setAttribute("y2", "1");
+  [0, 0.42, 0.5, 0.58, 1].forEach((o, i) => {
+    const st = document.createElementNS(NS, "stop");
+    st.setAttribute("offset", String(o));
+    st.setAttribute("stop-color", stops[i]);
+    lg.append(st);
+  });
+  defs.append(lg);
+  svg.prepend(defs);
+  const CATEGORY = ["model", "code", "human", "data", "ext", "fn", "fnx", "file", "focus"];
+  svg.querySelectorAll("g.node").forEach((g) => {
+    if (CATEGORY.some((c) => g.classList.contains(c))) return;
+    g.querySelectorAll(".label-container, .label-container > *, :scope > rect, :scope > polygon").forEach((shape) => (shape as SVGElement).style.setProperty("fill", `url(#${id})`, "important"));
+    g.classList.add("is-metal");
+  });
+}
+
 function decorate(svg: SVGSVGElement, boxes: Map<string, Box>) {
   const NS = "http://www.w3.org/2000/svg";
+  chromeMetal(svg);
   svg.querySelectorAll("g.node").forEach((g) => {
     const rid = ridOf(g);
     const b = rid ? boxes.get(rid) : undefined;
@@ -410,6 +440,7 @@ async function showPeek(b: Box, g: Element) {
       if (peekFor !== b.rid) return;
       mini.innerHTML = svg; // Mermaid output
       const s = mini.querySelector("svg");
+      if (s) chromeMetal(s as SVGSVGElement);
       if (s) { s.removeAttribute("width"); s.removeAttribute("height"); s.style.maxWidth = "100%"; s.style.maxHeight = "220px"; }
       placePeek(g);
     } catch { mini.replaceChildren(el("span", "muted", "(preview failed)")); }

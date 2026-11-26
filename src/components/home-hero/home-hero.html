@@ -8,15 +8,22 @@ The fraktul.dev hero: chrome wordmark, foil star, and a diagram that zooms into 
   .f2 { width: 380px; height: 260px; right: 22%; bottom: -160px; opacity: 0.35; }
   .inner { position: relative; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.9fr); gap: clamp(24px, 5vw, 72px); align-items: center; max-width: 1200px; margin: 0 auto; }
   .eyebrow { font: 400 11px/1 var(--display); letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-2); }
-  .word { margin: 18px 0 14px; font: 700 clamp(48px, 7.4vw, 112px)/1 "Syncopate", var(--display); letter-spacing: -0.01em; text-transform: lowercase; color: var(--ink); background: linear-gradient(180deg, #ffffff 0%, #d9dde3 30%, #8a919b 49%, #3c4149 51%, #b9bfc7 72%, #f4f5f7 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1.5px rgba(10, 11, 13, 0.55); filter: drop-shadow(0 2px 0 rgba(10, 11, 13, 0.18)) drop-shadow(0 12px 18px rgba(10, 11, 13, 0.18)); }
+  .word { margin: 18px 0 14px; font: 700 clamp(48px, 7.4vw, 112px)/1 "Syncopate", var(--display); letter-spacing: -0.01em; text-transform: lowercase; color: var(--ink); background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.95) 50%, transparent 58%) 160% 0 / 250% 100% no-repeat, linear-gradient(180deg, #ffffff 0%, #d9dde3 30%, #8a919b 49%, #3c4149 51%, #b9bfc7 72%, #f4f5f7 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1.5px rgba(10, 11, 13, 0.55); filter: drop-shadow(0 2px 0 rgba(10, 11, 13, 0.18)) drop-shadow(0 12px 18px rgba(10, 11, 13, 0.18)); }
   :root[data-theme="dark"] .word { -webkit-text-stroke: 1px rgba(255, 255, 255, 0.25); filter: drop-shadow(0 0 18px rgba(168, 200, 255, 0.25)); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .word { -webkit-text-stroke: 1px rgba(255, 255, 255, 0.25); filter: drop-shadow(0 0 18px rgba(168, 200, 255, 0.25)); } }
+  /* A specular glint sweeps across the chrome now and then. */
+  @media (prefers-reduced-motion: no-preference) {
+    .word { animation: glint 7s ease-in-out 1.2s infinite; }
+    @keyframes glint { 0% { background-position: 160% 0, 0 0; } 28%, 100% { background-position: -60% 0, 0 0; } }
+  }
   .tag { margin: 0 0 14px; font: 600 clamp(20px, 2.4vw, 28px)/1.3 var(--body); color: var(--ink); max-width: 30ch; text-wrap: balance; }
   .lede { margin: 0 0 28px; font: 400 17px/1.6 var(--body); color: var(--ink-2); max-width: 52ch; }
   .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
-  .cta { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: var(--r-pill); font: 600 15px var(--body); text-decoration: none; border: 1px solid var(--line); background: var(--btn); color: var(--ink); box-shadow: var(--gloss), 0 2px 6px rgba(0, 0, 0, 0.08); }
-  .cta.main { background: linear-gradient(180deg, #3b3f46 0%, #121316 50%, #000 51%, #2a2d33 100%); color: #fff; border-color: #000; }
-  :root[data-theme="dark"] .cta.main { background: linear-gradient(180deg, #ffffff 0%, #dfe2e6 48%, #b9bec6 52%, #f2f3f5 100%); color: #0a0b0d; border-color: #fff; }
-  .cta:hover { filter: brightness(1.06); }
+  .cta { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 999px; font: 600 15px var(--body); text-decoration: none; border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent); background: var(--btn); color: var(--ink); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: border-color 0.15s, transform 0.1s; }
+  .cta:hover { border-color: color-mix(in srgb, var(--ink) 34%, transparent); }
+  .cta:active { transform: scale(0.98); }
+  .cta.main { color: var(--sheet); border: 1.5px solid transparent; background: linear-gradient(var(--ink), var(--ink)) padding-box, linear-gradient(var(--ink), var(--ink)) border-box; }
+  .cta.main:hover { background: linear-gradient(var(--ink), var(--ink)) padding-box, var(--brand) border-box; box-shadow: 0 8px 30px -8px color-mix(in srgb, #6f8dff 60%, transparent); }
   .art { width: 100%; height: auto; }
   .frame { fill: var(--sheet); stroke: var(--ink); stroke-opacity: 0.55; }
   .chrome-edge { fill: none; stroke: url(#rim); stroke-width: 3; }
