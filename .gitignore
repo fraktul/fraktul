@@ -1,0 +1,9 @@
+dist/
+example-dist/
+fraktul-dist/
+.bascik/
+node_modules/
+voice/.venv/
+voice/samples/
+.fraktul/
+site-dist/

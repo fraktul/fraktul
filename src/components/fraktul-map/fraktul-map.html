@@ -1,0 +1,90 @@
+<!-- @bascik
+The fraktul map: diagrams from the project's model file you can open, expand in place and follow on tours.
+Styles live in src/pages/css/explorer.css (global), because most of what they style is Mermaid's generated SVG.
+-->
+<div class="app" data-testid="fraktul-map">
+  <header class="bar" data-testid="fraktul-map-header">
+    <a class="brand" href="#" id="home" data-testid="fraktul-map-home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-text" id="brand-text">System map</span>
+    </a>
+    <div class="search">
+      <label class="sr" for="search">Find a block, file or function</label>
+      <input id="search" type="search" placeholder="Find a block, file or function  ( / )" autocomplete="off" data-testid="fraktul-map-search" />
+      <ol class="results" id="results" hidden></ol>
+    </div>
+    <label class="sr" for="style-pick">Style</label>
+    <select class="style-pick" id="style-pick" data-testid="fraktul-map-style">
+      <option value="chrome">Liquid chrome</option>
+      <option value="hud">Cyber HUD</option>
+      <option value="candy">Candy</option>
+    </select>
+    <button class="btn icon theme-btn" id="theme-btn" type="button" title="Theme: follow the system" data-testid="fraktul-map-theme">◐</button>
+    <button class="btn tours-btn" id="tours-btn" type="button" aria-expanded="false" data-testid="fraktul-map-tours">Tours</button>
+  </header>
+
+  <nav class="crumbs" aria-label="Where you are" data-testid="fraktul-map-nav">
+    <button class="btn up" id="back" type="button" title="Up one level (Esc or Backspace)" data-testid="fraktul-map-back">↑ Up</button>
+    <ol id="crumbs"></ol>
+    <div class="view-tools">
+      <button class="btn icon" id="zoom-out" type="button" title="Zoom out" data-testid="fraktul-map-zoom-out">−</button>
+      <button class="btn icon" id="zoom-fit" type="button" title="Fit to screen (0)" data-testid="fraktul-map-zoom-fit">Fit</button>
+      <button class="btn icon" id="zoom-in" type="button" title="Zoom in" data-testid="fraktul-map-zoom-in">+</button>
+    </div>
+  </nav>
+
+  <main class="stage" id="main" data-testid="fraktul-map-main">
+    <section class="canvas" id="canvas" aria-label="Diagram" tabindex="0" data-testid="fraktul-map-canvas">
+      <div class="board" id="board"><p class="loading">Drawing the map…</p></div>
+      <div class="legend" id="legend" aria-label="Legend">
+        <span><i class="sw sw-model"></i>a model does it</span>
+        <span><i class="sw sw-code"></i>code</span>
+        <span><i class="sw sw-human"></i>a person</span>
+        <span><i class="sw sw-data"></i>data</span>
+        <span><i class="sw sw-planned"></i>planned</span>
+        <span><i class="sw sw-drill"></i>click to open · hover to peek</span>
+      </div>
+      <aside class="tour-card" id="tour-card" hidden data-testid="fraktul-map-tour-card"></aside>
+      <div class="peek" id="peek" hidden role="tooltip"></div>
+    </section>
+    <aside class="panel" id="panel" aria-label="Details" data-testid="fraktul-map-panel"></aside>
+  </main>
+
+  <dialog class="tours" id="tours" data-testid="fraktul-map-tours-dialog">
+    <div class="tours-head">
+      <h2>Tours: follow the data</h2>
+      <button class="btn icon" id="tours-close" type="button" title="Close" data-testid="fraktul-map-tours-close">×</button>
+    </div>
+    <ol class="tour-list" id="tour-list"></ol>
+    <div class="tours-foot">
+      <button class="btn rec" id="rec-start" type="button" data-testid="fraktul-map-record">● Record a walkthrough</button>
+      <span class="muted small">Talk while you click through the map; your voice and every step you take are saved together.</span>
+    </div>
+  </dialog>
+
+  <div class="rec-bar" id="rec-bar" hidden data-testid="fraktul-map-rec-bar">
+    <span class="rec-dot" aria-hidden="true"></span><strong>Recording</strong> <span class="mono" id="rec-time">0:00</span>
+    <span class="muted small">Talk and click through the map.</span>
+    <button class="btn small" id="rec-stop" type="button" data-testid="fraktul-map-rec-stop">Stop</button>
+  </div>
+
+  <dialog class="tours rec-save" id="rec-save" data-testid="fraktul-map-rec-save">
+    <form method="dialog" class="rec-form">
+      <h2>Save the walkthrough (<span id="rec-len">0:00</span>)</h2>
+      <label for="rec-title">Title</label>
+      <input id="rec-title" type="text" placeholder="How a question gets answered" data-testid="fraktul-map-rec-title" />
+      <label for="rec-summary">One line about it</label>
+      <input id="rec-summary" type="text" placeholder="What someone will learn from it" data-testid="fraktul-map-rec-summary" />
+      <label for="rec-by">Your name</label>
+      <input id="rec-by" type="text" data-testid="fraktul-map-rec-by" />
+      <p class="muted small" id="rec-done" hidden></p>
+      <div class="rec-actions">
+        <button class="btn" id="rec-preview" type="button" data-testid="fraktul-map-rec-preview">Play it back</button>
+        <button class="btn" id="rec-discard" type="button" data-testid="fraktul-map-rec-discard">Discard</button>
+        <button class="btn primary" id="rec-save-btn" type="button" data-testid="fraktul-map-rec-save-btn">Save file</button>
+      </div>
+    </form>
+  </dialog>
+</div>
+<script data-bascik-build-once src="./data.ts"></script>
+<script src="fraktul-map.ts"></script>

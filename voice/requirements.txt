@@ -1,0 +1,5 @@
+# Local text-to-speech for fraktul tours (Apple silicon, MLX). Installed by `fraktul voice --setup`.
+mlx-audio==0.6.8
+misaki[en]
+soundfile
+numpy

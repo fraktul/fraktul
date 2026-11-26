@@ -1,0 +1,111 @@
+# fraktul, mapped with fraktul. Also the fixture the tests check.
+version: 1
+title: fraktul
+brand: fraktul
+root: fraktul
+voice: { voice: bf_emma, speed: 1 }
+
+repos:
+  fraktul: { path: ".", github: rinsesoft/fraktul, title: fraktul }
+
+coverage:
+  - repo: fraktul
+    include: ["src/lib/*.ts", "scripts/*.ts", "bin/*.ts", "voice/*.py"]
+
+nodes:
+  fraktul:
+    title: fraktul
+    kind: district
+    status: built
+    summary: >-
+      An explorable map of a software system. One model file describes the blocks and how they connect; fraktul checks it
+      against the code, generates the file and function levels from the code itself, and serves a page you can dive into,
+      tour, listen to and record walkthroughs on.
+    diagram: |
+      flowchart LR
+        author(["You write model.yaml"]):::human
+        model_file[("Model file")]
+        check["Check"]
+        build["Build the map"]
+        page["The map page"]
+        voice["Voice tours"]
+        reader(["Someone explores"]):::human
+        author --> model_file
+        model_file --> check
+        model_file --> build --> page --> reader
+        model_file -- "say: narration" --> voice --> page
+        reader -. "records a walkthrough" .-> page
+
+  model_file:
+    title: Model file
+    kind: data
+    status: built
+    summary: Blocks, their Mermaid diagrams, status, anchors into the code, and tours with optional spoken narration.
+    anchors:
+      files: [src/lib/model.ts, src/lib/mermaid.ts]
+      functions: ["src/lib/model.ts#loadModel", "src/lib/mermaid.ts#parseFlowchart"]
+
+  check:
+    title: Check
+    kind: component
+    status: built
+    summary: Fails when an anchor, a diagram box, a narration cue or a tour step no longer exists; lists what the model does not mention yet.
+    anchors:
+      files: [scripts/check-model.ts]
+      functions: ["src/lib/check.ts#checkModel", "src/lib/check.ts#modelDepth"]
+
+  build:
+    title: Build the map
+    kind: component
+    status: built
+    summary: Reads the model, every git-tracked code file it points at (functions, imports, calls) and the project's live facts, into one JSON block in a Bascik page.
+    diagram: |
+      flowchart LR
+        read["Read the model"] --> code["Read the code"] --> calls["Who calls whom"] --> diagrams["Generate file and function diagrams"]
+        live["Live facts"] --> site[("Site data")]
+        diagrams --> site
+        %% @link read src/lib/model.ts#loadModel
+        %% @link code src/lib/code.ts#readCode
+        %% @link calls src/lib/code.ts#callsOf
+        %% @link diagrams src/lib/build.ts#buildSite
+        %% @link live src/lib/live.ts#readLive
+    anchors:
+      files: [src/lib/build.ts, src/lib/code.ts, src/lib/live.ts, bin/fraktul.ts]
+
+  page:
+    title: The map page
+    kind: component
+    status: built
+    summary: Mermaid diagrams you open by clicking, peek at by hovering, and climb back up from; tours with branches; search.
+    anchors:
+      files: [src/components/fraktul-map/fraktul-map.ts, scripts/copy-media.ts]
+
+  voice:
+    title: Voice tours
+    kind: component
+    status: built
+    summary: Narration spoken locally by Kokoro on MLX, one sentence at a time, so captions and highlight cues land exactly.
+    anchors:
+      files: [scripts/voice.ts, voice/render.py]
+
+tours:
+  - id: how-it-works
+    title: How fraktul works
+    summary: From a model file to a map you can dive into.
+    steps:
+      - view: fraktul
+        focus: [author, model_file]
+        title: It starts with one file
+        text: You describe the system as blocks in model.yaml.
+        say: >-
+          Everything starts with one file. [[author, model_file]] You describe your system as blocks: each one has a title,
+          a status, a short summary, and the files and functions it lives in. [[check]] Before anything is drawn, the check
+          makes sure every one of those still exists.
+      - view: fraktul
+        focus: [build, page]
+        title: The map is built from the code
+        text: File and function levels come from the code itself.
+        say: >-
+          [[build]] The build reads the model and the code it points at. It finds the functions, who calls whom, and the
+          source, so the deepest levels of the map are never out of date. [[page, reader]] Then anyone can open the map and
+          click their way down.

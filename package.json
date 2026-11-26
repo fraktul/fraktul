@@ -1,0 +1,25 @@
+{
+  "name": "fraktul",
+  "private": true,
+  "type": "module",
+  "description": "An explorable map of a software system: one model file, diagrams you dive into down to the source, guided and voiced tours.",
+  "engines": {
+    "node": ">=24.21.0"
+  },
+  "scripts": {
+    "dev": "node bin/fraktul.ts dev example/model.yaml",
+    "build": "node bin/fraktul.ts build example/model.yaml --out example-dist",
+    "check": "node bin/fraktul.ts check example/model.yaml",
+    "test": "node --test test/*.test.ts && node bin/fraktul.ts check example/model.yaml",
+    "site:dev": "FRAKTUL_SITE=1 node bin/fraktul.ts dev example/model.yaml --port 8095",
+    "site:build": "FRAKTUL_SITE=1 node bin/fraktul.ts build example/model.yaml --out site-dist"
+  },
+  "version": "0.1.0",
+  "bin": {
+    "fraktul": "bin/fraktul.ts"
+  },
+  "dependencies": {
+    "@bascik/bascik": "^1.0.1",
+    "yaml": "^2.9.1"
+  }
+}
