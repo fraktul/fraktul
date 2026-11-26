@@ -17,7 +17,8 @@ calls whom, but leaves out source code and links into the private repo. Drop `FR
 1. Create a Cloudflare API token (Cloudflare dashboard → My Profile → API Tokens → Create Token → "Edit Cloudflare
    Workers" template), limited to the account that holds fraktul.dev, with these permissions:
    - Account · Workers Scripts · Edit
-   - Zone · Workers Routes · Edit, for the fraktul.dev zone (the first deploy attaches the custom domains)
+   - Zone · Workers Routes · Edit, for the fraktul.dev zone (the site is served by routes `fraktul.dev/*` and
+     `www.fraktul.dev/*` on top of the zone's existing proxied DNS records)
 2. Add it to the GitHub repo: `gh secret set CLOUDFLARE_API_TOKEN -R rinsesoft/fraktul`
 3. If the token can see more than one Cloudflare account, also set the account:
    `gh variable set CLOUDFLARE_ACCOUNT_ID -R rinsesoft/fraktul --body <account id>`
