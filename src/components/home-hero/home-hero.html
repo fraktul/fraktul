@@ -22,8 +22,11 @@ The fraktul.dev hero: chrome wordmark, foil star, and a diagram that zooms into 
   .cta { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 999px; font: 600 15px var(--body); text-decoration: none; border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent); background: var(--btn); color: var(--ink); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: border-color 0.15s, transform 0.1s; }
   .cta:hover { border-color: color-mix(in srgb, var(--ink) 34%, transparent); }
   .cta:active { transform: scale(0.98); }
-  .cta.main { color: var(--sheet); border: 1.5px solid transparent; background: linear-gradient(var(--ink), var(--ink)) padding-box, linear-gradient(var(--ink), var(--ink)) border-box; }
-  .cta.main:hover { box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 18%, transparent), 0 10px 28px -10px rgba(0, 0, 0, 0.5); }
+  /* The main call to action is a liquid-chrome pill, the same material as the voice player's play button. */
+  .cta.main { color: var(--ink); border: 1.5px solid transparent; backdrop-filter: none;
+    background: radial-gradient(70% 55% at 50% 10%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 100%) padding-box, linear-gradient(180deg, var(--metal-0), var(--metal-1) 42%, var(--metal-2) 54%, var(--metal-3) 78%, var(--metal-4)) padding-box, var(--rim) border-box;
+    box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.14), 0 10px 22px -10px rgba(0, 0, 0, 0.55); }
+  .cta.main:hover { filter: brightness(1.04); box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.14), 0 14px 26px -10px rgba(0, 0, 0, 0.6); }
   .art { width: 100%; height: auto; }
   .frame { fill: var(--sheet); stroke: var(--ink); stroke-opacity: 0.55; }
   .chrome-edge { fill: none; stroke: url(#rim); stroke-width: 3; }
