@@ -11,8 +11,10 @@
   },
   "workers_dev": true,
   "preview_urls": true,
+  // Routes, not custom domains: fraktul.dev and www already have proxied DNS records, and a route answers on top of
+  // them (the origin behind those records is never contacted).
   "routes": [
-    { "pattern": "fraktul.dev", "custom_domain": true },
-    { "pattern": "www.fraktul.dev", "custom_domain": true }
+    { "pattern": "fraktul.dev/*", "zone_name": "fraktul.dev" },
+    { "pattern": "www.fraktul.dev/*", "zone_name": "fraktul.dev" }
   ]
 }
