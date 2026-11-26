@@ -1,22 +1,41 @@
 <!-- @bascik
-A narrated tour step, played in the page: the voice is generated locally, the captions are timed to it.
+A narrated tour step, played in the page like a Y2K music player: a glass display shows the line being spoken, an Aqua
+bubble plays and pauses, and the transcript below follows along. The voice is generated locally; captions are timed to it.
 -->
 <style>
   .sec { max-width: 1200px; margin: 0 auto; padding: 56px max(20px, env(safe-area-inset-right, 0px)); display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(24px, 5vw, 64px); align-items: center; }
   .head { font: 400 clamp(22px, 3vw, 30px)/1.3 var(--display); letter-spacing: 0.03em; margin: 0 0 10px; color: var(--ink); }
   .copy p { color: var(--ink-2); font-size: 17px; line-height: 1.6; margin: 0 0 12px; max-width: 52ch; }
-  .deck { padding: 22px; border-radius: 20px; background: var(--sheet); border: 1px solid var(--line); box-shadow: var(--gloss), 0 20px 50px rgba(0, 0, 0, 0.1); position: relative; }
-  .deck::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: var(--brand); z-index: 1; }
-  .row { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
-  .play { width: 56px; height: 56px; border-radius: 50%; border: 0; background: var(--ink); color: var(--sheet); font-family: var(--body); font-size: 18px; cursor: pointer; box-shadow: 0 6px 18px -6px rgba(0, 0, 0, 0.5); }
-  .who { font: 400 12px var(--display); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); }
-  .bar { height: 6px; border-radius: 3px; background: var(--paper-2); overflow: hidden; flex: 1; }
-  .fill { display: block; height: 100%; width: 0; background: var(--ink); }
-  .lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-  .lines li { padding: 8px 12px; border-radius: 10px; color: var(--ink-2); font-size: 15px; line-height: 1.5; transition: background 0.2s, color 0.2s; }
-  .lines li.on { background: var(--paper); color: var(--ink); box-shadow: inset 3px 0 0 var(--hi); }
-  .lines + .lines { margin-top: 8px; }
+  .deck { padding: 18px; border-radius: 24px; position: relative; }
+  /* The display: dark glass, like a 2000s player's screen. Text on it is light and large, so it stays readable. */
+  .screen { position: relative; overflow: hidden; border-radius: 14px; padding: 14px 16px 16px; background: radial-gradient(120% 140% at 0% 0%, #1c2a3a 0%, #0b0f15 55%, #07090c 100%); border: 1px solid #000; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), inset 0 10px 30px rgba(0, 0, 0, 0.6); color: #eaf6ff; }
+  .screen::after { content: ""; position: absolute; inset: 0 0 55% 0; background: linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0)); pointer-events: none; }
+  .meta { display: flex; align-items: center; gap: 10px; font: 500 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: #9fd7ff; }
+  .meta .t { margin-left: auto; color: #d7ecff; }
+  .eq { display: inline-flex; align-items: end; gap: 2px; height: 12px; }
+  .eq i { width: 3px; height: 30%; background: #9fd7ff; border-radius: 1px; opacity: 0.8; }
+  .now { min-height: 3.2em; margin: 12px 0 12px; font: 500 18px/1.45 var(--body); color: #f4faff; text-shadow: 0 0 12px rgba(159, 215, 255, 0.35); }
+  .track { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
+  .fill { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #a9d6ff, #cbb9ff); box-shadow: 0 0 8px rgba(169, 214, 255, 0.8); }
+  /* Controls: an Aqua bubble. */
+  .controls { display: flex; align-items: center; gap: 14px; margin: 16px 0 12px; }
+  .play { position: relative; width: 58px; height: 58px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, 0.35); cursor: pointer; color: #0b1a2a; font: 600 18px/1 var(--body);
+    background: radial-gradient(70% 45% at 50% 18%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(100% 100% at 50% 100%, #bfe6ff 0%, #6fb8ef 45%, #2f7fc4 100%);
+    box-shadow: inset 0 -6px 12px rgba(0, 40, 90, 0.35), 0 8px 18px -6px rgba(20, 70, 130, 0.6); }
+  .play:active { transform: scale(0.97); }
+  .label { font: 400 12px/1.4 var(--display); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); }
+  .label strong { display: block; color: var(--ink); font-weight: 400; }
+  .lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .lines li { padding: 7px 12px; border-radius: 10px; color: var(--ink-2); font-size: 14.5px; line-height: 1.5; transition: background 0.25s, color 0.25s; }
+  .lines li.on { color: var(--ink); background: linear-gradient(90deg, rgba(169, 214, 255, 0.35), rgba(203, 185, 255, 0.22) 60%, rgba(255, 198, 230, 0.12)); }
+  .lines + .lines { margin-top: 6px; }
   .none { color: var(--ink-2); }
+  .deck.playing .eq i { opacity: 1; }
+  @media (prefers-reduced-motion: no-preference) {
+    .deck.playing .eq i { animation: eq 0.9s ease-in-out infinite; }
+    .deck.playing .eq i:nth-child(2) { animation-delay: -0.3s; } .deck.playing .eq i:nth-child(3) { animation-delay: -0.6s; } .deck.playing .eq i:nth-child(4) { animation-delay: -0.15s; } .deck.playing .eq i:nth-child(5) { animation-delay: -0.45s; }
+    @keyframes eq { 0%, 100% { height: 25%; } 50% { height: 100%; } }
+  }
   @media (max-width: 860px) { .sec { grid-template-columns: 1fr; } }
 </style>
 <div class="y2k-band"><section class="sec" data-testid="voice-demo">
@@ -25,38 +44,48 @@ A narrated tour step, played in the page: the voice is generated locally, the ca
     <p>Write what a guide would say next to each step. fraktul speaks it with a neural voice that runs on your own Mac, then times every caption and every highlight to the sentence.</p>
     <p>Or press record and talk while you click: your own walkthrough, saved for the next person.</p>
   </div>
-  <div class="deck y2k-card">
-    <div class="row">
+  <div class="deck y2k-card" id="deck">
+    <div class="screen">
+      <div class="meta"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span id="track">Track 1/2</span><span class="t" id="time">0:00</span></div>
+      <p class="now" id="now" aria-live="polite">Press play to hear how fraktul works.</p>
+      <div class="track"><span class="fill" id="fill"></span></div>
+    </div>
+    <div class="controls">
       <button class="play" id="play" type="button" aria-label="Play the narration" data-testid="voice-demo-play">&#9654;&#xFE0E;</button>
-      <div style="flex: 1">
-        <div class="who">How fraktul works · voice Emma</div>
-        <div class="bar" style="margin-top: 8px"><span class="fill" id="fill"></span></div>
-      </div>
+      <div class="label"><strong>How fraktul works</strong>Voice: Emma, made on this Mac</div>
     </div>
     <div id="lines"><script data-bascik-build-once src="./captions.ts"></script></div>
   </div>
 </section></div>
 <script type="text/typescript">
+  const deck = document.getElementById("deck") as HTMLElement;
   const lines = document.getElementById("lines") as HTMLElement;
   const play = document.getElementById("play") as HTMLButtonElement;
   const fill = document.getElementById("fill") as HTMLElement;
+  const now = document.getElementById("now") as HTMLElement;
+  const time = document.getElementById("time") as HTMLElement;
+  const track = document.getElementById("track") as HTMLElement;
   const lists = Array.from(lines.children).filter((x) => x.tagName === "OL") as HTMLElement[];
   const audio = new Audio();
   let i = 0;
-  const load = (n: number) => { i = n; audio.src = lists[n].dataset.src ?? ""; };
+  const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+  const load = (n: number) => { i = n; audio.src = lists[n].dataset.src ?? ""; track.textContent = `Track ${n + 1}/${lists.length}`; };
   if (lists.length) load(0); else play.hidden = true;
   play.addEventListener("click", () => (audio.paused ? audio.play() : audio.pause()));
-  audio.addEventListener("play", () => { play.textContent = "\u275A\u275A"; });
-  audio.addEventListener("pause", () => { play.textContent = "\u25B6\uFE0E"; });
+  audio.addEventListener("play", () => { play.textContent = "❚❚"; play.setAttribute("aria-label", "Pause"); deck.classList.add("playing"); });
+  audio.addEventListener("pause", () => { play.textContent = "▶︎"; play.setAttribute("aria-label", "Play the narration"); deck.classList.remove("playing"); });
   audio.addEventListener("timeupdate", () => {
     const t = audio.currentTime;
     const before = lists.slice(0, i).reduce((n, l) => n + l.children.length, 0);
     const total = lists.reduce((n, l) => n + l.children.length, 0);
-    fill.style.width = `${(100 * (before + t / (audio.duration || 1) * lists[i].children.length)) / total}%`;
+    fill.style.width = `${(100 * (before + (t / (audio.duration || 1)) * lists[i].children.length)) / total}%`;
+    time.textContent = fmt(t);
     lists.forEach((l, k) => Array.from(l.children).forEach((li) => {
       const el = li as HTMLElement;
-      el.classList.toggle("on", k === i && t >= Number(el.dataset.t) && t < Number(el.dataset.end) + 0.3);
+      const on = k === i && t >= Number(el.dataset.t) && t < Number(el.dataset.end) + 0.3;
+      el.classList.toggle("on", on);
+      if (on) now.textContent = el.textContent;
     }));
   });
-  audio.addEventListener("ended", () => { if (i + 1 < lists.length) { load(i + 1); audio.play(); } else { load(0); fill.style.width = "0"; } });
+  audio.addEventListener("ended", () => { if (i + 1 < lists.length) { load(i + 1); audio.play(); } else { load(0); fill.style.width = "0"; deck.classList.remove("playing"); } });
 </script>
