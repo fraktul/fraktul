@@ -294,3 +294,42 @@
   --n-plain-line:#71717a;
   color-scheme:dark;
 }
+
+/* The logo: an iridescent fractal mark, 28 by 28. Dive is the mark; the others are kept for comparison on /design. */
+:root {
+  --mark-dive: path(evenodd, 'M0.00 0.00H28.00V28.00H0.00Z M3.00 3.00H25.00V25.00H3.00Z M11.00 11.00H25.00V25.00H11.00Z M13.50 13.50H22.50V22.50H13.50Z M17.00 17.00H22.50V22.50H17.00Z');
+  --mark-dive-b: path(evenodd, 'M0.00 0.00H28.00V28.00H0.00Z M3.00 3.00H25.00V25.00H3.00Z M14.00 14.00H25.00V25.00H14.00Z M16.00 16.00H23.00V23.00H16.00Z M19.50 19.50H23.00V23.00H19.50Z');
+  --mark-dive-c: path(evenodd, 'M0.00 0.00H28.00V28.00H0.00Z M3.00 3.00H25.00V25.00H3.00Z M11.40 11.40H25.00V25.00H11.40Z M13.25 13.25H23.15V23.15H13.25Z M17.03 17.03H23.15V23.15H17.03Z');
+  --mark-dive-d: path(evenodd, 'M0.00 0.00H28.00V28.00H0.00Z M2.40 2.40H25.60V25.60H2.40Z M8.90 8.90H25.60V25.60H8.90Z M10.90 10.90H23.60V23.60H10.90Z M16.61 16.61H23.60V23.60H16.61Z');
+  --mark-dive-e: path(evenodd, 'M0.00 0.00H28.00V28.00H0.00Z M3.60 3.60H24.40V24.40H3.60Z M12.75 12.75H24.40V24.40H12.75Z M15.35 15.35H21.80V21.80H15.35Z M17.93 17.93H21.80V21.80H17.93Z');
+  --mark-sierpinski: path(evenodd, 'M14 1L27 26H1Z M7.5 13.5H20.5L14 26Z M10.75 7.25H17.25L14 13.5Z M4.25 19.75H10.75L7.5 26Z M17.25 19.75H23.75L20.5 26Z');
+  --mark-steps: path('M0 0H15V15H0Z M15 15H24V24H15Z M24 24H28V28H24Z');
+  --mark-shape: var(--mark-dive);
+  /* Chrome rim for card borders and bezels (y2k); a plain line elsewhere. */
+  --rim: linear-gradient(var(--line), var(--line));
+  --chrome-text: linear-gradient(var(--ink), var(--ink));
+  --foil: linear-gradient(100deg,#ff5cc4 0%,#6f8dff 22%,#2fd8c8 42%,#ffd84a 62%,#ff6fd0 82%,#6f8dff 100%);
+}
+
+:root[data-style="y2k"] {
+  --rim: linear-gradient(180deg, #ffffff 0%, #c3c8cf 38%, #6f757e 50%, #d6dade 64%, #ffffff 100%);
+  --chrome-text: linear-gradient(180deg, #3a3f46 0%, #0b0c0e 48%, #4b5058 52%, #1a1c20 100%);
+  --sheen: linear-gradient(160deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 38%);
+  --tile-ink: #15171a;
+  /* Pearl card surface: brushed silver (light only; text stays dark on it). The foil is for the logo alone. */
+  --card: linear-gradient(165deg, #ffffff 0%, #f1f3f6 45%, #e4e7ec 100%);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"])[data-style="y2k"] {
+  --rim: linear-gradient(180deg, #a3a9b2 0%, #464b53 42%, #15171a 52%, #5c626b 72%, #b2b8c0 100%);
+  --chrome-text: linear-gradient(180deg, #ffffff 0%, #d7dbe0 44%, #8f969f 52%, #f1f3f5 100%);
+  --sheen: linear-gradient(160deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 40%);
+  --tile-ink: #f3f4f6;
+  --card: linear-gradient(var(--sheet), var(--sheet));
+} }
+:root[data-theme="dark"][data-style="y2k"] {
+  --rim: linear-gradient(180deg, #a3a9b2 0%, #464b53 42%, #15171a 52%, #5c626b 72%, #b2b8c0 100%);
+  --chrome-text: linear-gradient(180deg, #ffffff 0%, #d7dbe0 44%, #8f969f 52%, #f1f3f5 100%);
+  --sheen: linear-gradient(160deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 40%);
+  --tile-ink: #f3f4f6;
+  --card: linear-gradient(var(--sheet), var(--sheet));
+}

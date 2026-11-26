@@ -3,3 +3,11 @@ body.site { height: auto; min-height: 100%; background: var(--paper); color: var
 :where(body.site) a { color: var(--accent); }
 body.site code { font-family: var(--mono); }
 html:has(body.site) { height: auto; }
+
+/* y2k details for the home page sections, shared by its components (global helper classes). */
+.y2k-head { background: var(--chrome-text); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.y2k-card { border: 1.5px solid transparent !important; background: var(--sheen, none) padding-box, var(--card, linear-gradient(var(--sheet), var(--sheet))) padding-box, var(--rim) border-box !important; box-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.6) !important; }
+.y2k-band { position: relative; overflow: hidden; background: linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.y2k-band > * { position: relative; }
+.y2k-tile { border: 1.5px solid transparent !important; background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0) 50%) padding-box, var(--rim) padding-box, var(--rim) border-box !important; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18) !important; }
+.y2k-screen { border: 3px solid transparent !important; background: linear-gradient(#0b0c0f, #0b0c0f) padding-box, var(--rim) border-box !important; box-shadow: 0 20px 44px -20px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.06) !important; }

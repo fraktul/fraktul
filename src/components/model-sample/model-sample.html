@@ -12,8 +12,8 @@ What a model file looks like, and the three Mermaid conventions that chain diagr
   code { font: 13px var(--mono); background: var(--paper-2); padding: 1px 5px; border-radius: 5px; color: var(--ink); }
   @media (max-width: 860px) { .sec { grid-template-columns: 1fr; } }
 </style>
-<section class="sec" data-testid="model-sample">
-  <pre aria-label="Example model file"><span class="k">answer_core</span>:
+<div class="y2k-band right"><section class="sec" data-testid="model-sample">
+  <pre class="y2k-screen" aria-label="Example model file"><span class="k">answer_core</span>:
   <span class="k">title</span>: <span class="s">Answer core</span>
   <span class="k">status</span>: <span class="s">prototype</span>
   <span class="k">anchors</span>:
@@ -26,11 +26,11 @@ What a model file looks like, and the three Mermaid conventions that chain diagr
       sort -- <span class="s">"a rule"</span> --&gt; <span class="h">rule_lookup</span>
       <span class="c">%% @link question adr:0012</span></pre>
   <div>
-    <h2 class="head">Plain Mermaid, chained by id</h2>
+    <h2 class="head y2k-head">Plain Mermaid, chained by id</h2>
     <ul>
       <li><strong>A box whose id is another block becomes a door.</strong> <code>table_engine</code> above opens the table engine's own diagram.</li>
       <li><strong><code>block/inner</code> reaches inside.</strong> An edge to <code>answer_core/read_back</code> lands on that box when the block is drawn open.</li>
       <li><strong><code>%% @link</code> opens code.</strong> Point any box at a file, a function or a decision record.</li>
     </ul>
   </div>
-</section>
+</section></div>
