@@ -27,7 +27,7 @@
   --safe:#946300;
   --wrong:#c22a2a;
   --magenta:#c4237f;
-  --bar:linear-gradient(180deg,#ffffff 0%,#e6e8ec 38%,#a9aeb6 50%,#dfe2e6 62%,#ffffff 100%);
+  --bar:linear-gradient(180deg,#ffffff 0%,#f3f4f6 46%,#e2e5e9 68%,#d3d7dc 71%,#eceef1 86%,#fafbfc 100%);
   --btn:rgba(255,255,255,0.72);
   --brand:linear-gradient(115deg,#cbb9ff 0%,#a9d6ff 28%,#b6f0e2 52%,#ffeab4 74%,#ffc6e6 100%);
   --canvas:radial-gradient(rgba(10,11,13,0.08) 1.2px, transparent 1.4px) 0 0 / 22px 22px;
