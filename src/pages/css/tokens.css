@@ -335,3 +335,26 @@
   --tile-ink: #f3f4f6;
   --card: linear-gradient(var(--sheet), var(--sheet));
 }
+
+/* The 3D view (map3d.ts): always a dark space, in every style and theme, so the light streams and outlines read.
+   The colours repeat the dark-theme box lines above, so a block keeps its colour between 2D and 3D. */
+:root {
+  --space-bg:#04060c;
+  --space-grid:#16233a;
+  --space-grid-2:#0c1422;
+  --space-code:#7fb3ff;
+  --space-model:#e2a259;
+  --space-human:#b49cff;
+  --space-data:#f08fd0;
+  --space-ext:#8a9099;
+  --space-fn:#86a6c2;
+  --space-file:#bfb28a;
+  --space-district:#e9ebef;
+  --space-plain:#9096a0;
+  --space-planned:#7fb3ff;
+  --space-focus:#ffd27a;
+  --space-edge:#5d7290;
+  --space-label:#d6e6ff;
+  --space-label-2:#8193ad;
+  --space-label-dim:#4c5a70;
+}
