@@ -47,8 +47,8 @@ kbd { font: 12px var(--mono); border: 1px solid var(--line); border-bottom-width
 .btn.up:not(:disabled) { border-color: var(--accent); color: var(--accent); }
 
 /* Stage */
-.stage { display: grid; grid-template-columns: minmax(0, 1fr) 400px; min-height: 0; }
-.stage.code-view { grid-template-columns: minmax(0, 1fr) min(760px, 52%); }
+/* One panel width on every level (a code view scrolls inside it instead of widening it), so the diagram never jumps. */
+.stage { --panel-w: clamp(340px, 30vw, 460px); display: grid; grid-template-columns: minmax(0, 1fr) var(--panel-w); min-height: 0; }
 .canvas { position: relative; overflow: hidden; min-height: 0; cursor: grab; outline: none;
   background: var(--canvas); }
 .canvas.is-panning { cursor: grabbing; }
@@ -237,7 +237,9 @@ pre.code:not(.numbered) { padding: 10px 12px; }
 /* flat: quiet, no material */
 :root:not([data-style="y2k"]) .bar { box-shadow: none; }
 :root[data-style="flat"] .btn, :root:not([data-style="y2k"]) .style-pick { box-shadow: none; }
-:root:not([data-style="y2k"]) .tour-card::before { background: var(--accent); height: 3px; }
+/* Flat: the accent is the card's own top border, so it follows the rounded corners instead of floating inside them. */
+:root:not([data-style="y2k"]) .tour-card::before { display: none; }
+:root:not([data-style="y2k"]) .tour-card { border-top: 3px solid var(--accent); }
 :root:not([data-style="y2k"]) .brand-text { font-weight: 600; letter-spacing: -0.01em; font-size: 15px; }
 :root:not([data-style="y2k"]) .panel h2 { font-weight: 600; letter-spacing: -0.015em; }
 /* Box corners follow the style (Mermaid draws plain rects). */
@@ -294,7 +296,11 @@ pre.code:not(.numbered) { padding: 10px 12px; }
 :root[data-style="y2k"] .tour-card .tour-head .eyebrow { letter-spacing: 0.08em; }
 
 /* The 3D view: the Mermaid board stays laid out underneath (3D reads its positions) but is not shown. */
-.mode-3d[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+/* Pressed 3D: solid ink with paper text in every style (y2k's glass .btn background must not win, or the label vanishes). */
+.btn.mode-3d[aria-pressed="true"], :root[data-style] .btn.mode-3d[aria-pressed="true"],
+:root[data-style] .btn.mode-3d[aria-pressed="true"]:hover {
+  background: var(--ink); background-color: var(--ink); color: var(--sheet); border-color: var(--ink);
+}
 .canvas.is-3d { cursor: default; }
 .canvas.is-3d .board { visibility: hidden; }
 .canvas.is-3d .legend, .canvas.is-3d .peek { display: none; }
@@ -306,7 +312,39 @@ pre.code:not(.numbered) { padding: 10px 12px; }
 .space-label.is-hover { color: #ffffff; }
 .space-label.is-focus { color: var(--space-focus); }
 .space-label.is-dim { color: var(--space-label-dim); }
-.space-hint { position: absolute; left: 12px; bottom: 10px; margin: 0; font: 400 11px/1.6 var(--mono); color: var(--space-label-2); pointer-events: none; }
-.space-hint kbd { display: inline-block; min-width: 1.2em; margin: 0 1px; padding: 0 4px; border: 1px solid var(--space-grid); border-radius: 4px; text-align: center; font: inherit; color: var(--space-label); }
+/* Key hints sit on their own glass strip so they read on any sky, light or dark. */
+.space-hint { position: absolute; z-index: 3; left: 12px; bottom: 10px; margin: 0; padding: 5px 10px; max-width: calc(100% - 150px); font: 500 11.5px/1.7 var(--mono); color: var(--ink-2);
+  background: color-mix(in srgb, var(--sheet) 88%, transparent); border: 1px solid var(--line); border-radius: 8px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); pointer-events: none; }
+.space-hint kbd { display: inline-block; min-width: 1.2em; margin: 0 1px; padding: 0 4px; border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent); border-radius: 4px; background: var(--paper); text-align: center; font: inherit; font-weight: 600; color: var(--ink); }
+.lock-btn { position: absolute; right: 12px; bottom: 10px; z-index: 3; }
+.lock-btn[aria-pressed="true"], :root[data-style] .lock-btn[aria-pressed="true"] { background: var(--ink); background-color: var(--ink); color: var(--sheet); border-color: var(--ink); }
+/* Locked: a crosshair marks what a click opens. */
+.space.is-locked::after { content: ""; position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; pointer-events: none;
+  background: linear-gradient(var(--space-label), var(--space-label)) center / 2px 100% no-repeat, linear-gradient(var(--space-label), var(--space-label)) center / 100% 2px no-repeat; opacity: 0.8; }
 .space-error { position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%); max-width: 80%; margin: 0; color: var(--space-label); font: 400 14px/1.5 var(--body); text-align: center; }
 @media (pointer: coarse) { .space-hint { display: none; } }
+
+/* Details panel: hide it to give the diagram the whole width (\ or the panel button). */
+.stage.panel-closed { grid-template-columns: minmax(0, 1fr) 0; }
+.panel[hidden] { display: none; }
+.panel-top .chip { margin-left: auto; }
+.panel-hide { width: 26px; height: 26px; padding: 0; font-size: 14px; line-height: 1; flex: none; }
+.panel-btn { display: inline-grid; place-items: center; }
+.panel-glyph { width: 15px; height: 11px; border: 1.5px solid currentColor; border-radius: 3px; position: relative; box-sizing: border-box; }
+.panel-glyph::after { content: ""; position: absolute; top: 0; bottom: 0; right: 3px; width: 1.5px; background: currentColor; }
+.panel-btn[aria-pressed="true"] .panel-glyph::after { right: 0; width: 5px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* "How to explore" folds. */
+.intro > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+.intro > summary::-webkit-details-marker { display: none; }
+.intro > summary::after { content: ""; width: 7px; height: 7px; border-right: 1.5px solid var(--ink-2); border-bottom: 1.5px solid var(--ink-2); transform: rotate(-45deg); transition: transform 0.15s; }
+.intro[open] > summary::after { transform: rotate(45deg); }
+.intro > summary h3 { margin: 0; }
+.intro[open] > summary { margin-bottom: 10px; }
+/* Tour card: a window you can drag by its title bar and fold to it. */
+.tour-card .tour-head { cursor: grab; user-select: none; touch-action: none; }
+.tour-card.is-dragging { opacity: 0.94; box-shadow: 0 22px 48px rgba(0, 0, 0, 0.28); }
+.tour-card.is-dragging .tour-head { cursor: grabbing; }
+.card-min { width: 26px; height: 26px; padding: 0; display: inline-grid; place-items: center; }
+.card-min::before { content: ""; width: 10px; height: 1.5px; background: currentColor; }
+.tour-card.is-min .card-min::before { height: 8px; width: 9px; background: none; border: 1.5px solid currentColor; border-radius: 2px; box-sizing: border-box; }

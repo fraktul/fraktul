@@ -331,7 +331,7 @@ function fit() {
   const r = canvas.getBoundingClientRect();
   const pad = 40;
   // While a tour card is open on a wide screen, fit the diagram into the space beside it.
-  const left = !tourCard.hidden && !tourCard.classList.contains("is-min") && r.width > 900 ? tourCard.offsetWidth + 24 : 0;
+  const left = !tourCard.hidden && !tourCard.classList.contains("is-min") && !tourCard.classList.contains("is-moved") && r.width > 900 ? tourCard.offsetWidth + 24 : 0;
   const s = Math.max(0.15, Math.min(1.25, (r.width - left - pad * 2) / w, (r.height - pad * 2 - 40) / h));
   zoom = { s, x: left + (r.width - left - w * s) / 2, y: Math.max(pad / 2, (r.height - 40 - h * s) / 2) };
   applyZoom();
@@ -386,6 +386,7 @@ function clickBox(b: Box | null) {
   hidePeek();
   if (b.target && openable(b.target) && b.target !== view().key) { openKey(b.target); return; }
   selected = b.target ?? `box:${b.box}`;
+  if (panel.hidden) setPanel(true);
   drawPanel();
   markSelected(b.rid);
   logEvent({ kind: "select", key: selected });
@@ -513,7 +514,7 @@ function drawPanel() {
   const parts: (HTMLElement | null)[] = [];
   const k = kindOf(key);
   const isView = !selected;
-  const top = el("div", "panel-top", el("span", "eyebrow", isView ? "You are looking at" : "Selected"), chip(key));
+  const top = el("div", "panel-top", el("span", "eyebrow", isView ? "You are looking at" : "Selected"), chip(key), button("⟩", "btn icon small panel-hide", () => setPanel(false), "Hide the details panel (\\)"));
   parts.push(top);
   if (k === "box") parts.push(el("h2", null, key.slice(4)), el("p", "muted", "A plain box: nothing is linked to it yet. Add a node with this id, or a %% @link line, to make it a block."));
   if (k === "node") parts.push(...nodePanel(SITE.nodes[key.slice(5)], isView));
@@ -528,16 +529,21 @@ function drawPanel() {
 }
 
 function intro(): HTMLElement {
-  return el("div", "intro",
-    el("h3", null, "How to explore"),
+  const box = el("details", "intro",
+    el("summary", null, el("h3", null, "How to explore")),
     el("ul", null,
       el("li", null, el("strong", null, "Click"), " a box with the ", el("i", "sw sw-drill"), " badge to open it. Keep going down to files, functions and their source."),
       el("li", null, el("strong", null, "Hover"), " a box to peek inside before you open it."),
       el("li", null, el("strong", null, "↑ Up"), " (top left), the breadcrumbs, ", el("kbd", null, "Esc"), " or ", el("kbd", null, "Backspace"), " take you back up."),
       el("li", null, el("strong", null, "Tours"), " (top right) follow one piece of data through the system, with branches."),
-      el("li", null, "Drag to pan, scroll to zoom, ", el("kbd", null, "/"), " to search.")),
-    meta());
+      el("li", null, "Drag to pan, scroll to zoom, ", el("kbd", null, "/"), " to search. ", el("kbd", null, "\\"), " hides this panel.")),
+    meta()) as HTMLDetailsElement;
+  box.open = pref("fraktul-intro", "1") === "1";
+  box.addEventListener("toggle", () => savePref("fraktul-intro", box.open ? "1" : "0"));
+  return box;
 }
+function pref(k: string, d: string) { try { return localStorage.getItem(k) ?? d; } catch { return d; } }
+function savePref(k: string, v: string) { try { localStorage.setItem(k, v); } catch { /* private window */ } }
 function meta(): HTMLElement {
   const m = SITE.meta;
   const missing = Object.entries(m.repos).filter(([, r]) => !r.present).map(([k]) => k);
@@ -738,7 +744,7 @@ async function showStep() {
   const dives = focusBoxes.map((r) => current.boxes.get(r)).filter((b): b is Box => !!b && !!b.target && hasDiagram(b.target!) && kindOf(b.target!) === "node");
   const caption = el("p", "caption");
   tourCard.replaceChildren(...[
-    el("div", "tour-head", el("span", "eyebrow", `${t.title} · ${n} of ${t.steps.length}`), button("Back to the tour", "btn small resume", () => showStep()), button("×", "btn icon", endTour, "End the tour")),
+    el("div", "tour-head", el("span", "eyebrow", `${t.title} · ${n} of ${t.steps.length}`), button("Back to the tour", "btn small resume", () => (view().key === `node:${tour!.step.view}` ? toggleCardMin() : showStep())), button("", "btn icon card-min", toggleCardMin, "Fold the tour card to its title bar (the voice keeps going)"), button("×", "btn icon", endTour, "End the tour")),
     el("h3", null, s.title),
     el("p", null, s.text),
     listen ? player(nar!, caption) : nar ? el("div", "listen-row", button("▶ Listen", "btn small primary", () => { (tour as any).listen = true; showStep(); }), el("span", "muted small", `${fmt(nar.duration)} narrated`)) : null,
@@ -774,8 +780,19 @@ function player(nar: Narration, caption: HTMLElement): HTMLElement {
 function setFocus(list: string[]) {
   current.svg?.querySelectorAll(".is-focus").forEach((x) => x.classList.remove("is-focus"));
   for (const f of list) current.els.get(f.replace("/", "__"))?.classList.add("is-focus");
-  if (in3d) F3D.focus(list.map((f) => f.replace("/", "__")));
+  if (in3d) {
+    const rids = list.map((f) => f.replace("/", "__"));
+    F3D.focus(rids);
+    // Fly the camera only when what the narration points at changes (timeupdate calls this several times a second).
+    const key = `${view().key}|${rids.join(",")}`;
+    if (key !== flownTo) {
+      flownTo = key;
+      // With nothing named, look at the whole level; during a tour, circle slowly while the voice talks.
+      F3D.flyTo(rids.length ? rids : [...current.boxes.keys()], { orbit: !!tour });
+    }
+  }
 }
+let flownTo = "";
 audio.addEventListener("play", () => { if (playerBits) playerBits.btn.textContent = "❚❚"; });
 audio.addEventListener("pause", () => { if (playerBits) playerBits.btn.textContent = "▶"; });
 audio.addEventListener("timeupdate", () => {
@@ -799,14 +816,18 @@ audio.addEventListener("ended", () => {
   autoTimer = window.setTimeout(() => go(nx), wait);
 });
 
-function endTour() { clearTimeout(autoTimer); audio.pause(); tour = null; tourCard.hidden = true; applyTourFocus(); }
+function endTour() {
+  clearTimeout(autoTimer); audio.pause(); tour = null; tourCard.hidden = true; applyTourFocus();
+  // Pull the camera back to see the whole level again.
+  if (in3d) F3D.flyTo([...current.boxes.keys()]);
+}
 function applyTourFocus() {
   const svg = current.svg;
   if (!svg) return;
   if (replay) return;
   svg.classList.toggle("in-tour", !!tour && view().key === `node:${tour.step.view}`);
   svg.querySelectorAll(".is-focus").forEach((x) => x.classList.remove("is-focus"));
-  if (in3d) F3D.focus([]);
+  if (in3d) { F3D.focus([]); F3D.stopOrbit(); flownTo = ""; }
   if (!tour || view().key !== `node:${tour.step.view}`) { if (tour) tourCard.classList.add("is-min"); return; }
   tourCard.classList.remove("is-min");
   setFocus(tour.step.focus ?? []);
@@ -890,7 +911,7 @@ function playRecording(rec: any) {
   bar.addEventListener("click", (e) => { const r = bar.getBoundingClientRect(); audio.currentTime = ((e.clientX - r.left) / r.width) * (audio.duration || rec.duration); replay!.next = 0; });
   playerBits = { btn, fill, time, caption: el("p"), nar: { file: "", duration: rec.duration, cues: [], captions: [] } };
   tourCard.replaceChildren(
-    el("div", "tour-head", el("span", "eyebrow", "Recorded walkthrough"), button("×", "btn icon", stopReplay, "Stop")),
+    el("div", "tour-head", el("span", "eyebrow", "Recorded walkthrough"), button("", "btn icon card-min", toggleCardMin, "Fold the card to its title bar"), button("×", "btn icon", stopReplay, "Stop")),
     el("h3", null, rec.title), rec.summary ? el("p", null, rec.summary) : el("span"),
     el("div", "player", btn, bar, time));
   tourCard.hidden = false;
@@ -974,7 +995,7 @@ search.addEventListener("keydown", (e) => {
 search.addEventListener("blur", () => setTimeout(() => { hits = []; drawHits(); }, 120));
 
 // ───────────── 3D: the same level as a place to fly through (map3d.ts, docs/3d-view.md) ─────────────
-type Family = "tower" | "stack" | "crystal" | "orb" | "island" | "pillar" | "tablet" | "gate" | "monolith" | "terrain" | "slab" | "core" | "plain";
+type Family = "database" | "server" | "screen" | "terminal" | "gear" | "neural" | "document" | "person" | "cloud" | "diamond" | "package" | "folder" | "disk" | "queue" | "tablet" | "terrain" | "plain";
 const F3D = (window as any).Fraktul3D;
 const space = document.getElementById("space") as HTMLElement;
 const btn3d = document.getElementById("view-3d") as HTMLButtonElement;
@@ -988,9 +1009,32 @@ function fnv(str: string): number {
   return h >>> 0;
 }
 const CATS = ["model", "code", "human", "data", "ext", "fn", "fnx", "file", "district"];
-const KIND_SHAPE: Record<string, Family> = { district: "terrain", component: "tower", module: "stack", data: "crystal", person: "pillar", service: "orb", repo: "island", doc: "tablet", step: "gate" };
-const CLASS_SHAPE: Record<string, Family> = { human: "pillar", data: "crystal", ext: "monolith", model: "orb", code: "tower", file: "slab", fn: "core", fnx: "core", district: "terrain" };
-const SHAPE_TONE: Partial<Record<Family, string>> = { pillar: "human", crystal: "data", monolith: "ext", slab: "file", core: "fn", terrain: "district", orb: "model", tablet: "plain", gate: "code" };
+// 3D draws each box as what it is: a database as stacked disks, an API as a server rack, a page as a screen, a
+// function as a gear, a model as a small neural net, a person as a figure, an outside service as a cloud. The words in
+// a box's title win (they say what it is), then its Mermaid shape, then the block's kind, then its colour class.
+const WORD_SHAPE: [RegExp, Family][] = [
+  [/\b(db|database|sql|postgres|mysql|sqlite|mongo|table|tables|index|warehouse|store|cache|redis|ledger)\b/i, "database"],
+  [/\b(disk|disks|storage|bucket|blob|s3|volume|drive|archive|backup|filesystem)\b/i, "disk"],
+  [/\b(queue|stream|topic|bus|kafka|events?|inbox|outbox|webhook)\b/i, "queue"],
+  [/\b(api|apis|endpoint|server|service|backend|gateway|worker|function app|lambda|host)\b/i, "server"],
+  [/\b(cli|terminal|shell|command|script|cron|job)\b/i, "terminal"],
+  [/\b(page|ui|screen|app|browser|dashboard|site|web|frontend|portal|view|teams|chat|3d|panel|board)\b/i, "screen"],
+  [/\b(file|files|doc|docs|document|pdf|yaml|json|csv|mp3|report|readme|manual|deck|spec|html)\b/i, "document"],
+  [/\b(model|llm|ai|gpt|claude|neural|embedding|embeddings|kokoro|classifier|agent|voice)\b/i, "neural"],
+  [/\b(algorithm|parse|parser|split|sort|rank|match|compute|check|checks|rule|rules|engine|calc|transform|build|generate|reader?)\b/i, "gear"],
+  [/\b(repo|repos|repository|git|github|folder)\b/i, "folder"],
+  [/\b(user|users|customer|person|people|you|someone|staff|coder|reviewer|team|author|reader|expert)\b/i, "person"],
+];
+const KIND_SHAPE: Record<string, Family> = { district: "terrain", component: "package", module: "package", data: "database", person: "person", service: "server", repo: "folder", doc: "document", step: "gear" };
+const CLASS_SHAPE: Record<string, Family> = { human: "person", data: "database", ext: "cloud", model: "neural", code: "package", file: "document", fn: "gear", fnx: "gear", district: "terrain" };
+const SHAPE_TONE: Partial<Record<Family, string>> = { person: "human", database: "data", disk: "data", queue: "data", cloud: "ext", document: "file", gear: "fn", terrain: "district", neural: "model", tablet: "plain", server: "code", screen: "code", terminal: "code", package: "code", folder: "file" };
+/** The Mermaid shape a box was written with ("[(", "{", "([", "[[" …), from the parsed diagram. */
+function mermaidShape(b: Box): string {
+  const [outer, inner] = b.rid.includes("__") ? b.rid.split("__") : [null, b.rid];
+  const d = SITE.diagrams[outer ? `node:${outer}` : view().key] as any;
+  for (const l of d?.lines ?? []) for (const t of l.tok ?? []) if (t.id === inner && t.shape) return t.shape;
+  return "";
+}
 /** Lines of code behind a box: a file's lines, a function's span, or the files a block is anchored to. */
 function linesOf(target: string | null): number | null {
   if (!target) return null;
@@ -1001,15 +1045,22 @@ function linesOf(target: string | null): number | null {
   const sum = n.anchors.filter((a) => a.key.startsWith("file:")).reduce((t, a) => t + (SITE.files[a.key]?.lines ?? 0), 0);
   return sum || null;
 }
-function shapeOf(b: Box, cls: string | undefined): Family {
+function shapeOf(b: Box, cls: string | undefined, title: string): Family {
   const n = b.target ? nodeOf(b.target) : undefined;
-  if (n?.status === "external") return "monolith";
-  if (n?.kind && KIND_SHAPE[n.kind]) return KIND_SHAPE[n.kind];
-  if (b.target?.startsWith("file:")) return "slab";
-  if (b.target?.startsWith("fn:")) return "core";
   if (b.target?.startsWith("adr:")) return "tablet";
+  if (b.target?.startsWith("fn:")) return "gear";
+  if (b.target?.startsWith("file:")) return "document";
+  if (n?.status === "external" || cls === "ext") return "cloud";
+  if (cls === "human") return "person";
+  if (n?.kind === "district") return "terrain";
+  const shape = mermaidShape(b);
+  if (shape.startsWith("[(")) return /disk|storage|bucket|volume|drive/i.test(title) ? "disk" : "database";
+  if (shape.startsWith("{")) return "diamond";
+  if (shape.startsWith("[[")) return "gear";
+  for (const [re, f] of WORD_SHAPE) if (re.test(`${title} ${b.box.replace(/_/g, " ")}`)) return f;
+  if (n?.kind && KIND_SHAPE[n.kind]) return KIND_SHAPE[n.kind];
   if (cls && CLASS_SHAPE[cls]) return CLASS_SHAPE[cls];
-  return b.target ? "tower" : "plain";
+  return b.target ? "package" : "plain";
 }
 /** What 3D needs from the diagram on screen: every box and arrow, placed where Mermaid drew it. */
 function scene3d() {
@@ -1027,11 +1078,11 @@ function scene3d() {
     const p = place(g as SVGGraphicsElement);
     if (g.classList.contains("cluster")) { groups.push({ rid, title: b.title, ...p }); continue; }
     const cls = CATS.find((c) => g.classList.contains(c));
-    const family = shapeOf(b, cls);
+    const title = b.target ? b.title : (g.textContent || b.box).trim().replace(/\s+/g, " ");
+    const family = shapeOf(b, cls, title);
     const st = b.target ? statusOf(b.target) : undefined;
     const lines = linesOf(b.target);
     const drill = openable(b.target) && b.target !== view().key;
-    const title = b.target ? b.title : (g.textContent || b.box).trim().replace(/\s+/g, " ");
     const sub = [st && st !== "built" ? st : "", lines ? `${lines.toLocaleString()} lines` : "", drill ? "click to enter" : ""].filter(Boolean).join(" · ");
     const tone = cls ?? SHAPE_TONE[family] ?? (b.target ? "code" : "plain");
     items.push({ rid, title, sub, family, status: st, tone, ...p, size: lines ? Math.max(0.08, Math.min(1, Math.log10(lines + 1) / 4)) : null, hash: fnv(b.target ?? rid), drill });
@@ -1062,7 +1113,15 @@ async function set3d(on: boolean) {
   hidePeek();
   if (!on) { F3D.hide(); return; }
   try {
-    await F3D.show(space, { pick: (rid: string | null) => clickBox(rid ? current.boxes.get(rid) ?? null : null) });
+    await F3D.show(space, {
+      pick: (rid: string | null) => {
+        const b = rid ? current.boxes.get(rid) ?? null : null;
+        // A block that opens a level: fly into it first, then open (the next level lands with its own entry flight).
+        if (b?.target && openable(b.target) && b.target !== view().key) { F3D.dive(rid, () => { entry3d = true; clickBox(b); }); return; }
+        clickBox(b);
+      },
+      locked: (on: boolean) => { lockBtn.setAttribute("aria-pressed", String(on)); lockBtn.textContent = on ? "Unlock mouse (Esc)" : "Lock mouse"; },
+    });
   } catch {
     space.append(el("p", "space-error", "The 3D view could not load three.js (vendor/three.module.min.js beside this page). Rebuild the map and try again."));
     return;
@@ -1071,6 +1130,64 @@ async function set3d(on: boolean) {
   if (current.svg) after3d();
 }
 btn3d.addEventListener("click", () => set3d(!in3d));
+const lockBtn = document.getElementById("lock-btn") as HTMLButtonElement;
+lockBtn.addEventListener("click", (e) => { e.stopPropagation(); F3D.lock(!F3D.locked); });
+
+// ───────────── details panel: hide and show (remembered) ─────────────
+const stageEl = document.getElementById("main") as HTMLElement, panelBtn = document.getElementById("panel-btn") as HTMLButtonElement;
+function setPanel(open: boolean) {
+  stageEl.classList.toggle("panel-closed", !open);
+  panel.hidden = !open;
+  panelBtn.setAttribute("aria-pressed", String(open));
+  panelBtn.title = open ? "Hide the details panel (\\)" : "Show the details panel (\\)";
+  savePref("fraktul-panel", open ? "1" : "0");
+  // The canvas just changed width: refit the flat map (the 3D view follows its own size).
+  if (!in3d) requestAnimationFrame(() => fit());
+}
+panelBtn.addEventListener("click", () => setPanel(panel.hidden));
+setPanel(pref("fraktul-panel", "1") === "1");
+
+// ───────────── tour card: drag it by its title bar, fold it to the bar ─────────────
+function placeCard(x: number, y: number) {
+  const r = canvas.getBoundingClientRect();
+  const w = tourCard.offsetWidth, h = tourCard.offsetHeight;
+  x = Math.max(8, Math.min(r.width - Math.min(w, r.width) - 8 + Math.max(0, w - r.width), x));
+  y = Math.max(8, Math.min(r.height - Math.min(h, 44) - 8, y));
+  tourCard.style.left = `${x}px`; tourCard.style.top = `${y}px`;
+  return { x, y };
+}
+{
+  let d: { x: number; y: number; ox: number; oy: number } | null = null;
+  tourCard.addEventListener("pointerdown", (e) => {
+    const head = (e.target as Element).closest(".tour-head");
+    if (!head || (e.target as Element).closest("button, a, input, select")) return;
+    e.preventDefault();
+    d = { x: e.clientX, y: e.clientY, ox: tourCard.offsetLeft, oy: tourCard.offsetTop };
+    tourCard.setPointerCapture(e.pointerId);
+    tourCard.classList.add("is-dragging");
+  });
+  tourCard.addEventListener("pointermove", (e) => { if (d) placeCard(d.ox + e.clientX - d.x, d.oy + e.clientY - d.y); });
+  const end = () => {
+    if (!d) return;
+    d = null;
+    tourCard.classList.remove("is-dragging");
+    tourCard.classList.add("is-moved");
+    savePref("fraktul-tour-pos", JSON.stringify([tourCard.offsetLeft, tourCard.offsetTop]));
+  };
+  tourCard.addEventListener("pointerup", end);
+  tourCard.addEventListener("pointercancel", end);
+  tourCard.addEventListener("dblclick", (e) => { if ((e.target as Element).closest(".tour-head") && !(e.target as Element).closest("button")) toggleCardMin(); });
+  try {
+    const p = JSON.parse(pref("fraktul-tour-pos", "null"));
+    if (Array.isArray(p)) { tourCard.style.left = `${p[0]}px`; tourCard.style.top = `${p[1]}px`; tourCard.classList.add("is-moved"); }
+  } catch { /* nothing saved */ }
+  window.addEventListener("resize", () => { if (tourCard.classList.contains("is-moved")) placeCard(tourCard.offsetLeft, tourCard.offsetTop); });
+}
+function toggleCardMin() {
+  const min = !tourCard.classList.contains("is-min");
+  tourCard.classList.toggle("is-min", min);
+  if (!in3d) fit();
+}
 
 // ───────────── keys, hash, theme, start ─────────────
 document.addEventListener("keydown", (e) => {
@@ -1081,6 +1198,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") { if (!peek.hidden) hidePeek(); else if (selected) { selected = null; drawPanel(); markSelected(); } else back(); }
   if (e.key === "0" && !in3d) fit();
   if (e.key === "3") set3d(!in3d);
+  if (e.key === "\\") setPanel(panel.hidden);
   if (e.key === " " && (tour || replay) && audio.src) { e.preventDefault(); if (audio.paused) audio.play(); else audio.pause(); }
   if (e.key === "ArrowRight" && tour) { const n = nextOf(); if (n) go(n); }
 });

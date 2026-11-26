@@ -6,7 +6,7 @@
 // identity comes from a hash of the box's id (crown, setbacks, window pattern), so a block keeps its silhouette when
 // its code changes.
 
-type Family = "tower" | "stack" | "crystal" | "orb" | "island" | "pillar" | "tablet" | "gate" | "monolith" | "terrain" | "slab" | "core" | "plain";
+type Family = "database" | "server" | "screen" | "terminal" | "gear" | "neural" | "document" | "person" | "cloud" | "diamond" | "package" | "folder" | "disk" | "queue" | "tablet" | "terrain" | "plain";
 type Item3D = {
   rid: string; title: string; sub: string; family: Family; status?: string; tone: string;
   x: number; y: number; w: number; h: number; size: number | null; hash: number; drill: boolean;
@@ -14,7 +14,7 @@ type Item3D = {
 type Group3D = { rid: string; title: string; x: number; y: number; w: number; h: number };
 type Edge3D = { pts: [number, number][]; tone: string };
 type Scene3D = { key: string; items: Item3D[]; groups: Group3D[]; edges: Edge3D[] };
-type Hooks3D = { pick: (rid: string | null) => void };
+type Hooks3D = { pick: (rid: string | null) => void; locked?: (on: boolean) => void };
 
 // fraktul ships its own three.js beside the page (vendor/); the CDN is only a fallback for hosts that serve the page
 // alone (a claude.ai Artifact), where the local file is not there.
@@ -31,7 +31,11 @@ let T: any = null;
   let focusSet = new Set<string>();
   let hover: string | null = null;
   const look = { yaw: 0, pitch: -0.55, pos: null as any };
-  let fly: { from: any; to: any; yaw0: number; yaw1: number; p0: number; p1: number; t: number; dur: number } | null = null;
+  let fly: { from: any; to: any; yaw0: number; yaw1: number; p0: number; p1: number; t: number; dur: number; done?: () => void } | null = null;
+  // A slow circle around what the tour is talking about; any drag, wheel or key hands the camera back.
+  let orbit: { c: any; r: number; h: number; yaw: number; speed: number } | null = null;
+  // A camera move asked for while the entry flight is still running waits for it.
+  let pending: (() => void) | null = null;
   const keys = new Set<string>();
   let palette: Record<string, number> = {};
 
@@ -81,6 +85,7 @@ let T: any = null;
     raf = requestAnimationFrame(frame);
   }
   function hide() {
+    lock(false);
     shown = false;
     cancelAnimationFrame(raf);
     keys.clear();
@@ -115,6 +120,8 @@ let T: any = null;
     if (i === 0) for (let k = 6; k < 64; k += 12) x.fillRect(k, 4, 2, 56); // vertical strips
     if (i === 1) for (let a = 6; a < 64; a += 10) for (let b = 6; b < 64; b += 10) x.fillRect(a, b, 3, 3); // dots
     if (i === 2) for (let k = 6; k < 64; k += 9) x.fillRect(4, k, 20 + ((k * 7) % 34), 2); // lines of code
+    if (i === 3) { for (let k = 8; k < 44; k += 6) x.fillRect(k, 26, 3, 12); x.fillRect(50, 28, 8, 8); } // rack vents and a drive bay
+    if (i === 4) { x.fillRect(6, 8, 10, 3); x.fillRect(6, 18, 30, 3); x.fillRect(6, 28, 22, 3); x.fillRect(6, 40, 6, 3); x.fillRect(14, 40, 2, 8); } // a terminal: prompt lines
     const t = new T.CanvasTexture(c);
     t.wrapS = t.wrapT = T.RepeatWrapping;
     return (patterns[i] = t);
@@ -150,109 +157,164 @@ let T: any = null;
 
   /** The object for one box, standing on y = 0, footprint ~fw. Returns it with its height (for the label). */
   function make(it: Item3D): { obj: any; top: number } {
-    const color = it.status === "external" || it.family === "monolith" ? palette.ext : it.status === "planned" ? palette.planned : tone(it.tone);
+    const color = it.status === "external" || it.family === "cloud" ? palette.ext : it.status === "planned" ? palette.planned : tone(it.tone);
     const fw = Math.max(0.9, Math.min(it.w, it.h * 1.6) * UNIT * 0.62);
     const size = it.size ?? 0.35;
     const H = 0.8 + size * 6.5;
     const o = new T.Group();
-    const st = it.family === "monolith" ? "built" : it.status;
-    const win = hashBits(it.hash, 4, 3);
+    const st = it.status;
     let top = H;
+    // Each family is drawn as the thing it is (see WORD_SHAPE in fraktul-map.ts); the hash varies the details, so two
+    // databases or two servers never look identical, and size follows the lines of code behind the box.
+    const add = (geo: any, x: number, y: number, z: number, w: number | null = null, ww = 1, hh = 1) => { const m = solid(geo, color, st, w, ww, hh); m.position.set(x, y, z); o.add(m); return m; };
+    const glow = (geo: any, x: number, y: number, z: number, opacity = 0.9) => { const m = new T.Mesh(geo, new T.MeshBasicMaterial({ color, transparent: true, opacity })); m.position.set(x, y, z); o.add(m); return m; };
     switch (it.family) {
-      case "tower": case "plain": {
-        const tiers = it.family === "plain" ? 1 : 1 + hashBits(it.hash, 2, 3);
-        const height = it.family === "plain" ? Math.max(0.7, H * 0.35) : H;
-        let y = 0, wdt = fw;
-        for (let i = 0; i < tiers; i++) {
-          const th = i === 0 ? height * (tiers === 1 ? 1 : 0.6) : (height * 0.4) / (tiers - 1);
-          const s = solid(new T.BoxGeometry(wdt, th, wdt), color, st, win, wdt, th);
-          s.position.y = y + th / 2;
-          o.add(s);
-          y += th; wdt *= 0.72;
+      case "database": {
+        // The database icon: a stack of disks with gaps between them.
+        const n = 2 + hashBits(it.hash, 2, 3), r = fw * 0.48, h = Math.max(0.35, (H * 0.85) / n);
+        for (let i = 0; i < n; i++) add(new T.CylinderGeometry(r, r, h * 0.82, 28), 0, h * i + h / 2, 0);
+        glow(new T.TorusGeometry(r * 1.0, 0.02, 6, 40), 0, h * n, 0, 0.7).rotation.x = Math.PI / 2;
+        top = h * n;
+        break;
+      }
+      case "disk": {
+        // A drive: a flat case with a platter and a spindle on top.
+        const w = fw * 1.1, d = fw * 0.8;
+        add(new T.BoxGeometry(w, 0.35, d), 0, 0.175, 0);
+        const plat = add(new T.CylinderGeometry(d * 0.4, d * 0.4, 0.06, 32), -w * 0.12, 0.38, 0);
+        glow(new T.CylinderGeometry(0.05, 0.05, 0.1, 10), -w * 0.12, 0.44, 0);
+        o.userData.spin = plat; o.userData.spinAxis = "y";
+        const arm = add(new T.BoxGeometry(d * 0.42, 0.04, 0.06), w * 0.18, 0.44, d * 0.12); arm.rotation.y = 0.5;
+        top = 0.6;
+        break;
+      }
+      case "queue": {
+        // Messages in a channel: a row of envelopes on a rail, nearest first.
+        const n = 3 + hashBits(it.hash, 3, 3), w = fw * 1.4, bw = (w / n) * 0.72;
+        add(new T.BoxGeometry(w + 0.2, 0.08, fw * 0.5), 0, 0.04, 0, null);
+        for (let i = 0; i < n; i++) add(new T.BoxGeometry(bw, bw * 0.7, fw * 0.36), -w / 2 + (i + 0.5) * (w / n), 0.08 + bw * 0.35, 0);
+        top = 0.2 + bw * 0.7;
+        break;
+      }
+      case "server": {
+        // An API or service: a rack of units with status lights.
+        const units = 2 + hashBits(it.hash, 2, 4), uh = Math.max(0.32, (H * 0.9) / units), w = fw * 0.75, d = fw * 0.6;
+        for (let i = 0; i < units; i++) {
+          add(new T.BoxGeometry(w, uh * 0.86, d), 0, uh * i + uh / 2, 0, 3, 1, 1);
+          for (let k = 0; k < 2; k++) glow(new T.SphereGeometry(0.035, 8, 6), w * 0.32 - k * 0.12, uh * i + uh / 2, d / 2 + 0.01, k === 0 ? 1 : 0.5);
         }
-        top = y;
-        if (it.family === "tower") {
-          const crown = hashBits(it.hash, 0, 4);
-          if (crown === 1) { const a = solid(new T.CylinderGeometry(0.03, 0.03, 1.2, 6), color, st, null); a.position.y = y + 0.6; o.add(a); const b = new T.Mesh(new T.SphereGeometry(0.09, 10, 8), new T.MeshBasicMaterial({ color })); b.position.y = y + 1.25; o.add(b); top = y + 1.3; }
-          if (crown === 2) { const p = solid(new T.ConeGeometry(wdt * 0.75, wdt * 0.8, 4), color, st, null); p.rotation.y = Math.PI / 4; p.position.y = y + wdt * 0.4; o.add(p); top = y + wdt * 0.8; }
-          if (crown === 3) { const p = solid(new T.ConeGeometry(wdt * 0.28, 1.6, 6), color, st, null); p.position.y = y + 0.8; o.add(p); top = y + 1.6; }
-        }
+        top = uh * units;
         break;
       }
-      case "stack": {
-        let y = 0, wdt = fw;
-        for (let i = 0; i < 3; i++) { const th = H * [0.45, 0.33, 0.22][i]; const s = solid(new T.BoxGeometry(wdt, th, wdt), color, st, win, wdt, th); s.position.y = y + th / 2; s.rotation.y = i * 0.18; o.add(s); y += th; wdt *= 0.78; }
-        top = y;
+      case "screen": case "terminal": {
+        // A page or app: a monitor on a stand. A command line tool gets a terminal prompt on its screen.
+        const w = fw * 1.25, h = w * 0.62, y = 0.55 + h / 2;
+        add(new T.CylinderGeometry(w * 0.22, w * 0.26, 0.06, 20), 0, 0.03, 0);
+        add(new T.BoxGeometry(0.08, 0.55, 0.08), 0, 0.3, 0);
+        add(new T.BoxGeometry(w, h, 0.12), 0, y, 0, it.family === "terminal" ? 4 : 2, 2, 1);
+        if (it.family === "terminal") glow(new T.BoxGeometry(w * 0.12, 0.05, 0.02), -w * 0.28, y - h * 0.25, 0.07);
+        top = y + h / 2;
         break;
       }
-      case "crystal": {
-        const h = Math.max(1.6, H * 0.8);
-        const s = solid(new T.OctahedronGeometry(fw * 0.55, 0), color, st, null);
-        s.scale.y = h / (fw * 1.1);
-        s.position.y = h / 2 + 0.1;
-        o.add(s);
-        top = h + 0.1;
+      case "gear": {
+        // A function or algorithm: a cog, turning. The number of teeth comes from the hash.
+        const r = 0.3 + size * 0.45, teeth = 6 + hashBits(it.hash, 2, 5) * 2, y = r + 0.35;
+        const g = new T.Group(); g.position.y = y; o.add(g);
+        const hub = solid(new T.CylinderGeometry(r, r, 0.22, 24), color, st, null); hub.rotation.x = Math.PI / 2; g.add(hub);
+        for (let i = 0; i < teeth; i++) { const a = (i / teeth) * Math.PI * 2; const t = solid(new T.BoxGeometry(0.16, 0.2, 0.22), color, st, null); t.position.set(Math.cos(a) * (r + 0.08), Math.sin(a) * (r + 0.08), 0); t.rotation.z = a; g.add(t); }
+        const axle = new T.Mesh(new T.CylinderGeometry(r * 0.25, r * 0.25, 0.3, 12), new T.MeshBasicMaterial({ color })); axle.rotation.x = Math.PI / 2; g.add(axle);
+        add(new T.BoxGeometry(0.06, y, 0.06), 0, y / 2, -0.15);
+        o.userData.spin = g;
+        top = y + r + 0.2;
         break;
       }
-      case "orb": {
-        const r = fw * 0.42, y = 1.2 + size * 2;
-        const s = solid(new T.IcosahedronGeometry(r, 1), color, st, null); s.position.y = y; o.add(s);
-        const ring = new T.Mesh(new T.TorusGeometry(r * 1.55, 0.025, 6, 48), new T.MeshBasicMaterial({ color, transparent: true, opacity: 0.85 }));
-        ring.rotation.x = Math.PI / 2 - 0.35; ring.position.y = y; o.add(ring); o.userData.spin = ring;
-        const stem = new T.Mesh(new T.CylinderGeometry(0.02, 0.02, y - r, 4), new T.MeshBasicMaterial({ color, transparent: true, opacity: 0.35 })); stem.position.y = (y - r) / 2; o.add(stem);
-        top = y + r;
+      case "neural": {
+        // A model: a small neural network, three layers of nodes wired together, gently turning.
+        const sizes = [2 + hashBits(it.hash, 1, 2), 3 + hashBits(it.hash, 3, 2), 1 + hashBits(it.hash, 5, 2)], gap = fw * 0.42, y0 = 1.1;
+        const g = new T.Group(); g.position.y = y0; o.add(g);
+        const pts: any[][] = sizes.map((n, li) => Array.from({ length: n }, (_, k) => new T.Vector3((li - 1) * gap, (k - (n - 1) / 2) * 0.42, 0)));
+        const wires: number[] = [];
+        for (let li = 0; li < 2; li++) for (const a of pts[li]) for (const b of pts[li + 1]) wires.push(a.x, a.y, a.z, b.x, b.y, b.z);
+        const wg = new T.BufferGeometry(); wg.setAttribute("position", new T.Float32BufferAttribute(wires, 3));
+        g.add(new T.LineSegments(wg, new T.LineBasicMaterial({ color, transparent: true, opacity: 0.45 })));
+        for (const layer of pts) for (const p of layer) { const m = solid(new T.IcosahedronGeometry(0.12, 1), color, st, null); m.position.copy(p); g.add(m); }
+        add(new T.CylinderGeometry(0.02, 0.02, y0 - 0.5, 4), 0, (y0 - 0.5) / 2, 0);
+        o.userData.spin = g; o.userData.spinAxis = "y"; o.userData.spinSpeed = 0.35;
+        top = y0 + Math.max(...sizes) * 0.21 + 0.3;
         break;
       }
-      case "island": {
-        const s = solid(new T.CylinderGeometry(fw * 0.9, fw * 0.6, 0.4, 20), color, st, null); s.position.y = 0.2; o.add(s);
-        const b = solid(new T.BoxGeometry(fw * 0.3, 1.2, fw * 0.3), color, st, win, 1, 1); b.position.set(-fw * 0.2, 1, 0); o.add(b);
-        top = 1.6;
+      case "document": {
+        // A file or doc: a standing page with a folded corner and lines of text on it.
+        const w = fw * 0.75, h = Math.max(1.1, H * 0.8), fold = w * 0.28;
+        const shape = new T.Shape(); shape.moveTo(-w / 2, 0); shape.lineTo(w / 2, 0); shape.lineTo(w / 2, h - fold); shape.lineTo(w / 2 - fold, h); shape.lineTo(-w / 2, h); shape.closePath();
+        add(new T.ExtrudeGeometry(shape, { depth: 0.08, bevelEnabled: false }), 0, 0, -0.04, 2, 1, Math.max(1, Math.round(h)));
+        top = h;
         break;
       }
-      case "pillar": {
-        const p = new T.Mesh(new T.CylinderGeometry(0.05, 0.05, 1.8, 8), new T.MeshBasicMaterial({ color })); p.position.y = 0.9; o.add(p);
-        const head = new T.Mesh(new T.SphereGeometry(0.22, 16, 12), new T.MeshBasicMaterial({ color })); head.position.y = 2.05; o.add(head);
-        const halo = new T.Mesh(new T.RingGeometry(0.35, 0.42, 32), new T.MeshBasicMaterial({ color, transparent: true, opacity: 0.5, side: T.DoubleSide })); halo.rotation.x = -Math.PI / 2; halo.position.y = 0.02; o.add(halo);
-        top = 2.3;
+      case "folder": {
+        // A repo: a folder, tab and all.
+        const w = fw * 1.1, h = 0.7, d = fw * 0.7;
+        add(new T.BoxGeometry(w, h, d), 0, h / 2, 0);
+        add(new T.BoxGeometry(w * 0.4, 0.14, d), -w * 0.3, h + 0.07, 0);
+        top = h + 0.14;
+        break;
+      }
+      case "person": {
+        // A person: a figure with a head, standing on a ring.
+        add(new T.CylinderGeometry(0.2, 0.3, 0.9, 16), 0, 0.45, 0);
+        add(new T.SphereGeometry(0.2, 16, 12), 0, 1.15, 0);
+        glow(new T.RingGeometry(0.38, 0.45, 32), 0, 0.02, 0, 0.5).rotation.x = -Math.PI / 2;
+        top = 1.4;
+        break;
+      }
+      case "cloud": {
+        // An outside service: a cloud, floating.
+        const y = 1.6, r = fw * 0.26;
+        const puffs: [number, number, number, number][] = [[0, 0, 0, 1.2], [-1.1, -0.25, 0, 0.85], [1.1, -0.25, 0, 0.9], [0.5, 0.35, 0.2, 0.8], [-0.5, 0.25, -0.2, 0.75]];
+        for (const [x, py, z, k] of puffs) add(new T.IcosahedronGeometry(r * k, 1), x * r, y + py * r, z * r);
+        top = y + r * 1.5;
+        break;
+      }
+      case "diamond": {
+        // A decision: the flowchart diamond, standing up.
+        const h = 1.4;
+        const s2 = add(new T.OctahedronGeometry(fw * 0.42, 0), 0, h / 2 + 0.2, 0); s2.scale.y = h / (fw * 0.84);
+        o.userData.spin = s2; o.userData.spinAxis = "y"; o.userData.spinSpeed = 0.25;
+        top = h + 0.2;
+        break;
+      }
+      case "package": {
+        // A component or module: a parcel, with the tape band round it. Bigger code, bigger box; the hash stacks a
+        // second, smaller parcel on some.
+        const w = fw * 0.85, h = Math.max(0.7, H * 0.55);
+        add(new T.BoxGeometry(w, h, w), 0, h / 2, 0, hashBits(it.hash, 4, 3), w, h);
+        glow(new T.BoxGeometry(w * 0.18, h + 0.02, w + 0.02), 0, h / 2, 0, 0.35);
+        top = h;
+        if (hashBits(it.hash, 1, 2) && H > 2) { const w2 = w * 0.6, h2 = h * 0.45; add(new T.BoxGeometry(w2, h2, w2), w * 0.05, h + h2 / 2, -w * 0.05).rotation.y = 0.3; top = h + h2; }
         break;
       }
       case "tablet": {
-        const s = solid(new T.BoxGeometry(fw * 0.8, H * 0.7 + 0.8, 0.18), color, st, 2, 1, 2); s.position.y = (H * 0.7 + 0.8) / 2; o.add(s);
-        top = H * 0.7 + 0.8;
-        break;
-      }
-      case "gate": {
-        const gh = 1.8, gw = fw * 1.1;
-        for (const sx of [-1, 1]) { const p = solid(new T.BoxGeometry(0.16, gh, 0.16), color, st, null); p.position.set((sx * gw) / 2, gh / 2, 0); o.add(p); }
-        const bar = solid(new T.BoxGeometry(gw + 0.3, 0.16, 0.2), color, st, null); bar.position.y = gh; o.add(bar);
-        top = gh + 0.1;
-        break;
-      }
-      case "monolith": {
-        const h = Math.max(3, H * 1.1);
-        const s = solid(new T.BoxGeometry(fw * 0.6, h, fw * 0.25), palette.ext, "built", null); s.position.y = h / 2;
-        s.userData.fill.color = new T.Color(0x101216); s.userData.fill.opacity = 1;
-        o.add(s);
+        // A decision record: a stone tablet.
+        const h = H * 0.6 + 0.9, w = fw * 0.75;
+        const shape = new T.Shape(); shape.moveTo(-w / 2, 0); shape.lineTo(w / 2, 0); shape.lineTo(w / 2, h - w / 2); shape.absarc(0, h - w / 2, w / 2, 0, Math.PI, false); shape.closePath();
+        add(new T.ExtrudeGeometry(shape, { depth: 0.16, bevelEnabled: false }), 0, 0, -0.08, 2, 1, 2);
         top = h;
         break;
       }
       case "terrain": {
-        const s = solid(new T.BoxGeometry(Math.max(fw * 1.6, it.w * UNIT), 0.5, Math.max(fw, it.h * UNIT)), color, st, null); s.position.y = 0.25; o.add(s);
-        const b = solid(new T.BoxGeometry(fw * 0.3, 0.9, fw * 0.3), color, st, win, 1, 1); b.position.set(fw * 0.25, 0.95, 0); o.add(b);
+        // A whole system: a campus, a plate with a few buildings on it.
+        const pw = Math.max(fw * 1.6, it.w * UNIT), pd = Math.max(fw, it.h * UNIT);
+        add(new T.BoxGeometry(pw, 0.3, pd), 0, 0.15, 0);
+        const n = 2 + hashBits(it.hash, 2, 3);
+        for (let i = 0; i < n; i++) { const bh = 0.5 + ((it.hash >>> (i * 3)) % 7) * 0.15; add(new T.BoxGeometry(fw * 0.22, bh, fw * 0.22), (i - (n - 1) / 2) * fw * 0.32, 0.3 + bh / 2, ((i % 2) - 0.5) * pd * 0.3, 1, 1, 1); }
         top = 1.5;
         break;
       }
-      case "slab": {
-        const s = solid(new T.BoxGeometry(fw * 1.1, H, fw * 0.4), color, st, 2, fw, H); s.position.y = H / 2; o.add(s);
-        top = H;
-        break;
-      }
-      case "core": {
-        const c = 0.35 + size * 0.5, y = 0.9 + size;
-        const s = solid(new T.BoxGeometry(c, c, c), color, st, null); s.position.y = y; s.rotation.set(0.5, 0.6, 0); o.add(s); o.userData.spin = s;
-        s.userData.fill.color = new T.Color(color).multiplyScalar(0.35);
-        top = y + c;
-        break;
+      default: {
+        // A plain box with nothing behind it: a low block.
+        const h = Math.max(0.5, H * 0.3);
+        add(new T.BoxGeometry(fw * 0.8, h, fw * 0.8), 0, h / 2, 0);
+        top = h;
       }
     }
     if (it.status === "prototype") o.userData.flicker = true;
@@ -369,6 +431,7 @@ let T: any = null;
 
     applyFocus();
     if (!same) {
+      orbit = null; pending = null;
       // Stand back from the level, above it and off to the front left, so the flow (left to right or top to bottom
       // in the 2D map) runs across the screen and blocks stand apart instead of behind each other.
       const span = Math.max(spanX, spanZ, 6);
@@ -437,16 +500,24 @@ let T: any = null;
   let drag: { x: number; y: number; yaw: number; pitch: number; moved: boolean; touches?: number; dist?: number } | null = null;
   function wire(cv: HTMLCanvasElement) {
     cv.tabIndex = 0;
+    lockCv = cv;
     const stop = (e: Event) => e.stopPropagation();
     cv.addEventListener("pointerdown", (e) => {
       stop(e);
+      if (locked()) { fly = null; orbit = null; pending = null; const r = cv.getBoundingClientRect(); hooks?.pick(pickAt(r.left + r.width / 2, r.top + r.height / 2)); return; }
       cv.focus({ preventScroll: true });
-      fly = null;
+      fly = null; orbit = null; pending = null;
       drag = { x: e.clientX, y: e.clientY, yaw: look.yaw, pitch: look.pitch, moved: false };
       cv.setPointerCapture(e.pointerId);
     });
     cv.addEventListener("pointermove", (e) => {
       stop(e);
+      // Mouse locked: every move turns the camera, no button needed; the click picks the block in the centre.
+      if (locked()) {
+        look.yaw -= e.movementX * 0.0032;
+        look.pitch = Math.max(-1.45, Math.min(1.2, look.pitch - e.movementY * 0.0032));
+        return;
+      }
       if (drag) {
         const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
         if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
@@ -465,7 +536,7 @@ let T: any = null;
       if (d && !d.moved) { const rid = pickAt(e.clientX, e.clientY); hooks?.pick(rid); }
     });
     cv.addEventListener("pointerleave", () => { if (hover) { hover = null; cv.style.cursor = ""; } });
-    cv.addEventListener("wheel", (e) => { e.preventDefault(); stop(e); fly = null; moveBy(0, -e.deltaY * 0.012, 0); }, { passive: false });
+    cv.addEventListener("wheel", (e) => { e.preventDefault(); stop(e); fly = null; orbit = null; moveBy(0, -e.deltaY * 0.012, 0); }, { passive: false });
     // Two fingers: pinch to move forward and back.
     cv.addEventListener("touchmove", (e) => {
       if (e.touches.length !== 2) return;
@@ -479,13 +550,26 @@ let T: any = null;
       const k = e.key.toLowerCase();
       if (["w", "a", "s", "d", "q", "e", "arrowup", "arrowdown", "arrowleft", "arrowright", "shift"].includes(k)) {
         if (k.startsWith("arrow")) e.preventDefault();
-        keys.add(k); fly = null;
+        keys.add(k); fly = null; orbit = null;
       }
       if (k === "0") { sceneKey = ""; hooks && rebuildLast(); }
+      if (k === "l") lock(!locked());
     });
     document.addEventListener("keyup", (e) => keys.delete(e.key.toLowerCase()));
     window.addEventListener("blur", () => keys.clear());
   }
+  // ───────────── mouse lock (Pointer Lock): look with plain mouse moves, Esc or L gives the mouse back ─────────────
+  let lockCv: HTMLCanvasElement | null = null;
+  const locked = () => !!lockCv && document.pointerLockElement === lockCv;
+  function lock(on: boolean) {
+    if (!lockCv) return;
+    if (on && !locked()) { fly = null; orbit = null; pending = null; (lockCv.requestPointerLock() as any)?.catch?.(() => {}); }
+    if (!on && locked()) document.exitPointerLock();
+  }
+  document.addEventListener("pointerlockchange", () => {
+    host?.classList.toggle("is-locked", locked());
+    hooks?.locked?.(locked());
+  });
   let lastScene: Scene3D | null = null;
   function rebuildLast() { if (lastScene) build(lastScene); }
 
@@ -510,6 +594,65 @@ let T: any = null;
     built?.labels.forEach((l) => l.el.classList.toggle("is-hover", l.rid === rid));
   }
 
+  // ───────────── camera moves: fly to blocks, circle them, dive into one ─────────────
+  const wrap = (a: number) => Math.atan2(Math.sin(a), Math.cos(a));
+  /** Yaw and pitch that look from `from` at `at` (the camera looks down -Z, rotation order YXZ). */
+  function angles(from: any, at: any) {
+    const d = at.clone().sub(from);
+    return { yaw: Math.atan2(-d.x, -d.z), pitch: Math.atan2(d.y, Math.hypot(d.x, d.z)) };
+  }
+  function aim(at: any) { const a = angles(camera.position, at); look.yaw = a.yaw; look.pitch = a.pitch; }
+  function flyCam(to: any, at: any, dur: number, done?: () => void) {
+    const a = angles(to, at);
+    fly = { from: camera.position.clone(), to, yaw0: look.yaw, yaw1: look.yaw + wrap(a.yaw - look.yaw), p0: look.pitch, p1: a.pitch, t: 0, dur, done };
+  }
+  /** Centre and size of some blocks, on the ground. */
+  function boundsOf(rids: string[]) {
+    if (!built) return null;
+    const box = new T.Box3();
+    let any = false;
+    for (const rid of rids) { const o = built.byRid.get(rid); if (!o) continue;
+      // The block's own meshes only: the focus beam (30 units of light) would put the camera in the sky.
+      o.updateWorldMatrix(true, true);
+      o.traverse((m: any) => { if (m.isMesh && m !== o.userData.beam && m.parent !== o.userData.beam && m.geometry) { m.geometry.computeBoundingBox?.(); if (m.geometry.boundingBox) { box.union(m.geometry.boundingBox.clone().applyMatrix4(m.matrixWorld)); any = true; } } }); }
+    if (!any) return null;
+    const c = box.getCenter(new T.Vector3()), size = box.getSize(new T.Vector3());
+    // Blocks still rising (the entry reveal) are nearly flat: assume a typical height.
+    return { c, span: Math.max(size.x, size.z, 1.5), height: Math.max(size.y, 2) };
+  }
+  /** Swoop to look at these blocks from the front, a little above; then, if asked, circle them slowly. */
+  let shot = 0;
+    function flyTo(rids: string[], o: { orbit?: boolean } = {}) {
+    if (!shown || !built || !rids.length) { orbit = null; return; }
+    const run = () => {
+      const b = boundsOf(rids);
+      if (!b) return;
+      const at = new T.Vector3(b.c.x, Math.max(0.6, b.height * 0.45), b.c.z);
+      const dist = b.span * 1.1 + 5;
+      // Come in from the front-left (where the level's own view stands) and high enough to look over the blocks in
+      // front; each step swings a little left or right of that so moving between steps feels like a camera move.
+      const swing = ((shot++ % 3) - 1) * 0.38;
+      const yaw = -0.72 + swing;
+      const h = at.y + dist * 0.85;
+      const to = new T.Vector3(at.x + Math.sin(yaw) * dist, h, at.z + Math.cos(yaw) * dist);
+      orbit = null;
+      flyCam(to, at, Math.min(2.2, 1.1 + camera.position.distanceTo(to) * 0.04), () => {
+        if (o.orbit) orbit = { c: at, r: dist, h, yaw, speed: 0.07 };
+      });
+    };
+    // Wait for the entry flight (top-down plan tilting to the street) to land first.
+    if (fly && !fly.done) pending = run; else run();
+  }
+  /** Fly into a block, then call `done` (which opens it); the next level arrives with its own entry flight. */
+  function dive(rid: string, done: () => void) {
+    const b = boundsOf([rid]);
+    if (!b || !shown) { done(); return; }
+    orbit = null; pending = null;
+    const at = new T.Vector3(b.c.x, Math.max(0.5, b.height * 0.5), b.c.z);
+    const to = at.clone().add(camera.position.clone().sub(at).setLength(Math.max(0.6, b.span * 0.35)));
+    flyCam(to, at, 0.75, done);
+  }
+
   // ───────────── the frame loop ─────────────
   const v = () => new T.Vector3();
   let tmp: any = null;
@@ -528,7 +671,16 @@ let T: any = null;
       camera.position.lerpVectors(fly.from, fly.to, e);
       look.yaw = fly.yaw0 + (fly.yaw1 - fly.yaw0) * e;
       look.pitch = fly.p0 + (fly.p1 - fly.p0) * e;
-      if (fly.t >= 1) fly = null;
+      if (fly.t >= 1) {
+        const done = fly.done;
+        fly = null;
+        done?.();
+        if (pending) { const p = pending; pending = null; p(); }
+      }
+    } else if (orbit) {
+      orbit.yaw += dt * orbit.speed;
+      camera.position.set(orbit.c.x + Math.sin(orbit.yaw) * orbit.r, orbit.h, orbit.c.z + Math.cos(orbit.yaw) * orbit.r);
+      aim(orbit.c);
     }
     if (keys.size) {
       const sp = (keys.has("shift") ? 16 : 7) * dt;
@@ -550,7 +702,7 @@ let T: any = null;
       }
       for (const s of built.streams) if (!s.line.visible && now >= s.at) { s.line.visible = true; s.dots.forEach((d) => (d.visible = true)); }
       for (const m of built.movers) { m.t = (m.t + dt * m.sp) % 1; m.m.position.copy(m.curve.getPoint(m.t)); }
-      for (const o of built.byRid.values()) if (o.userData.spin) o.userData.spin.rotation.z += dt * 0.6;
+      for (const o of built.byRid.values()) if (o.userData.spin) o.userData.spin.rotation[o.userData.spinAxis ?? "z"] += dt * (o.userData.spinSpeed ?? 0.6);
       for (const o of built.flicker) { const on = Math.sin(now * 9 + o.position.x) > -0.7; o.traverse((m: any) => { if (m.isLineSegments) m.material.opacity = on ? 1 : 0.25; }); }
     }
     renderer.render(scene, camera);
@@ -586,7 +738,9 @@ let T: any = null;
   }
 
   return {
-    show, hide, focus,
+    show, hide, focus, flyTo, dive,
+    stopOrbit() { orbit = null; },
+    lock, get locked() { return locked(); },
     build(s: Scene3D, o?: { entry?: boolean }) { lastScene = s; build(s, o); },
     get shown() { return shown; },
   };

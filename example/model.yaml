@@ -1,9 +1,9 @@
-# fraktul, mapped with fraktul. Also the fixture the tests check.
+# fraktul, mapped with fraktul. It is the map on fraktul.dev/map, the tutorial tours, and the fixture the tests check.
 version: 1
 title: fraktul
 brand: fraktul
 root: fraktul
-voice: { voice: bf_emma, speed: 1 }
+voice: { voice: bf_emma, speed: 1, say_as: { YAML: "yammel", JSON: "jason", CLI: "C L I", CI: "C I", ADR: "A D R", ADRs: "A D Rs", WASD: "W A S D", npm: "N P M", MLX: "M L X", "3D": "three D" } }
 
 repos:
   fraktul: { path: ".", github: rinsesoft/fraktul, title: fraktul }
@@ -11,6 +11,8 @@ repos:
 coverage:
   - repo: fraktul
     include: ["src/lib/*.ts", "scripts/*.ts", "bin/*.ts", "voice/*.py"]
+
+expect: { tours: 8 }
 
 nodes:
   fraktul:
@@ -24,32 +26,103 @@ nodes:
     diagram: |
       flowchart LR
         author(["You write model.yaml"]):::human
-        model_file[("Model file")]
+        model_file["Model file"]:::data
         check["Check"]
         build["Build the map"]
         page["The map page"]
         voice["Voice tours"]
+        publish["Publish"]
         reader(["Someone explores"]):::human
         author --> model_file
         model_file --> check
         model_file --> build --> page --> reader
         model_file -- "say: narration" --> voice --> page
+        page --> publish
         reader -. "records a walkthrough" .-> page
 
   model_file:
     title: Model file
     kind: data
     status: built
-    summary: Blocks, their Mermaid diagrams, status, anchors into the code, and tours with optional spoken narration.
+    summary: >-
+      One YAML file next to the code: the blocks, their Mermaid diagrams and status, anchors into the code, the repos
+      they live in, and tours with optional spoken narration.
+    diagram: |
+      flowchart TD
+        repos["repos: where the code lives"]:::data
+        nodes["nodes: the blocks"]:::data
+        diagram["diagram: Mermaid inside a block"]:::code
+        anchors["anchors: files, functions, data, docs, ADRs"]:::code
+        status["status and kind"]:::data
+        tours["tours: steps, focus, branches"]:::data
+        say["say: narration with cues"]:::data
+        live["live: facts read at build time"]:::code
+        chaining["Diagrams that chain"]
+        repos --> anchors
+        nodes --> diagram --> chaining
+        nodes --> anchors
+        nodes --> status
+        nodes --> live
+        tours --> say
+        tours -- "view and focus name" --> diagram
+        %% @link nodes src/lib/model.ts#loadModel
+        %% @link anchors src/lib/model.ts#anchorsOf
+        %% @link repos src/lib/model.ts#repoRoot
+        %% @link live src/lib/live.ts#readLive
     anchors:
-      files: [src/lib/model.ts, src/lib/mermaid.ts]
+      files: [src/lib/model.ts, src/lib/mermaid.ts, src/lib/remote.ts]
       functions: ["src/lib/model.ts#loadModel", "src/lib/mermaid.ts#parseFlowchart"]
+
+  chaining:
+    title: Diagrams that chain
+    kind: component
+    status: built
+    summary: >-
+      Plain Mermaid with three small conventions: a box whose id is a block opens it, block/inner reaches inside it,
+      %% @link opens code, and %% @expand draws a block's diagram inside a bigger one.
+    diagram: |
+      flowchart LR
+        parse["Parse the flowchart"]:::code
+        door["A box named like a block is a door"]
+        inner["block/inner lands inside an open block"]
+        link["%% @link opens a file, function or ADR"]
+        expand["%% @expand draws a block in place"]
+        generated["Generated file and function levels"]:::code
+        parse --> door --> inner
+        parse --> link
+        parse --> expand
+        door --> generated
+        %% @link parse src/lib/mermaid.ts#parseFlowchart
+        %% @link generated src/lib/build.ts#genFile
+    anchors:
+      functions: ["src/lib/mermaid.ts#parseStatement", "src/lib/build.ts#targetOf", "src/lib/build.ts#genFn"]
 
   check:
     title: Check
     kind: component
     status: built
-    summary: Fails when an anchor, a diagram box, a narration cue or a tour step no longer exists; lists what the model does not mention yet.
+    summary: >-
+      Fails when an anchor, a diagram box, a narration cue or a tour step no longer exists; lists what the model does not
+      mention yet; enforces the depth and tour counts you ask for.
+    diagram: |
+      flowchart LR
+        load["Load the model"]:::code
+        refs["Every file and function still there"]:::code
+        boxes["Links, inner boxes, @expand"]:::code
+        tours_ok["Views, focus, cues, next, branches"]:::code
+        coverage["Files the model does not mention"]:::code
+        depth["Depth and tour counts (expect)"]:::code
+        verdict{"Pass or fail"}
+        ci(["CI runs it on every push"]):::ext
+        load --> refs --> verdict
+        load --> boxes --> verdict
+        load --> tours_ok --> verdict
+        load --> coverage --> verdict
+        load --> depth --> verdict
+        verdict --> ci
+        %% @link load scripts/check-model.ts
+        %% @link refs src/lib/check.ts#checkModel
+        %% @link depth src/lib/check.ts#modelDepth
     anchors:
       files: [scripts/check-model.ts]
       functions: ["src/lib/check.ts#checkModel", "src/lib/check.ts#modelDepth"]
@@ -76,36 +149,458 @@ nodes:
     title: The map page
     kind: component
     status: built
-    summary: Mermaid diagrams you open by clicking, peek at by hovering, and climb back up from; tours with branches; search.
+    summary: >-
+      Mermaid diagrams you open by clicking, peek at by hovering and climb back up from; a details panel; search; tours
+      with branches and a voice; a 3D fly-through; and a recorder for your own walkthroughs.
+    diagram: |
+      flowchart LR
+        reader(["Someone explores"]):::human
+        board["The diagram"]:::code
+        peek["Hover to peek"]:::code
+        crumbs["Up and breadcrumbs"]:::code
+        panel["Details panel"]:::code
+        search["Search"]:::code
+        tours_ui["Tours and Listen"]:::code
+        space["3D fly-through"]:::code
+        recorder["Record a walkthrough"]:::code
+        reader --> board
+        board --> peek
+        board --> panel
+        board --> crumbs
+        reader --> search --> board
+        reader --> tours_ui --> board
+        board --> space
+        reader -.-> recorder --> tours_ui
+        %% @link board src/components/fraktul-map/fraktul-map.ts
+        %% @link space src/components/fraktul-map/map3d.ts
     anchors:
-      files: [src/components/fraktul-map/fraktul-map.ts, scripts/copy-media.ts]
+      files: [src/components/fraktul-map/fraktul-map.ts, src/components/fraktul-map/map3d.ts, scripts/copy-media.ts]
 
   voice:
     title: Voice tours
     kind: component
     status: built
     summary: Narration spoken locally by Kokoro on MLX, one sentence at a time, so captions and highlight cues land exactly.
+    diagram: |
+      flowchart LR
+        say["say: text on each step"]:::data
+        split["Split into sentences, keep the cues"]:::code
+        kokoro["Kokoro speaks each sentence"]:::model
+        cache[("Sentence cache")]:::data
+        mp3[("One MP3 per step, captions, cue times")]:::data
+        player["Player: captions and moving highlight"]:::code
+        say --> split --> kokoro --> mp3 --> player
+        split -- "unchanged sentence" --> cache --> mp3
+        %% @link split scripts/voice.ts
+        %% @link kokoro voice/render.py
     anchors:
       files: [scripts/voice.ts, voice/render.py]
+
+  publish:
+    title: Publish
+    kind: component
+    status: built
+    summary: >-
+      The same map, four ways out: a live dev server, a static folder for any host, one self-contained HTML file, and a
+      public mode that hides the source while a repo is private.
+    diagram: |
+      flowchart LR
+        cli["fraktul CLI"]:::code
+        dev["dev: live reload while you edit"]:::code
+        static[("build: a static folder")]:::data
+        artifact[("artifact: one HTML file")]:::data
+        public["FRAKTUL_PUBLIC=1 hides source"]:::code
+        host(["Any static host, CI deploys"]):::ext
+        cli --> dev
+        cli --> static --> host
+        cli --> artifact
+        public -.-> static
+        %% @link cli bin/fraktul.ts#build
+    anchors:
+      files: [bin/fraktul.ts, scripts/build-package.ts, scripts/release.ts, src/lib/head.ts, src/lib/docs.ts]
 
 tours:
   - id: how-it-works
     title: How fraktul works
-    summary: From a model file to a map you can dive into.
+    summary: The whole idea in six stops, from one model file to a map anyone can dive into.
     steps:
       - view: fraktul
         focus: [author, model_file]
         title: It starts with one file
-        text: You describe the system as blocks in model.yaml.
+        text: You describe the system as blocks in model.yaml, next to the code.
         say: >-
-          Everything starts with one file. [[author, model_file]] You describe your system as blocks: each one has a title,
-          a status, a short summary, and the files and functions it lives in. [[check]] Before anything is drawn, the check
-          makes sure every one of those still exists.
+          Welcome to fraktul. This is fraktul's own map, drawn by fraktul, so everything you see here is real.
+          [[author, model_file]] Everything starts with one file. You describe your system as blocks: each one has a
+          title, a status, a short summary, and the files and functions it lives in. The file sits in the same repository
+          as the code, so it changes in the same pull requests.
       - view: fraktul
-        focus: [build, page]
-        title: The map is built from the code
-        text: File and function levels come from the code itself.
+        focus: [check]
+        title: The check keeps it honest
+        text: Before anything is drawn, every reference is checked against the code.
         say: >-
-          [[build]] The build reads the model and the code it points at. It finds the functions, who calls whom, and the
-          source, so the deepest levels of the map are never out of date. [[page, reader]] Then anyone can open the map and
-          click their way down.
+          [[check]] Before anything is drawn, the check reads the model and tries every reference in it. If a file was
+          moved, or a function was renamed, the check fails and names the block to fix. It also lists the files the model
+          does not mention yet, so new code cannot hide. Run it in CI, and the map can never quietly drift from the code.
+      - view: fraktul
+        focus: [build]
+        title: The deep levels come from the code
+        text: File and function levels are generated, never typed.
+        say: >-
+          [[build]] The build reads the model, and then the code it points at. It finds every function, what each file
+          imports, and who calls whom. From that it generates the levels under your blocks: a diagram of the files, then
+          a diagram of the functions in each file, then the source itself. None of it is written by hand, so none of it
+          goes stale.
+      - view: fraktul
+        focus: [page, reader]
+        title: One page to explore
+        text: Click to open a block, hover to peek, climb back up.
+        say: >-
+          [[page]] All of that lands in one page. [[reader]] Someone new can start at the top and click their way down,
+          one level at a time, from the big picture to a single line of code. Hovering a block shows what is inside before
+          you open it, and the Up button always takes you back.
+      - view: fraktul
+        focus: [voice]
+        title: Tours that talk
+        text: Tours walk through the map; narration is spoken by a local voice.
+        say: >-
+          [[voice]] A tour is a path through the map, like this one. Each step can carry narration, and fraktul speaks it
+          with a neural voice that runs on your own machine. The highlight moves as the voice talks. And when a person
+          explains it better, anyone can record a walkthrough of their own, with their voice and every click saved
+          together.
+      - view: fraktul
+        focus: [publish]
+        title: Ship it anywhere
+        text: A dev server, a static site, or one HTML file.
+        say: >-
+          [[publish]] Finally, the map goes out the door. Run it live while you edit, build a static folder for any host,
+          or pack everything into a single HTML file you can send. Where to next? Pick a tour to go deeper.
+        branches:
+          - { label: "Write a model", to: "tour:write-a-model" }
+          - { label: "Explore the map", to: "tour:explore-the-map" }
+          - { label: "Make a tour talk", to: "tour:voice-tours" }
+
+  - id: write-a-model
+    title: Write a model
+    summary: What goes in model.yaml, block by block, and how each part shows up on the map.
+    steps:
+      - view: model_file
+        focus: [nodes]
+        title: Blocks are nodes
+        text: Every block is a node with an id, a title, a kind and a status.
+        say: >-
+          Let's open the model file. [[nodes]] Every block in your system is a node. Its id is short, lowercase, with
+          underscores, because that same id is what you write in the diagrams. Give it a title people understand, and a
+          one or two sentence summary: that summary is what the side panel shows, and what search finds.
+      - view: model_file
+        focus: [status]
+        title: Status and kind
+        text: Built, prototype, planned, proposed or external; and what sort of thing it is.
+        say: >-
+          [[status]] Each block says how real it is. Built means it is running. Prototype means it works but is not
+          finished. Planned and proposed are drawn dashed, so nobody mistakes a plan for a system. External marks things
+          you rely on but do not own. The kind, a component, a data store, a person, a service, changes the shape it gets
+          in the 3D view.
+      - view: model_file
+        focus: [diagram]
+        title: A block can hold a diagram
+        text: Plain Mermaid. Boxes named like blocks become doors.
+        say: >-
+          [[diagram]] A block can carry a diagram, written in ordinary Mermaid, the diagram language many tools already
+          read. fraktul adds no new syntax. It just notices when a box has the same id as another block, and turns that box
+          into a door you can open. [[chaining]] How diagrams chain together has its own tour.
+        branches:
+          - { label: "How diagrams chain", to: "tour:diagrams-that-chain" }
+      - view: model_file
+        focus: [anchors, repos]
+        title: Anchors tie blocks to code
+        text: Files, functions, data, docs and decision records, in one or more repos.
+        say: >-
+          [[anchors]] Anchors are what keep the map honest. A block lists the files and functions it lives in, the data
+          it reads, the docs that explain it, and the decisions behind it. Functions are written as a path, a hash, and the
+          name. [[repos]] A map can span several repositories: each one gets a key and a path, and anchors name the repo
+          they live in. The check tries every anchor on every run.
+      - view: model_file
+        focus: [live]
+        title: Live facts
+        text: Numbers and lists are read at build time, never typed.
+        say: >-
+          [[live]] A number typed into a map is wrong the day it changes. So fraktul reads facts while it builds. Point
+          adrs_dir at your decision records and they are listed, searchable, and linked from the blocks that name them.
+          For anything else, a small live module next to the model returns tables, lists and bars, read straight from the
+          project.
+      - view: model_file
+        focus: [tours, say]
+        title: Tours live in the model too
+        text: Steps name a view and the boxes to light up; say adds narration.
+        say: >-
+          [[tours]] Tours sit at the bottom of the same file. Each step names the diagram to show, the boxes to light up,
+          a title, and a line of text for the card. Steps can branch into other paths, or into other tours. [[say]] Add a
+          say line, and the step can be spoken. Write what a guide would say out loud, which is more than the card shows.
+
+  - id: diagrams-that-chain
+    title: Diagrams that chain
+    summary: Small diagrams that open into each other, and bigger pictures built from them, without copying.
+    steps:
+      - view: chaining
+        focus: [parse]
+        title: fraktul reads your Mermaid
+        text: It parses the ids, edges and comments you already write.
+        say: >-
+          [[parse]] fraktul reads each diagram the way Mermaid does, statement by statement. It keeps track of every box,
+          every edge, and a few special comments. Because it only reads ids, you can write Mermaid the way you always
+          have.
+      - view: chaining
+        focus: [door]
+        title: A box named like a block is a door
+        text: It gets a badge, a hover preview, and opens on click.
+        say: >-
+          [[door]] When a box has the same id as a block, it becomes a door. It gets a small badge, hovering shows a
+          preview of the diagram inside, and clicking opens it. You can even leave the label out, and fraktul fills in the
+          block's title for you. That is the whole trick that lets you build high level diagrams out of smaller ones.
+      - view: chaining
+        focus: [inner]
+        title: Reach inside with block/inner
+        text: An edge can land on a box inside another block.
+        say: >-
+          [[inner]] Sometimes an arrow should land on one particular piece inside a block. Write the block id, a slash,
+          and the inner box. When that block is drawn open, the edge lands exactly there. When it is closed, the edge
+          lands on the block. The check makes sure the inner box really exists.
+      - view: chaining
+        focus: [link]
+        title: "@link opens code"
+        text: A plain box can open a file, a function or a decision record.
+        say: >-
+          [[link]] Not every box is a block. A comment that starts with at link ties a plain box to a file, a function,
+          or a decision record. Click it, and you go straight to that code. This map is full of them: open the Build the
+          map block, and each step links to the function that does it.
+      - view: chaining
+        focus: [expand]
+        title: "@expand builds bigger pictures"
+        text: Draw a block's diagram inside this one, without copying it.
+        say: >-
+          [[expand]] And at expand draws another block's whole diagram inside this one, as a group. So a big overview can
+          be made of the same small diagrams the teams keep up to date, with nothing copied and nothing to keep in sync.
+      - view: chaining
+        focus: [generated]
+        title: Below the model, it's generated
+        text: Files and functions get their own diagrams, from the code.
+        say: >-
+          [[generated]] Below your last block, the code takes over. A block with files gets a generated diagram of those
+          files. Each file opens into its functions and who calls whom. Each function shows its callers, the functions it
+          calls, and its source, with every call a link. You write the top, the code writes the bottom.
+
+  - id: explore-the-map
+    title: Explore the map
+    summary: Every way to move around the map, from clicking and peeking to search, 3D and the details panel.
+    steps:
+      - view: page
+        focus: [reader, board]
+        title: Click to go down
+        text: Boxes with the badge open. Drag to pan, scroll to zoom.
+        say: >-
+          [[reader, board]] This is the page you are using right now. The diagram in the middle is the level you are
+          looking at. Any box with the little badge opens into a level of its own: click it, and you go down. Drag to pan
+          around, scroll to zoom, and press zero to fit the diagram to the screen again.
+      - view: page
+        focus: [peek]
+        title: Hover to peek
+        text: See what's inside a block before you open it.
+        say: >-
+          [[peek]] Not sure if a block is the one you want? Rest the mouse on it. After a moment a preview appears with a
+          small drawing of what is inside, and its summary. Move away, and it goes.
+      - view: page
+        focus: [crumbs]
+        title: Always a way back up
+        text: Up, the breadcrumbs, Escape or Backspace.
+        say: >-
+          [[crumbs]] However deep you go, you can always climb back. The Up button at the top left takes you up one level.
+          The breadcrumbs next to it jump straight to any level above. On the keyboard, Escape or Backspace do the same.
+          And the address bar follows you, so you can share a link to exactly where you are.
+      - view: page
+        focus: [panel]
+        title: The details panel
+        text: What you're looking at, its code, docs and decisions. Hide it to make room.
+        say: >-
+          [[panel]] On the right, the details panel tells you about what you are looking at: its summary, its files and
+          functions, its docs, and the decisions behind it. Click a plain box to see its details instead. When you want
+          the whole screen for the diagram, hide the panel with the button at the top right, or press backslash.
+      - view: page
+        focus: [search]
+        title: Search everything
+        text: Press slash, type a few letters, jump straight there.
+        say: >-
+          [[search]] Looking for something by name? Press slash, and type. Search covers every block, every file, every
+          function, and every decision record, and takes you straight to it, opening every level on the way.
+      - view: page
+        focus: [space]
+        title: Fly through in 3D
+        text: Press 3. Drag to look, W A S D to move, click a block to fly in.
+        say: >-
+          [[space]] Press three, or the 3D button, and the same level becomes a small city you can fly through. Blocks
+          become buildings, data becomes stores, and the arrows become streams of light. Drag to look around, use W A S D
+          to move, and click a building to fly into it. If you would rather look around without holding the button down,
+          press L to lock the mouse, and Escape to let it go.
+      - view: page
+        focus: [tours_ui]
+        title: Tours and Listen
+        text: Follow a guided path; drag the card anywhere, fold it to its title bar.
+        say: >-
+          [[tours_ui]] The Tours button lists guided paths like this one. Read them at your own pace, or press Listen to
+          hear them, with captions, and the camera following along in 3D. The tour card can be dragged by its title bar,
+          and folded down when it is in the way. [[recorder]] And the recorder lets you make tours of your own.
+        branches:
+          - { label: "Record a walkthrough", to: "tour:record-a-walkthrough" }
+
+  - id: voice-tours
+    title: Make a tour talk
+    summary: How narration is written, spoken by a local neural voice, and kept in sync with the highlights.
+    steps:
+      - view: voice
+        focus: [say]
+        title: Write what a guide would say
+        text: say adds narration to a step; double brackets move the highlight.
+        say: >-
+          [[say]] Narration starts as text on a tour step, in a field called say. Write it the way you would explain it
+          to a new colleague, standing at a whiteboard. Inside the text, a pair of double square brackets with box ids
+          moves the highlight at that exact moment of the speech.
+      - view: voice
+        focus: [split]
+        title: One sentence at a time
+        text: The text is split into sentences; each cue is kept with its sentence.
+        say: >-
+          [[split]] Run fraktul voice, and the narration is split into sentences. Each cue stays attached to the sentence
+          it sits in. Codes and numbers are read out digit by digit, and words the voice gets wrong can be spelled out
+          the way they should sound.
+      - view: voice
+        focus: [kokoro]
+        title: A real voice, on your machine
+        text: Kokoro, a small neural voice model, runs locally on the GPU.
+        say: >-
+          [[kokoro]] Each sentence is spoken by Kokoro, a small neural voice model, running on your own Mac's GPU through
+          M L X. Nothing is sent anywhere. You pick the voice in the model file; this one is called Emma.
+      - view: voice
+        focus: [cache]
+        title: Only changed sentences are spoken again
+        text: A cache keeps every sentence; edit one line, re-speak one line.
+        say: >-
+          [[cache]] Every spoken sentence is kept in a cache, keyed by its text and the voice. Change one sentence in a long
+          tour, and only that sentence is spoken again. The rest comes straight from the cache, so re-running the voice
+          after an edit takes seconds.
+      - view: voice
+        focus: [mp3, player]
+        title: Captions and cues land exactly
+        text: One MP3 per step, with caption and cue times measured, not guessed.
+        say: >-
+          [[mp3]] The sentences are joined into one short audio file per step. Because each sentence was spoken on its own,
+          fraktul knows exactly when each one starts and ends. [[player]] So the captions change on the right word, and
+          the highlight moves the moment the voice names a block.
+
+  - id: keep-it-true
+    title: Keep the map true
+    summary: What the check catches, how coverage works, and how CI keeps the map from drifting.
+    steps:
+      - view: check
+        focus: [load, refs]
+        title: Every reference is tried
+        text: Files and functions named in the model must still exist.
+        say: >-
+          [[load]] The check starts by loading the model. [[refs]] Then it tries every anchor and every link: each file
+          must still be in the repository, and each function must still be in its file. Rename a function the map names,
+          and the check fails, telling you exactly which block to fix.
+      - view: check
+        focus: [boxes]
+        title: Diagram links hold
+        text: "@link boxes, block/inner and @expand must point at real things."
+        say: >-
+          [[boxes]] Inside the diagrams, every at link must name a box that is really there, every block slash inner box
+          must exist in that block's diagram, and every at expand must be a block with a diagram of its own.
+      - view: check
+        focus: [tours_ok]
+        title: Tours can't break
+        text: Views, focus boxes, cues, next steps and branches are all checked.
+        say: >-
+          [[tours_ok]] Tours are checked too. Each step's view must be a block with a diagram. Every box it lights up, and
+          every cue in its narration, must be in that diagram. And every next step and branch must lead somewhere real.
+      - view: check
+        focus: [coverage]
+        title: Nothing new hides
+        text: Files in the repo that the model doesn't mention are listed.
+        say: >-
+          [[coverage]] Coverage works the other way round. You tell fraktul which folders count, and it lists every file
+          there that no block mentions yet. Run the check with strict, and those fail too, so new code always lands on
+          the map.
+      - view: check
+        focus: [depth]
+        title: Ask for what you need
+        text: expect sets how deep blocks drill and how many tours there must be.
+        say: >-
+          [[depth]] With expect, a team can set its own bar: how many levels deep each top block must go, and how many
+          tours the map must have. This map, for example, asks for eight tours.
+      - view: check
+        focus: [verdict, ci]
+        title: Run it in CI
+        text: One command, a clear pass or fail, on every push.
+        say: >-
+          [[verdict]] All of this ends in one answer, pass or fail, with a list of what to fix. [[ci]] Put it in your CI,
+          next to the tests, and nobody can merge a change that breaks the map.
+
+  - id: record-a-walkthrough
+    title: Record a walkthrough
+    summary: Your own voice and clicks, saved together and replayed on the map.
+    steps:
+      - view: page
+        focus: [recorder]
+        title: Talk while you click
+        text: Tours, then Record a walkthrough. Your microphone and every click are saved.
+        say: >-
+          [[recorder]] Some explanations are best in a person's own words. Open Tours, and press Record a walkthrough.
+          fraktul records your microphone, and every level you open, every block you hover, and every block you click,
+          with the exact time.
+      - view: page
+        focus: [recorder, tours_ui]
+        title: Save it into the map
+        text: Save downloads one file; import-recording adds it next to the model.
+        say: >-
+          [[recorder]] When you stop, play it back, and save it. Saving downloads one file. One command imports it next to
+          the model, and you commit it like any other change. [[tours_ui]] The next build lists it under the tours.
+      - view: page
+        focus: [board, tours_ui]
+        title: Replay follows your voice
+        text: Same views, same boxes, same moments.
+        say: >-
+          [[board, tours_ui]] Play the recording, and the map follows your voice: the same levels open, the same blocks
+          light up, at the same moments you clicked them. It is the closest thing to sitting next to you.
+
+  - id: publish-the-map
+    title: Publish the map
+    summary: Run it live, build a static site, send one HTML file, and keep private code private.
+    steps:
+      - view: publish
+        focus: [cli, dev]
+        title: Live while you edit
+        text: fraktul dev serves the map and rebuilds when the model or code changes.
+        say: >-
+          [[cli]] Everything goes through one command line tool. [[dev]] Run fraktul dev with your model, and the map opens
+          in the browser. Edit the model or the code, and the page rebuilds by itself.
+      - view: publish
+        focus: [static, host]
+        title: A static folder for any host
+        text: fraktul build writes plain files; CI can deploy them on every merge.
+        say: >-
+          [[static]] Fraktul build writes a plain folder of files: the page, its diagrams, the narration audio, and the
+          libraries it needs, with nothing loaded from anywhere else. [[host]] Put it on any static host. This site is built
+          and deployed that way by CI, with a preview for every pull request.
+      - view: publish
+        focus: [artifact]
+        title: One file to send
+        text: fraktul artifact packs the whole map into a single HTML file.
+        say: >-
+          [[artifact]] Sometimes you just want to send the map to someone. Fraktul artifact packs the page, the data and
+          the diagram library into a single HTML file that opens anywhere, with no server at all.
+      - view: publish
+        focus: [public]
+        title: Public, without the source
+        text: FRAKTUL_PUBLIC=1 keeps the map and hides source code and links.
+        say: >-
+          [[public]] And when the code is private but the map should be shared, build in public mode. The blocks, the
+          diagrams and the tours stay; the source code and the links into the repository are left out.

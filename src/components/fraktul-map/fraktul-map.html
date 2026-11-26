@@ -30,6 +30,7 @@ Styles live in src/pages/css/explorer.css (global), because most of what they st
       <button class="btn icon" id="zoom-out" type="button" title="Zoom out" data-testid="fraktul-map-zoom-out">−</button>
       <button class="btn icon" id="zoom-fit" type="button" title="Fit to screen (0)" data-testid="fraktul-map-zoom-fit">Fit</button>
       <button class="btn icon" id="zoom-in" type="button" title="Zoom in" data-testid="fraktul-map-zoom-in">+</button>
+      <button class="btn icon panel-btn" id="panel-btn" type="button" aria-pressed="true" aria-controls="panel" title="Hide the details panel (\)" data-testid="fraktul-map-panel-toggle"><span class="panel-glyph" aria-hidden="true"></span><span class="sr-only">Details panel</span></button>
     </div>
   </nav>
 
@@ -37,7 +38,8 @@ Styles live in src/pages/css/explorer.css (global), because most of what they st
     <section class="canvas" id="canvas" aria-label="Diagram" tabindex="0" data-testid="fraktul-map-canvas">
       <div class="board" id="board"><p class="loading">Drawing the map…</p></div>
       <div class="space" id="space" hidden data-testid="fraktul-map-space">
-        <p class="space-hint" id="space-hint">Drag to look · <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to move · <kbd>Q</kbd><kbd>E</kbd> down, up · <kbd>Shift</kbd> faster · click to open · <kbd>0</kbd> replay</p>
+        <button class="btn small lock-btn" id="lock-btn" type="button" aria-pressed="false" title="Lock the mouse: move it to look, no dragging (L; Esc unlocks)" data-testid="fraktul-map-mouse-lock">Lock mouse</button>
+        <p class="space-hint" id="space-hint"><kbd>L</kbd> lock the mouse · Drag to look · <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to move · <kbd>Q</kbd><kbd>E</kbd> down, up · <kbd>Shift</kbd> faster · click to open · <kbd>0</kbd> replay</p>
       </div>
       <div class="legend" id="legend" aria-label="Legend">
         <span><i class="sw sw-model"></i>a model does it</span>

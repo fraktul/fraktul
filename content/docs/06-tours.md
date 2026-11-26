@@ -135,5 +135,9 @@ In the map, **Listen** plays a tour. Captions follow the voice, the highlight mo
 by itself, pausing at branches so the listener can choose. **Space** pauses and resumes; the right arrow goes to the
 next step.
 
+The tour card is a small window: drag it by its title bar to wherever it's out of the way (the map remembers where),
+fold it to its title bar with **–**, and unfold it with the same button. The voice keeps going while it's folded. In 3D,
+the camera follows the tour from block to block.
+
 If you change a step's `say:` text, run `fraktul voice` again. Audio for steps that no longer exist is left out of the
 next build.

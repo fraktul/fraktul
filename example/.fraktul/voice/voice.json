@@ -3,21 +3,54 @@
   "how-it-works": {
    "voice": "bf_emma",
    "model": "mlx-community/Kokoro-82M-bf16",
-   "rendered": "2026-11-26T05:13:04.005Z",
+   "rendered": "2026-11-26T22:37:18.742Z",
    "steps": {
     "how-it-works-1": {
      "file": "voice/how-it-works/how-it-works-1.mp3",
-     "duration": 16.67,
+     "duration": 25.78,
      "cues": [
       {
-       "t": 3.2,
+       "t": 8.39,
        "focus": [
         "author",
         "model_file"
        ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.17,
+       "text": "Welcome to fraktul."
       },
       {
-       "t": 11.45,
+       "t": 2.49,
+       "end": 7.89,
+       "text": "This is fraktul's own map, drawn by fraktul, so everything you see here is real."
+      },
+      {
+       "t": 8.39,
+       "end": 11.09,
+       "text": "Everything starts with one file."
+      },
+      {
+       "t": 11.41,
+       "end": 19.16,
+       "text": "You describe your system as blocks: each one has a title, a status, a short summary, and the files and functions it lives in."
+      },
+      {
+       "t": 19.48,
+       "end": 25.46,
+       "text": "The file sits in the same repository as the code, so it changes in the same pull requests."
+      }
+     ]
+    },
+    "how-it-works-2": {
+     "file": "voice/how-it-works/how-it-works-2.mp3",
+     "duration": 22.48,
+     "cues": [
+      {
+       "t": 0,
        "focus": [
         "check"
        ]
@@ -26,35 +59,73 @@
      "captions": [
       {
        "t": 0,
-       "end": 2.7,
-       "text": "Everything starts with one file."
+       "end": 5.3,
+       "text": "Before anything is drawn, the check reads the model and tries every reference in it."
       },
       {
-       "t": 3.2,
-       "end": 10.95,
-       "text": "You describe your system as blocks: each one has a title, a status, a short summary, and the files and functions it lives in."
+       "t": 5.62,
+       "end": 11.57,
+       "text": "If a file was moved, or a function was renamed, the check fails and names the block to fix."
       },
       {
-       "t": 11.45,
-       "end": 16.35,
-       "text": "Before anything is drawn, the check makes sure every one of those still exists."
+       "t": 11.89,
+       "end": 17.32,
+       "text": "It also lists the files the model does not mention yet, so new code cannot hide."
+      },
+      {
+       "t": 17.64,
+       "end": 22.16,
+       "text": "Run it in CI, and the map can never quietly drift from the code."
       }
      ]
     },
-    "how-it-works-2": {
-     "file": "voice/how-it-works/how-it-works-2.mp3",
-     "duration": 14.87,
+    "how-it-works-3": {
+     "file": "voice/how-it-works/how-it-works-3.mp3",
+     "duration": 22.41,
      "cues": [
       {
        "t": 0,
        "focus": [
         "build"
        ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.73,
+       "text": "The build reads the model, and then the code it points at."
       },
       {
-       "t": 10.92,
+       "t": 4.04,
+       "end": 8.67,
+       "text": "It finds every function, what each file imports, and who calls whom."
+      },
+      {
+       "t": 8.99,
+       "end": 17.84,
+       "text": "From that it generates the levels under your blocks: a diagram of the files, then a diagram of the functions in each file, then the source itself."
+      },
+      {
+       "t": 18.16,
+       "end": 22.09,
+       "text": "None of it is written by hand, so none of it goes stale."
+      }
+     ]
+    },
+    "how-it-works-4": {
+     "file": "voice/how-it-works/how-it-works-4.mp3",
+     "duration": 17.37,
+     "cues": [
+      {
+       "t": 0,
        "focus": [
-        "page",
+        "page"
+       ]
+      },
+      {
+       "t": 3.27,
+       "focus": [
         "reader"
        ]
       }
@@ -62,18 +133,1340 @@
      "captions": [
       {
        "t": 0,
-       "end": 3.5,
-       "text": "The build reads the model and the code it points at."
+       "end": 2.77,
+       "text": "All of that lands in one page."
       },
       {
-       "t": 3.82,
-       "end": 10.42,
-       "text": "It finds the functions, who calls whom, and the source, so the deepest levels of the map are never out of date."
+       "t": 3.27,
+       "end": 10.6,
+       "text": "Someone new can start at the top and click their way down, one level at a time, from the big picture to a single line of code."
       },
       {
        "t": 10.92,
-       "end": 14.54,
-       "text": "Then anyone can open the map and click their way down."
+       "end": 17.05,
+       "text": "Hovering a block shows what is inside before you open it, and the Up button always takes you back."
+      }
+     ]
+    },
+    "how-it-works-5": {
+     "file": "voice/how-it-works/how-it-works-5.mp3",
+     "duration": 21.45,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "voice"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.23,
+       "text": "A tour is a path through the map, like this one."
+      },
+      {
+       "t": 3.54,
+       "end": 9.89,
+       "text": "Each step can carry narration, and fraktul speaks it with a neural voice that runs on your own machine."
+      },
+      {
+       "t": 10.21,
+       "end": 13.09,
+       "text": "The highlight moves as the voice talks."
+      },
+      {
+       "t": 13.41,
+       "end": 21.13,
+       "text": "And when a person explains it better, anyone can record a walkthrough of their own, with their voice and every click saved together."
+      }
+     ]
+    },
+    "how-it-works-6": {
+     "file": "voice/how-it-works/how-it-works-6.mp3",
+     "duration": 16.16,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "publish"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.67,
+       "text": "Finally, the map goes out the door."
+      },
+      {
+       "t": 2.99,
+       "end": 11.12,
+       "text": "Run it live while you edit, build a static folder for any host, or pack everything into a single HTML file you can send."
+      },
+      {
+       "t": 11.44,
+       "end": 13.21,
+       "text": "Where to next?"
+      },
+      {
+       "t": 13.54,
+       "end": 15.84,
+       "text": "Pick a tour to go deeper."
+      }
+     ]
+    }
+   }
+  },
+  "write-a-model": {
+   "voice": "bf_emma",
+   "model": "mlx-community/Kokoro-82M-bf16",
+   "rendered": "2026-11-26T22:37:26.033Z",
+   "steps": {
+    "write-a-model-1": {
+     "file": "voice/write-a-model/write-a-model-1.mp3",
+     "duration": 21.46,
+     "cues": [
+      {
+       "t": 2.9,
+       "focus": [
+        "nodes"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.4,
+       "text": "Let's open the model file."
+      },
+      {
+       "t": 2.9,
+       "end": 5.8,
+       "text": "Every block in your system is a node."
+      },
+      {
+       "t": 6.12,
+       "end": 12.5,
+       "text": "Its id is short, lowercase, with underscores, because that same id is what you write in the diagrams."
+      },
+      {
+       "t": 12.82,
+       "end": 21.14,
+       "text": "Give it a title people understand, and a one or two sentence summary: that summary is what the side panel shows, and what search finds."
+      }
+     ]
+    },
+    "write-a-model-2": {
+     "file": "voice/write-a-model/write-a-model-2.mp3",
+     "duration": 25.57,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "status"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.7,
+       "text": "Each block says how real it is."
+      },
+      {
+       "t": 3.02,
+       "end": 5.37,
+       "text": "Built means it is running."
+      },
+      {
+       "t": 5.69,
+       "end": 8.94,
+       "text": "Prototype means it works but is not finished."
+      },
+      {
+       "t": 9.26,
+       "end": 14.34,
+       "text": "Planned and proposed are drawn dashed, so nobody mistakes a plan for a system."
+      },
+      {
+       "t": 14.66,
+       "end": 18.21,
+       "text": "External marks things you rely on but do not own."
+      },
+      {
+       "t": 18.53,
+       "end": 25.25,
+       "text": "The kind, a component, a data store, a person, a service, changes the shape it gets in the 3D view."
+      }
+     ]
+    },
+    "write-a-model-3": {
+     "file": "voice/write-a-model/write-a-model-3.mp3",
+     "duration": 20.31,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "diagram"
+       ]
+      },
+      {
+       "t": 16.59,
+       "focus": [
+        "chaining"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 9,
+       "text": "A block can carry a diagram, written in ordinary Mermaid, the diagram language many tools already read. fraktul adds no new syntax."
+      },
+      {
+       "t": 9.32,
+       "end": 16.09,
+       "text": "It just notices when a box has the same id as another block, and turns that box into a door you can open."
+      },
+      {
+       "t": 16.59,
+       "end": 19.99,
+       "text": "How diagrams chain together has its own tour."
+      }
+     ]
+    },
+    "write-a-model-4": {
+     "file": "voice/write-a-model/write-a-model-4.mp3",
+     "duration": 25.93,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "anchors"
+       ]
+      },
+      {
+       "t": 15.14,
+       "focus": [
+        "repos"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.8,
+       "text": "Anchors are what keep the map honest."
+      },
+      {
+       "t": 3.12,
+       "end": 10.77,
+       "text": "A block lists the files and functions it lives in, the data it reads, the docs that explain it, and the decisions behind it."
+      },
+      {
+       "t": 11.09,
+       "end": 14.64,
+       "text": "Functions are written as a path, a hash, and the name."
+      },
+      {
+       "t": 15.14,
+       "end": 22.09,
+       "text": "A map can span several repositories: each one gets a key and a path, and anchors name the repo they live in."
+      },
+      {
+       "t": 22.41,
+       "end": 25.61,
+       "text": "The check tries every anchor on every run."
+      }
+     ]
+    },
+    "write-a-model-5": {
+     "file": "voice/write-a-model/write-a-model-5.mp3",
+     "duration": 22.58,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "live"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.75,
+       "text": "A number typed into a map is wrong the day it changes."
+      },
+      {
+       "t": 4.07,
+       "end": 7.15,
+       "text": "So fraktul reads facts while it builds."
+      },
+      {
+       "t": 7.47,
+       "end": 14.32,
+       "text": "Point adrs_dir at your decision records and they are listed, searchable, and linked from the blocks that name them."
+      },
+      {
+       "t": 14.64,
+       "end": 22.26,
+       "text": "For anything else, a small live module next to the model returns tables, lists and bars, read straight from the project."
+      }
+     ]
+    },
+    "write-a-model-6": {
+     "file": "voice/write-a-model/write-a-model-6.mp3",
+     "duration": 22.63,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "tours"
+       ]
+      },
+      {
+       "t": 14.41,
+       "focus": [
+        "say"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3,
+       "text": "Tours sit at the bottom of the same file."
+      },
+      {
+       "t": 3.32,
+       "end": 9.87,
+       "text": "Each step names the diagram to show, the boxes to light up, a title, and a line of text for the card."
+      },
+      {
+       "t": 10.19,
+       "end": 13.91,
+       "text": "Steps can branch into other paths, or into other tours."
+      },
+      {
+       "t": 14.41,
+       "end": 17.52,
+       "text": "Add a say line, and the step can be spoken."
+      },
+      {
+       "t": 17.84,
+       "end": 22.31,
+       "text": "Write what a guide would say out loud, which is more than the card shows."
+      }
+     ]
+    }
+   }
+  },
+  "diagrams-that-chain": {
+   "voice": "bf_emma",
+   "model": "mlx-community/Kokoro-82M-bf16",
+   "rendered": "2026-11-26T22:37:32.731Z",
+   "steps": {
+    "diagrams-that-chain-1": {
+     "file": "voice/diagrams-that-chain/diagrams-that-chain-1.mp3",
+     "duration": 14.96,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "parse"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 4.88,
+       "text": "fraktul reads each diagram the way Mermaid does, statement by statement."
+      },
+      {
+       "t": 5.2,
+       "end": 9.64,
+       "text": "It keeps track of every box, every edge, and a few special comments."
+      },
+      {
+       "t": 9.96,
+       "end": 14.64,
+       "text": "Because it only reads ids, you can write Mermaid the way you always have."
+      }
+     ]
+    },
+    "diagrams-that-chain-2": {
+     "file": "voice/diagrams-that-chain/diagrams-that-chain-2.mp3",
+     "duration": 21.48,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "door"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.9,
+       "text": "When a box has the same id as a block, it becomes a door."
+      },
+      {
+       "t": 4.22,
+       "end": 10.47,
+       "text": "It gets a small badge, hovering shows a preview of the diagram inside, and clicking opens it."
+      },
+      {
+       "t": 10.79,
+       "end": 15.66,
+       "text": "You can even leave the label out, and fraktul fills in the block's title for you."
+      },
+      {
+       "t": 15.98,
+       "end": 21.16,
+       "text": "That is the whole trick that lets you build high level diagrams out of smaller ones."
+      }
+     ]
+    },
+    "diagrams-that-chain-3": {
+     "file": "voice/diagrams-that-chain/diagrams-that-chain-3.mp3",
+     "duration": 20.3,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "inner"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 4.7,
+       "text": "Sometimes an arrow should land on one particular piece inside a block."
+      },
+      {
+       "t": 5.02,
+       "end": 8.39,
+       "text": "Write the block id, a slash, and the inner box."
+      },
+      {
+       "t": 8.71,
+       "end": 12.81,
+       "text": "When that block is drawn open, the edge lands exactly there."
+      },
+      {
+       "t": 13.13,
+       "end": 16.29,
+       "text": "When it is closed, the edge lands on the block."
+      },
+      {
+       "t": 16.61,
+       "end": 19.98,
+       "text": "The check makes sure the inner box really exists."
+      }
+     ]
+    },
+    "diagrams-that-chain-4": {
+     "file": "voice/diagrams-that-chain/diagrams-that-chain-4.mp3",
+     "duration": 19.01,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "link"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.48,
+       "text": "Not every box is a block."
+      },
+      {
+       "t": 2.79,
+       "end": 8.97,
+       "text": "A comment that starts with at link ties a plain box to a file, a function, or a decision record."
+      },
+      {
+       "t": 9.29,
+       "end": 12.21,
+       "text": "Click it, and you go straight to that code."
+      },
+      {
+       "t": 12.54,
+       "end": 18.69,
+       "text": "This map is full of them: open the Build the map block, and each step links to the function that does it."
+      }
+     ]
+    },
+    "diagrams-that-chain-5": {
+     "file": "voice/diagrams-that-chain/diagrams-that-chain-5.mp3",
+     "duration": 13.87,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "expand"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 5.2,
+       "text": "And at expand draws another block's whole diagram inside this one, as a group."
+      },
+      {
+       "t": 5.52,
+       "end": 13.55,
+       "text": "So a big overview can be made of the same small diagrams the teams keep up to date, with nothing copied and nothing to keep in sync."
+      }
+     ]
+    },
+    "diagrams-that-chain-6": {
+     "file": "voice/diagrams-that-chain/diagrams-that-chain-6.mp3",
+     "duration": 21.75,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "generated"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.27,
+       "text": "Below your last block, the code takes over."
+      },
+      {
+       "t": 3.59,
+       "end": 7.84,
+       "text": "A block with files gets a generated diagram of those files."
+      },
+      {
+       "t": 8.16,
+       "end": 11.99,
+       "text": "Each file opens into its functions and who calls whom."
+      },
+      {
+       "t": 12.31,
+       "end": 18.16,
+       "text": "Each function shows its callers, the functions it calls, and its source, with every call a link."
+      },
+      {
+       "t": 18.48,
+       "end": 21.43,
+       "text": "You write the top, the code writes the bottom."
+      }
+     ]
+    }
+   }
+  },
+  "explore-the-map": {
+   "voice": "bf_emma",
+   "model": "mlx-community/Kokoro-82M-bf16",
+   "rendered": "2026-11-26T22:37:40.017Z",
+   "steps": {
+    "explore-the-map-1": {
+     "file": "voice/explore-the-map/explore-the-map-1.mp3",
+     "duration": 19.28,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "reader",
+        "board"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.05,
+       "text": "This is the page you are using right now."
+      },
+      {
+       "t": 3.37,
+       "end": 6.99,
+       "text": "The diagram in the middle is the level you are looking at."
+      },
+      {
+       "t": 7.31,
+       "end": 12.86,
+       "text": "Any box with the little badge opens into a level of its own: click it, and you go down."
+      },
+      {
+       "t": 13.18,
+       "end": 18.96,
+       "text": "Drag to pan around, scroll to zoom, and press zero to fit the diagram to the screen again."
+      }
+     ]
+    },
+    "explore-the-map-2": {
+     "file": "voice/explore-the-map/explore-the-map-2.mp3",
+     "duration": 14.06,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "peek"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.92,
+       "text": "Not sure if a block is the one you want?"
+      },
+      {
+       "t": 3.24,
+       "end": 5.34,
+       "text": "Rest the mouse on it."
+      },
+      {
+       "t": 5.67,
+       "end": 11.14,
+       "text": "After a moment a preview appears with a small drawing of what is inside, and its summary."
+      },
+      {
+       "t": 11.46,
+       "end": 13.74,
+       "text": "Move away, and it goes."
+      }
+     ]
+    },
+    "explore-the-map-3": {
+     "file": "voice/explore-the-map/explore-the-map-3.mp3",
+     "duration": 20.88,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "crumbs"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.35,
+       "text": "However deep you go, you can always climb back."
+      },
+      {
+       "t": 3.67,
+       "end": 7.17,
+       "text": "The Up button at the top left takes you up one level."
+      },
+      {
+       "t": 7.49,
+       "end": 11.44,
+       "text": "The breadcrumbs next to it jump straight to any level above."
+      },
+      {
+       "t": 11.76,
+       "end": 15.31,
+       "text": "On the keyboard, Escape or Backspace do the same."
+      },
+      {
+       "t": 15.63,
+       "end": 20.56,
+       "text": "And the address bar follows you, so you can share a link to exactly where you are."
+      }
+     ]
+    },
+    "explore-the-map-4": {
+     "file": "voice/explore-the-map/explore-the-map-4.mp3",
+     "duration": 19.61,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "panel"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 8.75,
+       "text": "On the right, the details panel tells you about what you are looking at: its summary, its files and functions, its docs, and the decisions behind it."
+      },
+      {
+       "t": 9.07,
+       "end": 12.57,
+       "text": "Click a plain box to see its details instead."
+      },
+      {
+       "t": 12.89,
+       "end": 19.29,
+       "text": "When you want the whole screen for the diagram, hide the panel with the button at the top right, or press backslash."
+      }
+     ]
+    },
+    "explore-the-map-5": {
+     "file": "voice/explore-the-map/explore-the-map-5.mp3",
+     "duration": 14.41,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "search"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.42,
+       "text": "Looking for something by name?"
+      },
+      {
+       "t": 2.74,
+       "end": 4.89,
+       "text": "Press slash, and type."
+      },
+      {
+       "t": 5.21,
+       "end": 14.09,
+       "text": "Search covers every block, every file, every function, and every decision record, and takes you straight to it, opening every level on the way."
+      }
+     ]
+    },
+    "explore-the-map-6": {
+     "file": "voice/explore-the-map/explore-the-map-6.mp3",
+     "duration": 25.16,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "space"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 5.92,
+       "text": "Press three, or the 3D button, and the same level becomes a small city you can fly through."
+      },
+      {
+       "t": 6.25,
+       "end": 11.75,
+       "text": "Blocks become buildings, data becomes stores, and the arrows become streams of light."
+      },
+      {
+       "t": 12.07,
+       "end": 17.84,
+       "text": "Drag to look around, use W A S D to move, and click a building to fly into it."
+      },
+      {
+       "t": 18.16,
+       "end": 24.84,
+       "text": "If you would rather look around without holding the button down, press L to lock the mouse, and Escape to let it go."
+      }
+     ]
+    },
+    "explore-the-map-7": {
+     "file": "voice/explore-the-map/explore-the-map-7.mp3",
+     "duration": 20.14,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "tours_ui"
+       ]
+      },
+      {
+       "t": 16.74,
+       "focus": [
+        "recorder"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.48,
+       "text": "The Tours button lists guided paths like this one."
+      },
+      {
+       "t": 3.79,
+       "end": 10.37,
+       "text": "Read them at your own pace, or press Listen to hear them, with captions, and the camera following along in 3D."
+      },
+      {
+       "t": 10.69,
+       "end": 16.24,
+       "text": "The tour card can be dragged by its title bar, and folded down when it is in the way."
+      },
+      {
+       "t": 16.74,
+       "end": 19.82,
+       "text": "And the recorder lets you make tours of your own."
+      }
+     ]
+    }
+   }
+  },
+  "voice-tours": {
+   "voice": "bf_emma",
+   "model": "mlx-community/Kokoro-82M-bf16",
+   "rendered": "2026-11-26T22:37:45.944Z",
+   "steps": {
+    "voice-tours-1": {
+     "file": "voice/voice-tours/voice-tours-1.mp3",
+     "duration": 17.21,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "say"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 4.42,
+       "text": "Narration starts as text on a tour step, in a field called say."
+      },
+      {
+       "t": 4.75,
+       "end": 9.42,
+       "text": "Write it the way you would explain it to a new colleague, standing at a whiteboard."
+      },
+      {
+       "t": 9.74,
+       "end": 16.89,
+       "text": "Inside the text, a pair of double square brackets with box ids moves the highlight at that exact moment of the speech."
+      }
+     ]
+    },
+    "voice-tours-2": {
+     "file": "voice/voice-tours/voice-tours-2.mp3",
+     "duration": 15.91,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "split"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 4.38,
+       "text": "Run fraktul voice, and the narration is split into sentences."
+      },
+      {
+       "t": 4.7,
+       "end": 8.25,
+       "text": "Each cue stays attached to the sentence it sits in."
+      },
+      {
+       "t": 8.57,
+       "end": 15.59,
+       "text": "Codes and numbers are read out digit by digit, and words the voice gets wrong can be spelled out the way they should sound."
+      }
+     ]
+    },
+    "voice-tours-3": {
+     "file": "voice/voice-tours/voice-tours-3.mp3",
+     "duration": 15.13,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "kokoro"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 7.67,
+       "text": "Each sentence is spoken by Kokoro, a small neural voice model, running on your own Mac's GPU through M L X."
+      },
+      {
+       "t": 8,
+       "end": 10.39,
+       "text": "Nothing is sent anywhere."
+      },
+      {
+       "t": 10.71,
+       "end": 14.81,
+       "text": "You pick the voice in the model file; this one is called Emma."
+      }
+     ]
+    },
+    "voice-tours-4": {
+     "file": "voice/voice-tours/voice-tours-4.mp3",
+     "duration": 16.79,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "cache"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 5.17,
+       "text": "Every spoken sentence is kept in a cache, keyed by its text and the voice."
+      },
+      {
+       "t": 5.5,
+       "end": 10.59,
+       "text": "Change one sentence in a long tour, and only that sentence is spoken again."
+      },
+      {
+       "t": 10.91,
+       "end": 16.46,
+       "text": "The rest comes straight from the cache, so re-running the voice after an edit takes seconds."
+      }
+     ]
+    },
+    "voice-tours-5": {
+     "file": "voice/voice-tours/voice-tours-5.mp3",
+     "duration": 17.69,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "mp3"
+       ]
+      },
+      {
+       "t": 11.5,
+       "focus": [
+        "player"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 4.33,
+       "text": "The sentences are joined into one short audio file per step."
+      },
+      {
+       "t": 4.65,
+       "end": 11,
+       "text": "Because each sentence was spoken on its own, fraktul knows exactly when each one starts and ends."
+      },
+      {
+       "t": 11.5,
+       "end": 17.37,
+       "text": "So the captions change on the right word, and the highlight moves the moment the voice names a block."
+      }
+     ]
+    }
+   }
+  },
+  "keep-it-true": {
+   "voice": "bf_emma",
+   "model": "mlx-community/Kokoro-82M-bf16",
+   "rendered": "2026-11-26T22:37:52.092Z",
+   "steps": {
+    "keep-it-true-1": {
+     "file": "voice/keep-it-true/keep-it-true-1.mp3",
+     "duration": 17.52,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "load"
+       ]
+      },
+      {
+       "t": 3.25,
+       "focus": [
+        "refs"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.75,
+       "text": "The check starts by loading the model."
+      },
+      {
+       "t": 3.25,
+       "end": 10.93,
+       "text": "Then it tries every anchor and every link: each file must still be in the repository, and each function must still be in its file."
+      },
+      {
+       "t": 11.25,
+       "end": 17.2,
+       "text": "Rename a function the map names, and the check fails, telling you exactly which block to fix."
+      }
+     ]
+    },
+    "keep-it-true-2": {
+     "file": "voice/keep-it-true/keep-it-true-2.mp3",
+     "duration": 12.64,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "boxes"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 12.32,
+       "text": "Inside the diagrams, every at link must name a box that is really there, every block slash inner box must exist in that block's diagram, and every at expand must be a block with a diagram of its own."
+      }
+     ]
+    },
+    "keep-it-true-3": {
+     "file": "voice/keep-it-true/keep-it-true-3.mp3",
+     "duration": 15.53,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "tours_ok"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 1.95,
+       "text": "Tours are checked too."
+      },
+      {
+       "t": 2.27,
+       "end": 5.67,
+       "text": "Each step's view must be a block with a diagram."
+      },
+      {
+       "t": 5.99,
+       "end": 11.16,
+       "text": "Every box it lights up, and every cue in its narration, must be in that diagram."
+      },
+      {
+       "t": 11.48,
+       "end": 15.21,
+       "text": "And every next step and branch must lead somewhere real."
+      }
+     ]
+    },
+    "keep-it-true-4": {
+     "file": "voice/keep-it-true/keep-it-true-4.mp3",
+     "duration": 15.08,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "coverage"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.77,
+       "text": "Coverage works the other way round."
+      },
+      {
+       "t": 3.09,
+       "end": 9.09,
+       "text": "You tell fraktul which folders count, and it lists every file there that no block mentions yet."
+      },
+      {
+       "t": 9.41,
+       "end": 14.76,
+       "text": "Run the check with strict, and those fail too, so new code always lands on the map."
+      }
+     ]
+    },
+    "keep-it-true-5": {
+     "file": "voice/keep-it-true/keep-it-true-5.mp3",
+     "duration": 11.71,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "depth"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 7.88,
+       "text": "With expect, a team can set its own bar: how many levels deep each top block must go, and how many tours the map must have."
+      },
+      {
+       "t": 8.2,
+       "end": 11.39,
+       "text": "This map, for example, asks for eight tours."
+      }
+     ]
+    },
+    "keep-it-true-6": {
+     "file": "voice/keep-it-true/keep-it-true-6.mp3",
+     "duration": 11.5,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "verdict"
+       ]
+      },
+      {
+       "t": 5.53,
+       "focus": [
+        "ci"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 5.03,
+       "text": "All of this ends in one answer, pass or fail, with a list of what to fix."
+      },
+      {
+       "t": 5.53,
+       "end": 11.18,
+       "text": "Put it in your CI, next to the tests, and nobody can merge a change that breaks the map."
+      }
+     ]
+    }
+   }
+  },
+  "record-a-walkthrough": {
+   "voice": "bf_emma",
+   "model": "mlx-community/Kokoro-82M-bf16",
+   "rendered": "2026-11-26T22:37:57.037Z",
+   "steps": {
+    "record-a-walkthrough-1": {
+     "file": "voice/record-a-walkthrough/record-a-walkthrough-1.mp3",
+     "duration": 14.71,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "recorder"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.8,
+       "text": "Some explanations are best in a person's own words."
+      },
+      {
+       "t": 4.12,
+       "end": 14.39,
+       "text": "Open Tours, and press Record a walkthrough. fraktul records your microphone, and every level you open, every block you hover, and every block you click, with the exact time."
+      }
+     ]
+    },
+    "record-a-walkthrough-2": {
+     "file": "voice/record-a-walkthrough/record-a-walkthrough-2.mp3",
+     "duration": 15.16,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "recorder"
+       ]
+      },
+      {
+       "t": 11.99,
+       "focus": [
+        "tours_ui"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.9,
+       "text": "When you stop, play it back, and save it."
+      },
+      {
+       "t": 3.22,
+       "end": 5.79,
+       "text": "Saving downloads one file."
+      },
+      {
+       "t": 6.12,
+       "end": 11.49,
+       "text": "One command imports it next to the model, and you commit it like any other change."
+      },
+      {
+       "t": 11.99,
+       "end": 14.84,
+       "text": "The next build lists it under the tours."
+      }
+     ]
+    },
+    "record-a-walkthrough-3": {
+     "file": "voice/record-a-walkthrough/record-a-walkthrough-3.mp3",
+     "duration": 11.29,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "board",
+        "tours_ui"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 7.5,
+       "text": "Play the recording, and the map follows your voice: the same levels open, the same blocks light up, at the same moments you clicked them."
+      },
+      {
+       "t": 7.82,
+       "end": 10.97,
+       "text": "It is the closest thing to sitting next to you."
+      }
+     ]
+    }
+   }
+  },
+  "publish-the-map": {
+   "voice": "bf_emma",
+   "model": "mlx-community/Kokoro-82M-bf16",
+   "rendered": "2026-11-26T22:38:02.285Z",
+   "steps": {
+    "publish-the-map-1": {
+     "file": "voice/publish-the-map/publish-the-map-1.mp3",
+     "duration": 13.42,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "cli"
+       ]
+      },
+      {
+       "t": 3.83,
+       "focus": [
+        "dev"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.33,
+       "text": "Everything goes through one command line tool."
+      },
+      {
+       "t": 3.83,
+       "end": 8.43,
+       "text": "Run fraktul dev with your model, and the map opens in the browser."
+      },
+      {
+       "t": 8.75,
+       "end": 13.1,
+       "text": "Edit the model or the code, and the page rebuilds by itself."
+      }
+     ]
+    },
+    "publish-the-map-2": {
+     "file": "voice/publish-the-map/publish-the-map-2.mp3",
+     "duration": 19.19,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "static"
+       ]
+      },
+      {
+       "t": 10.15,
+       "focus": [
+        "host"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 9.65,
+       "text": "Fraktul build writes a plain folder of files: the page, its diagrams, the narration audio, and the libraries it needs, with nothing loaded from anywhere else."
+      },
+      {
+       "t": 10.15,
+       "end": 12.75,
+       "text": "Put it on any static host."
+      },
+      {
+       "t": 13.07,
+       "end": 18.87,
+       "text": "This site is built and deployed that way by CI, with a preview for every pull request."
+      }
+     ]
+    },
+    "publish-the-map-3": {
+     "file": "voice/publish-the-map/publish-the-map-3.mp3",
+     "duration": 13.27,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "artifact"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.4,
+       "text": "Sometimes you just want to send the map to someone."
+      },
+      {
+       "t": 3.72,
+       "end": 12.95,
+       "text": "Fraktul artifact packs the page, the data and the diagram library into a single HTML file that opens anywhere, with no server at all."
+      }
+     ]
+    },
+    "publish-the-map-4": {
+     "file": "voice/publish-the-map/publish-the-map-4.mp3",
+     "duration": 12.04,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "public"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 4.88,
+       "text": "And when the code is private but the map should be shared, build in public mode."
+      },
+      {
+       "t": 5.2,
+       "end": 11.72,
+       "text": "The blocks, the diagrams and the tours stay; the source code and the links into the repository are left out."
       }
      ]
     }

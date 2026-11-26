@@ -5,6 +5,10 @@
     <title>fraktul, mapped with fraktul</title>
     <meta name="description" content="fraktul's own architecture, drawn by fraktul." />
     <script src="vendor/mermaid.min.js"></script>
+    <script>
+      // The map is the tool, not the website: it starts flat, or with the style picked in its menu.
+      try { var s = localStorage.getItem("fraktul-style"); document.documentElement.dataset.style = s === "y2k" ? "y2k" : "flat"; } catch (e) { document.documentElement.dataset.style = "flat"; }
+    </script>
   </head>
   <body>
     <fraktul-map />
