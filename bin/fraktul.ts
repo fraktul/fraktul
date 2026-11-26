@@ -90,8 +90,11 @@ switch (cmd) {
     const page = readFileSync(join(out, "index.html"), "utf8");
     const head = (page.match(/<head[^>]*>([\s\S]*?)<\/head>/i)?.[1] ?? "").replace(/<meta charset[^>]*>/i, "").replace(/<meta name="viewport"[^>]*>/i, "");
     const body = page.match(/<body[^>]*>([\s\S]*?)<\/body>/i)?.[1] ?? "";
-    writeFileSync(join(out, "artifact.html"), `${head}\n${body}\n`);
-    console.log(`fraktul: ${join(out, "artifact.html")} (${Math.round((head.length + body.length) / 1024)} KB); publish voice/ and recordings/ beside it`);
+    // An Artifact runs its page alone, so Mermaid is inlined instead of served beside it.
+    const mermaidJs = readFileSync(join(out, "vendor", "mermaid.min.js"), "utf8").replace(/<\/script/gi, "<\\/script");
+    const inline = (html: string) => html.replace(/<script src="vendor\/mermaid\.min\.js"><\/script>/, () => `<script>${mermaidJs}</script>`);
+    writeFileSync(join(out, "artifact.html"), `${inline(head)}\n${inline(body)}\n`);
+    console.log(`fraktul: ${join(out, "artifact.html")} (Mermaid inlined); publish voice/ and recordings/ beside it`);
     break;
   }
   case "voice": {

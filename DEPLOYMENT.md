@@ -6,8 +6,8 @@ through Worker routes `fraktul.dev/*` and `www.fraktul.dev/*` on top of the zone
 
 | Push | What CI does |
 |---|---|
-| a branch other than `main` | runs the tests, builds the site (pages marked `noindex`), uploads a Preview version under one alias, `pr-<number>` when the branch has an open pull request (else the branch name): `https://pr-12-fraktul.<account>.workers.dev`. Smoke-tests it, puts the URL in the run summary and in one comment on the pull request, updated on every push. |
-| `main` | no tests (the pull request's branch was tested). Deploys production only when the commit came from a merged pull request and is still the newest commit on main, then smoke-tests https://fraktul.dev. A commit pushed straight to main does not deploy. |
+| a branch other than `main` | runs the tests, builds the site (pages marked `noindex`), uploads a Preview version under one alias, `pr-<number>` when the branch has an open pull request (else the branch name): `https://pr-12-fraktul.<account>.workers.dev`. Smoke-tests it and render-tests it in Chromium (the map must draw), puts the URL in the run summary and in one comment on the pull request, updated on every push. |
+| `main` | no tests (the pull request's branch was tested). Deploys production only when the commit came from a merged pull request and is still the newest commit on main, then smoke-tests and render-tests https://fraktul.dev. A commit pushed straight to main does not deploy. |
 | a tag `v*.*.*` | `release.yml` publishes to npm (RELEASING.md). |
 
 Both builds are public (`FRAKTUL_PUBLIC=1`): fraktul's own map on /map keeps its blocks, files, functions and who calls

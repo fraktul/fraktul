@@ -1064,7 +1064,7 @@ async function set3d(on: boolean) {
   try {
     await F3D.show(space, { pick: (rid: string | null) => clickBox(rid ? current.boxes.get(rid) ?? null : null) });
   } catch {
-    space.append(el("p", "space-error", "The 3D view needs three.js, which comes from cdn.jsdelivr.net. Check the connection and try again."));
+    space.append(el("p", "space-error", "The 3D view could not load three.js (vendor/three.module.min.js beside this page). Rebuild the map and try again."));
     return;
   }
   entry3d = true;
@@ -1122,7 +1122,13 @@ function start() {
   const brand = document.getElementById("brand-text") as HTMLElement;
   brand.textContent = SITE.meta.brand;
   document.title = SITE.meta.title;
-  if (typeof mermaid === "undefined") { board.replaceChildren(el("p", "error", "Mermaid did not load (it comes from cdn.jsdelivr.net). Check the connection and reload.")); return; }
-  fromHash();
+  if (typeof mermaid !== "undefined") { fromHash(); return; }
+  // The page did not include Mermaid: load fraktul's own copy, served beside the page, so the map works on any page.
+  const s = document.createElement("script");
+  s.src = MERMAID_URL;
+  s.addEventListener("load", () => fromHash());
+  s.addEventListener("error", () => board.replaceChildren(el("p", "error", "Mermaid did not load (vendor/mermaid.min.js is missing next to this page). Rebuild the map.")));
+  document.head.append(s);
 }
+const MERMAID_URL = "vendor/mermaid.min.js";
 if (document.readyState === "complete") start(); else window.addEventListener("load", start);
