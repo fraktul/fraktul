@@ -19,11 +19,14 @@ The fraktul.dev hero: chrome wordmark, foil star, and a diagram that zooms into 
   .tag { margin: 0 0 14px; font: 600 clamp(20px, 2.4vw, 28px)/1.3 var(--body); color: var(--ink); max-width: 30ch; text-wrap: balance; }
   .lede { margin: 0 0 28px; font: 400 17px/1.6 var(--body); color: var(--ink-2); max-width: 52ch; }
   .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
-  .cta { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 999px; font: 600 15px var(--body); text-decoration: none; border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent); background: var(--btn); color: var(--ink); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: border-color 0.15s, transform 0.1s; }
-  .cta:hover { border-color: color-mix(in srgb, var(--ink) 34%, transparent); }
+  /* Both calls to action share one size and one chrome rim: the main one polished, the second one brushed satin. */
+  .cta { display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-sizing: border-box; height: 48px; padding: 0 24px; border-radius: 999px; font: 600 15px/1 var(--body); text-decoration: none; color: var(--ink); border: 1.5px solid transparent;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--sheet) 96%, transparent), color-mix(in srgb, var(--metal-1) 80%, transparent)) padding-box, var(--rim) border-box;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 6px 16px -10px rgba(0, 0, 0, 0.45); transition: filter 0.15s, transform 0.1s, box-shadow 0.15s; }
+  .cta:hover { filter: brightness(1.04); }
   .cta:active { transform: scale(0.98); }
   /* The main call to action is a liquid-chrome pill, the same material as the voice player's play button. */
-  .cta.main { color: var(--ink); border: 1.5px solid transparent; backdrop-filter: none;
+  .cta.main {
     background: radial-gradient(70% 55% at 50% 10%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 100%) padding-box, linear-gradient(180deg, var(--metal-0), var(--metal-1) 42%, var(--metal-2) 54%, var(--metal-3) 78%, var(--metal-4)) padding-box, var(--rim) border-box;
     box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.14), 0 10px 22px -10px rgba(0, 0, 0, 0.55); }
   .cta.main:hover { filter: brightness(1.04); box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.14), 0 14px 26px -10px rgba(0, 0, 0, 0.6); }
