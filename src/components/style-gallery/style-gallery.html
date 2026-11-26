@@ -32,9 +32,12 @@ diagram boxes and the rules. Switch style and theme in the header.
   .marks figure { margin: 0; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--sheet); overflow: hidden; }
   .stage { height: 170px; display: grid; place-items: center; background: var(--canvas); border-bottom: 1px solid var(--line); }
   .mk { width: 28px; height: 28px; background: var(--foil); background-size: 300% 100%; transform: scale(4.2); transform-origin: center; }
+  .navstrip { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bar); box-shadow: var(--gloss); border-bottom: 1px solid var(--line); }
+  .mk-sm { width: 28px; height: 28px; flex: none; background: var(--foil); background-size: 300% 100%; filter: drop-shadow(0.6px 0 0 rgba(10,11,13,0.45)) drop-shadow(-0.6px 0 0 rgba(10,11,13,0.45)) drop-shadow(0 0.6px 0 rgba(10,11,13,0.45)) drop-shadow(0 -0.6px 0 rgba(10,11,13,0.45)); }
+  .nv { font: 400 15px/1 var(--display); letter-spacing: 0.08em; color: var(--ink); }
   .marks figcaption { padding: 10px 12px; font-size: 14px; color: var(--ink-2); line-height: 1.45; }
   .marks strong { color: var(--ink); }
-  @media (prefers-reduced-motion: no-preference) { .mk { animation: foil 9s linear infinite; } @keyframes foil { to { background-position: 300% 0; } } }
+  @media (prefers-reduced-motion: no-preference) { .mk, .mk-sm { animation: foil 9s linear infinite; } @keyframes foil { to { background-position: 300% 0; } } }
   .rules { margin: 0; padding-left: 20px; display: grid; gap: 8px; color: var(--ink-2); font-size: 15px; line-height: 1.55; max-width: 72ch; }
   .rules strong { color: var(--ink); }
 </style>
@@ -49,14 +52,14 @@ diagram boxes and the rules. Switch style and theme in the header.
 
   <h2>Logo</h2>
   <div class="marks">
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive)"></span></div><figcaption><strong>Dive</strong> (in use): the first cut, two cutouts.</figcaption></figure>
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-steps)"></span></div><figcaption><strong>Steps</strong>: each square half the last, receding into the corner.</figcaption></figure>
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-3)"></span></div><figcaption><strong>Dive, three thin cutouts</strong>: gaps 2.2 of 28.</figcaption></figure>
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-3-open)"></span></div><figcaption><strong>Dive, three hairline cutouts</strong>: gaps 1.6 of 28.</figcaption></figure>
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-b)"></span></div><figcaption><strong>Dive, halves</strong>: each part half the one around it.</figcaption></figure>
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-c)"></span></div><figcaption><strong>Dive, golden</strong>: golden-ratio sizes, a thinner inner frame.</figcaption></figure>
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-d)"></span></div><figcaption><strong>Dive, big core</strong>: a larger inner frame.</figcaption></figure>
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-e)"></span></div><figcaption><strong>Dive, heavy</strong>: thicker frames, a smaller core.</figcaption></figure>
+    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-dive)"></span><span class="nv">fraktul</span></div><figcaption><strong>Dive</strong> (in use): the first cut, two cutouts.</figcaption></figure>
+    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-steps)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-steps)"></span><span class="nv">fraktul</span></div><figcaption><strong>Steps</strong>: each square half the last, receding into the corner.</figcaption></figure>
+    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-3)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-dive-3)"></span><span class="nv">fraktul</span></div><figcaption><strong>Dive, three thin cutouts</strong>: gaps 2.2 of 28.</figcaption></figure>
+    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-3-open)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-dive-3-open)"></span><span class="nv">fraktul</span></div><figcaption><strong>Dive, three hairline cutouts</strong>: gaps 1.6 of 28.</figcaption></figure>
+    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-b)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-dive-b)"></span><span class="nv">fraktul</span></div><figcaption><strong>Dive, halves</strong>: each part half the one around it.</figcaption></figure>
+    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-c)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-dive-c)"></span><span class="nv">fraktul</span></div><figcaption><strong>Dive, golden</strong>: golden-ratio sizes, a thinner inner frame.</figcaption></figure>
+    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-d)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-dive-d)"></span><span class="nv">fraktul</span></div><figcaption><strong>Dive, big core</strong>: a larger inner frame.</figcaption></figure>
+    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-e)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-dive-e)"></span><span class="nv">fraktul</span></div><figcaption><strong>Dive, heavy</strong>: thicker frames, a smaller core.</figcaption></figure>
   </div>
 
   <h2>Colour</h2>
