@@ -160,8 +160,9 @@ ratio, in a pastel iridescent foil (`--mark-shape` and `--foil` in tokens.css). 
 
 ## fraktul.dev
 
-`npm run site:dev` serves the home page, the design system and fraktul's own map; `npm run site:build` writes
-`site-dist/`.
+`npm run site:dev` serves the home page, the documentation (`content/docs/*.md`), the design system and fraktul's
+own map; `npm run site:build` writes `site-dist/`. Every branch deploys a preview and `main` deploys production on
+Cloudflare: see [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Develop
 
