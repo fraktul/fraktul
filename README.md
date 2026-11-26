@@ -39,8 +39,9 @@ voice: { voice: bf_emma, speed: 1, say_as: { NCCI: "N C C I" } }
 expect: { tours: 3, depth: { answer_core: 3, "*": 2 } }    # requirements the check enforces (optional)
 
 repos:
-  main: { path: ".", github: owner/repo }
+  main: { path: "." }                                       # source links from the checkout's git origin
   other: { path: "~/github/other", github: owner/other }    # skipped when not checked out (CI)
+  billing: { path: "~/src/billing", remote: "https://gitlab.com/acme/billing", remote_private: true }
   local: { path: "~/notes", private: true, include: ["scripts/*.py"] }   # names only, never contents
 
 coverage:                             # files the check expects the model to mention
@@ -81,6 +82,21 @@ nodes:
 - Classes: `model`, `code`, `human`, `data`, `ext`. Planned blocks are drawn dashed.
 
 Only git-tracked files are read, so ignored, licensed or local data never enters the page.
+
+### Source links
+
+Local paths are only used while building. The page links every file, function and ADR to its source on the repo's
+host instead, pinned to the commit that was read, so a deployed map keeps pointing at the code it was built from.
+
+- **Where the repo lives**: `remote:` (any clone or web URL), or `github: owner/repo` as shorthand. With neither,
+  fraktul reads the checkout's `git remote get-url origin`. A repo with no remote simply has no links.
+- **Hosts**: GitHub, GitLab, Bitbucket, Azure DevOps and Gitea/Forgejo (Codeberg), each in its own line-link format.
+  A self-hosted server whose name does not say what it runs needs `remote_kind: gitlab` (or `github`, `bitbucket`,
+  `azure`, `gitea`); the check fails on a stated remote it cannot link to.
+- **Credentials**: a username, password or token in a URL (common in `origin`) is dropped and never printed.
+- **Private repos**: `remote_private: true` marks the links with a lock, so readers without access know why the host
+  asks them to sign in. This is separate from `private: true`, which keeps a repo's contents out of the page.
+- A repo that is not checked out links to its default branch, since there is no commit to pin to.
 
 ### Tours, narration and recordings
 
