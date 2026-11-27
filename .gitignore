@@ -16,3 +16,4 @@ site-dist/
 package/
 *.tgz
 .claude/worktrees/
+.demo/

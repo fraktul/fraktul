@@ -80,6 +80,7 @@ tours:
 | `default_repo` | no | Repo for anchors that name none. Default: the repo whose `path` is `"."`, else `main`. |
 | `adrs_dir` | no | Folder of decision records. See [Live facts](/docs/live-facts). |
 | `live_module` | no | A TypeScript file, relative to the model, that returns live facts. |
+| `traces` | no | The summary `fraktul traces` wrote, relative to the model. Default: `traces.json` beside the model, when there is one. See [Traces](/docs/traces). |
 | `voice` | no | Narration settings. See [Tours and narration](/docs/tours). |
 | `expect` | no | Promises the check enforces. See [Expectations](#expectations). |
 | `coverage` | no | Files the check expects the model to mention. See [Coverage](#coverage). |
@@ -144,11 +145,12 @@ nodes:
 | Field | What it does |
 |---|---|
 | `title` | Required. Shown on the box when the box has no label, and in the panel. |
-| `kind` | `district`, `component`, `module`, `data`, `person`, `service`, `repo`, `doc` or `step`. |
+| `kind` | The level: `system`, `service` or `feature` (see [Levels](/docs/levels)). Or what the box stands for: `component`, `module`, `data`, `person`, `repo`, `doc`, `step`. `district` is an older word for `system`. The check rejects anything else. |
 | `status` | `built`, `prototype`, `planned`, `proposed` or `external`. Planned blocks are drawn dashed. |
 | `summary` | One paragraph, shown in the panel and the hover peek. |
 | `diagram` | A Mermaid flowchart. See [Diagrams that chain](/docs/diagrams). |
 | `anchors` | The code behind the block (below). |
+| `service` | The block's name in traces (OpenTelemetry's `service.name`), or a list of names. See [Traces](/docs/traces). |
 | `live` | Names of live fact blocks to show in the panel. See [Live facts](/docs/live-facts). |
 
 The id is also the box's id in every diagram, so it must be lowercase letters, digits and underscores, starting with

@@ -5,8 +5,9 @@ import { loadModel } from "../src/lib/model.ts";
 import { SHOTS } from "../src/lib/shots.ts";
 
 test("site screenshots: every deep link leads to a view, a box and a tour stop that exist in the example map", async () => {
-  const site = await buildSite(loadModel());
+  const maps = { "/map": await buildSite(loadModel()), "/shop/": await buildSite(loadModel("example/shop/model.yaml")) };
   for (const s of SHOTS) {
+    const site = maps[(s.map ?? "/map") as keyof typeof maps];
     const [path, query = ""] = s.link.slice(1).split("?");
     const [slug, box] = path.split("/");
     const key = decodeURIComponent(slug).includes(":") ? decodeURIComponent(slug) : `node:${slug.replace(/-/g, "_")}`;

@@ -1,0 +1,366 @@
+# The OpenTelemetry Demo ("Astronomy Shop"), mapped with fraktul: a familiar open-source system of about twenty
+# services in a dozen languages (https://github.com/open-telemetry/opentelemetry-demo, Apache-2.0).
+#
+# It shows what fraktul's own map cannot: several services, and what their traces say. traces.json beside this file
+# was read from the demo's Jaeger while its load generator shopped (`fraktul traces`). The code levels need a
+# checkout of the demo at .demo/opentelemetry-demo (CI clones the pinned tag; see DEPLOYMENT.md).
+version: 1
+title: Astronomy Shop, mapped with fraktul
+brand: Astronomy Shop
+home: /
+root: shop
+default_repo: demo
+repos:
+  demo: { path: ".demo/opentelemetry-demo", github: open-telemetry/opentelemetry-demo, title: opentelemetry-demo }
+
+expect: { tours: 2 }
+
+nodes:
+  shop:
+    title: Astronomy Shop
+    kind: system
+    status: built
+    summary: >-
+      An online shop that sells telescopes. A shopper browses products, fills a cart, pays, and gets a confirmation
+      and a tracking number. Behind the page are about twenty small services, each doing one job.
+    diagram: |
+      flowchart LR
+        shopper(["A shopper"]):::human --> storefront
+        storefront -- "what is for sale" --> browsing
+        storefront -- "add, view" --> basket
+        storefront -- "place the order" --> checkout
+        checkout --> basket
+        checkout -- "take the money" --> paying
+        checkout -- "send it" --> delivery
+        checkout -- "tell everyone else" --> back_office
+        operations -.-> storefront
+
+  storefront:
+    title: Storefront
+    kind: service
+    status: built
+    service: [frontend, frontend-proxy]
+    summary: >-
+      The website. A proxy takes every request from the browser and hands it to the web app, which draws the pages and
+      asks the other services for products, the cart and the checkout.
+    diagram: |
+      flowchart LR
+        browser(["The shopper's browser"]):::human --> proxy["Proxy (Envoy)"]:::code --> pages["Pages"]:::code
+        pages --> api["API routes"]:::code
+        api --> products_api["Products"]:::code
+        api --> cart_api["Cart"]:::code
+        api --> checkout_api["Checkout"]:::code
+        api --> shipping_api["Shipping"]:::code
+        api --> recs_api["Recommendations"]:::code
+        %% @link proxy src/frontend-proxy/envoy.tmpl.yaml
+        %% @link pages src/frontend/pages/index.tsx
+        %% @link products_api src/frontend/pages/api/products/index.ts
+        %% @link cart_api src/frontend/pages/api/cart.ts
+        %% @link checkout_api src/frontend/pages/api/checkout.ts
+        %% @link shipping_api src/frontend/pages/api/shipping.ts
+        %% @link recs_api src/frontend/pages/api/recommendations.ts
+    anchors:
+      files:
+        - src/frontend/pages/api/cart.ts
+        - src/frontend/pages/api/checkout.ts
+        - src/frontend/pages/api/currency.ts
+        - src/frontend/pages/api/products/index.ts
+        - src/frontend/pages/api/recommendations.ts
+        - src/frontend/pages/api/shipping.ts
+        - src/frontend/gateways/Api.gateway.ts
+        - src/frontend/gateways/rpc/Cart.gateway.ts
+        - src/frontend/gateways/rpc/Checkout.gateway.ts
+        - src/frontend/gateways/rpc/ProductCatalog.gateway.ts
+
+  browsing:
+    title: Browsing
+    kind: feature
+    status: built
+    summary: Showing a shopper what is for sale, with pictures, suggestions for what else to buy, and adverts.
+    diagram: |
+      flowchart LR
+        storefront -- "list and look up products" --> product_catalog
+        storefront -- "what else might they like" --> recommendation
+        recommendation -- "which products exist" --> product_catalog
+        storefront -- "adverts for this page" --> ad
+        storefront -- "product photos" --> image_provider
+        checkout -- "prices at order time" --> product_catalog
+
+  product_catalog:
+    title: Product catalog
+    kind: service
+    status: built
+    service: product-catalog
+    summary: The list of everything the shop sells. Other services ask it for one product, all products, or a search.
+    anchors:
+      files: [src/product-catalog/main.go]
+  recommendation:
+    title: Recommendations
+    kind: service
+    status: built
+    service: recommendation
+    summary: Suggests other products to a shopper, based on what they are looking at.
+    anchors:
+      files: [src/recommendation/recommendation_server.py, src/recommendation/metrics.py]
+  ad:
+    title: Adverts
+    kind: service
+    status: built
+    service: ad
+    summary: Picks adverts that match the words on the page the shopper is viewing.
+    anchors:
+      files: [src/ad/src/main/java/oteldemo/AdService.java]
+  image_provider:
+    title: Product photos
+    kind: service
+    status: built
+    service: image-provider
+    summary: Serves the product pictures. A plain web server (nginx) with a folder of images.
+    anchors:
+      files: [src/image-provider/nginx.conf.template]
+
+  basket:
+    title: The cart
+    kind: feature
+    status: built
+    summary: Remembering what a shopper has picked, until they pay for it or give up.
+    diagram: |
+      flowchart LR
+        storefront -- "add, view, empty" --> cart
+        checkout -- "read it, then empty it" --> cart
+        cart -- "one entry per shopper" --> cart_store
+  cart:
+    title: Cart
+    kind: service
+    status: built
+    service: cart
+    summary: Holds each shopper's cart. It can add an item, return the cart and empty it.
+    anchors:
+      files: [src/cart/src/services/CartService.cs, src/cart/src/cartstore/ValkeyCartStore.cs]
+  cart_store:
+    title: Cart store
+    kind: data
+    status: built
+    service: redis
+    summary: A fast in-memory store (Valkey, which speaks the Redis protocol) where the carts are kept.
+
+  checkout:
+    title: Checkout
+    kind: service
+    status: built
+    service: checkout
+    summary: >-
+      Turns a cart into an order. It is the conductor: it reads the cart, prices it, charges the card, books the
+      shipping, sends the confirmation and announces the order to the rest of the shop.
+    diagram: |
+      flowchart LR
+        checkout["Checkout: place an order"]:::code
+        checkout -- "1. read the cart, 6. empty it" --> cart
+        checkout -- "2. look up each price" --> product_catalog
+        checkout -- "3. convert to the shopper's currency" --> currency
+        checkout -- "4. charge the card" --> payment
+        checkout -- "5. quote and book shipping" --> shipping
+        checkout -- "7. confirm by email" --> email
+        checkout -- "8. announce the order" --> order_events
+        %% @link checkout src/checkout/main.go
+    anchors:
+      files: [src/checkout/main.go, src/checkout/kafka/producer.go, src/checkout/money/money.go]
+
+  paying:
+    title: Paying
+    kind: feature
+    status: built
+    summary: Working out what the order costs in the shopper's currency, and taking the money.
+    diagram: |
+      flowchart LR
+        storefront -- "show prices in my currency" --> currency
+        checkout -- "convert each price" --> currency
+        checkout -- "charge the card" --> payment
+        payment --> bank(["The card network"]):::ext
+  payment:
+    title: Payment
+    kind: service
+    status: built
+    service: payment
+    summary: Takes a card number and an amount, checks the card, and charges it. (In the demo, nothing is really charged.)
+    anchors:
+      files: [src/payment/charge.js, src/payment/index.js]
+  currency:
+    title: Currency
+    kind: service
+    status: built
+    service: currency
+    summary: Converts an amount of money from one currency to another, and lists the currencies the shop supports.
+    anchors:
+      files: [src/currency/src/server.cpp]
+
+  delivery:
+    title: Delivery
+    kind: feature
+    status: built
+    summary: Telling the shopper what shipping costs, booking it, and confirming the order by email.
+    diagram: |
+      flowchart LR
+        storefront -- "what will shipping cost" --> shipping
+        checkout -- "quote, then ship" --> shipping
+        shipping -- "price for this many items" --> quote
+        checkout -- "order confirmation" --> email
+        email --> inbox(["The shopper's inbox"]):::human
+  shipping:
+    title: Shipping
+    kind: service
+    status: built
+    service: shipping
+    summary: Says what delivery will cost and, once paid, books it and returns a tracking number.
+    anchors:
+      files: [src/shipping/src/shipping_service.rs, src/shipping/src/shipping_service/quote.rs, src/shipping/src/shipping_service/tracking.rs]
+  quote:
+    title: Shipping quotes
+    kind: service
+    status: built
+    service: quote
+    summary: Works out a delivery price from the number of items.
+    anchors:
+      files: [src/quote/app/routes.php]
+  email:
+    title: Email
+    kind: service
+    status: built
+    service: email
+    summary: Sends the order confirmation to the shopper.
+    anchors:
+      files: [src/email/email_server.rb]
+
+  back_office:
+    title: After the order
+    kind: feature
+    status: built
+    summary: >-
+      What happens once an order exists, without making the shopper wait: the books are updated and the order is
+      checked for fraud. Checkout announces the order on a queue; whoever cares listens.
+    diagram: |
+      flowchart LR
+        checkout -- "order placed" --> order_events
+        order_events --> accounting --> ledger_db
+        order_events --> fraud_detection
+  order_events:
+    title: Order events
+    kind: data
+    status: built
+    service: kafka
+    summary: A queue (Kafka) that carries one message per order. Services that need to know about orders read from it.
+  accounting:
+    title: Accounting
+    kind: service
+    status: built
+    service: accounting
+    summary: Records every order in the shop's books.
+    anchors:
+      files: [src/accounting/Consumer.cs, src/accounting/Entities.cs]
+  ledger_db:
+    title: Orders database
+    kind: data
+    status: built
+    service: postgresql
+    summary: The database (PostgreSQL) where accounting keeps the orders.
+  fraud_detection:
+    title: Fraud detection
+    kind: service
+    status: built
+    service: fraud-detection
+    summary: Looks at each order as it arrives and flags the suspicious ones.
+    anchors:
+      files: [src/fraud-detection/src/main/kotlin/frauddetection/main.kt]
+
+  operations:
+    title: Running the shop
+    kind: feature
+    status: built
+    summary: >-
+      Not part of shopping, but part of the system: switches that turn behaviour on and off without a deploy, and
+      pretend shoppers that keep the demo busy.
+    diagram: |
+      flowchart LR
+        load_generator -- "browses and buys, all day" --> storefront
+        load_generator --> flags
+        cart -- "should I misbehave?" --> flags
+        payment --> flags
+        fraud_detection --> flags
+  flags:
+    title: Feature flags
+    kind: service
+    status: built
+    service: flagd
+    summary: Switches that services read to turn behaviour on or off while running. The demo uses them to break things on purpose.
+    anchors:
+      files: [src/flagd/demo.flagd.json]
+  load_generator:
+    title: Pretend shoppers
+    kind: service
+    status: built
+    service: load-generator
+    summary: A script that acts like many shoppers at once, so there is always traffic to look at.
+    anchors:
+      files: [src/load-generator/locustfile.py]
+
+tours:
+  - id: the-shop-in-two-minutes
+    title: The shop in two minutes
+    summary: The whole system from 30,000 feet, for someone who has never seen the code.
+    steps:
+      - view: shop
+        focus: [shopper, storefront]
+        title: A shopper and a website
+        text: Everything starts with a shopper opening the website. The storefront is the only part they ever see.
+      - view: shop
+        focus: [browsing, basket]
+        title: Looking, and picking
+        text: The storefront does not know the products itself. It asks one group of services what is for sale, and another to remember what the shopper picked.
+      - view: shop
+        focus: [checkout]
+        title: One service runs the sale
+        text: When the shopper pays, checkout takes over. It is the conductor. Every other step of the order happens because checkout asked for it.
+      - view: shop
+        focus: [paying, delivery]
+        title: Money and parcels
+        text: Checkout has the card charged, then has the parcel booked and a confirmation sent.
+      - view: shop
+        focus: [back_office]
+        title: The paperwork happens later
+        text: The shopper is done. Checkout announces the order, and accounting and fraud detection pick it up in their own time.
+      - view: shop
+        focus: [operations]
+        title: And someone keeps it running
+        text: Off to the side are the switches that change how services behave, and the pretend shoppers that keep this demo busy.
+  - id: follow-one-order
+    title: Follow one order
+    summary: From the click on "Place order" to the message on the queue, service by service.
+    steps:
+      - view: shop
+        focus: [storefront, checkout]
+        title: The click
+        text: The shopper presses Place order. The storefront sends the cart's owner, the address and the card to checkout.
+      - view: checkout
+        focus: [cart, product_catalog]
+        title: What are they buying?
+        text: Checkout reads the cart, then asks the catalog for the price of each item. It trusts the catalog's prices, not the browser's.
+      - view: checkout
+        focus: [currency]
+        title: In their currency
+        text: Each price is converted to the currency the shopper chose.
+      - view: checkout
+        focus: [payment]
+        title: Take the money
+        text: Checkout asks payment to charge the card for the total. If this fails, the order stops here.
+      - view: checkout
+        focus: [shipping]
+        title: Send the parcel
+        text: Shipping gave a price earlier; now it books the delivery and returns a tracking number.
+      - view: checkout
+        focus: [email, order_events]
+        title: Tell everyone
+        text: The shopper gets a confirmation by email. Then checkout puts one message on the order queue.
+      - view: back_office
+        focus: [order_events, accounting, fraud_detection]
+        title: After the shopper has gone
+        text: Accounting reads the message and records the order. Fraud detection reads the same message and checks it. Neither made the shopper wait.

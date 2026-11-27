@@ -13,6 +13,16 @@ through Worker routes `fraktul.dev/*` and `www.fraktul.dev/*` on top of the zone
 Both builds are public (`FRAKTUL_PUBLIC=1`): fraktul's own map on /map keeps its blocks, files, functions and who calls
 whom, but leaves out source code and links into the repo. Drop it from the `site:build` scripts once the code is public.
 
+## The demo shop (/shop/)
+
+`npm run site:build` also builds `example/shop/model.yaml`, a map of the OpenTelemetry Demo, into `site-dist/shop/`.
+Its code levels need the demo's source at `.demo/opentelemetry-demo` (git-ignored); CI clones the pinned tag before
+building. Without the checkout the map still builds, with its service levels and traces but no code below them.
+
+`example/shop/traces.json` was captured from the running demo. To refresh it: start the demo with Docker
+(`docker compose up -d` in a checkout of the demo, with a `file` exporter added to its Collector), let the load
+generator run for a few minutes, then `node bin/fraktul.ts traces <the exported file> --model example/shop/model.yaml`.
+
 ## Credentials
 
 - Repository secret `CLOUDFLARE_API_TOKEN`: a Cloudflare API token for the account, with Account · Workers Scripts ·

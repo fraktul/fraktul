@@ -6,7 +6,8 @@ where you click from the whole system down to a line of source, follow tours, li
 record your own.
 
 **[fraktul.dev](https://fraktul.dev)** · [Features](https://fraktul.dev/features) ·
-[Docs](https://fraktul.dev/docs) · [The live map](https://fraktul.dev/map) (fraktul, mapped with fraktul)
+[Docs](https://fraktul.dev/docs) · [The live map](https://fraktul.dev/map) (fraktul, mapped with fraktul) ·
+[The demo shop](https://fraktul.dev/shop/) (twenty services, mapped from code and traces)
 
 ## Why
 
@@ -26,11 +27,13 @@ Node 24.21 or newer, and a project in git (fraktul reads only files git tracks).
 silicon Mac with [uv](https://docs.astral.sh/uv/) and ffmpeg.
 
 ```bash
-npx fraktul init       # a starter model at docs/arch/model.yaml, from your project's folders
+npx fraktul skill      # install the agent skill: then ask your AI assistant to "map this system with fraktul"
+npx fraktul init       # or start by hand: a starter model at docs/arch/model.yaml, from your project's folders
 npx fraktul check      # every file, function, diagram box and tour step it names must exist
 npx fraktul dev        # the live map at http://localhost:8080
 npx fraktul build      # a static folder (fraktul-dist/) for any host
 npx fraktul voice      # speak the tours (local; the first run sets up the voice engine)
+npx fraktul traces http://jaeger:16686   # what OpenTelemetry traces saw, for the map and the check
 ```
 
 Every command takes the model's path; without one, fraktul looks for `./model.yaml`, then `./docs/arch/model.yaml`.
@@ -38,6 +41,27 @@ The full guide is at [fraktul.dev/docs](https://fraktul.dev/docs/getting-started
 
 The map is a static page. Mermaid, three.js and its fonts ship with fraktul and are served beside it, so it loads
 nothing from a CDN and nothing about your code leaves your machine.
+
+## Written by your AI assistant
+
+The model is a text file with a check that says when it is wrong, so an AI coding assistant can write it. `fraktul
+skill` (and `fraktul init`) install an agent skill into `.claude/skills` and `.agents/skills` that teaches the
+assistant the levels, the conventions and the check loop. Then ask it to map the system. Details:
+[Map it with AI](https://fraktul.dev/docs/ai). The skill's source is `skills/fraktul/SKILL.md`.
+
+## Levels
+
+One map holds every altitude: the **system** from 30,000 feet, each **service**, each **feature**, then the files and
+functions fraktul reads from the code. `kind: system | service | feature` says which level a block is.
+[Levels](https://fraktul.dev/docs/levels).
+
+## Traces
+
+`fraktul traces <jaeger url | OTLP JSON file or folder>` boils OpenTelemetry traces down to `traces.json` beside the
+model: services, the calls between them, error counts and latency (no payloads). Give each block `service: <name>`
+and its panel shows the real traffic; `fraktul check` lists calls the traces show that no diagram draws, and
+`--strict` fails on them. [Traces](https://fraktul.dev/docs/traces). `example/shop/` is the OpenTelemetry Demo mapped
+this way.
 
 ## The model
 

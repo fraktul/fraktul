@@ -317,6 +317,8 @@ pre.code:not(.numbered) { padding: 10px 12px; }
 .space-hint { position: absolute; z-index: 3; left: 12px; bottom: 10px; margin: 0; padding: 5px 10px; max-width: calc(100% - 24px); font: 500 11.5px/1.7 var(--mono); color: var(--ink-2);
   background: color-mix(in srgb, var(--sheet) 88%, transparent); border: 1px solid var(--line); border-radius: 8px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); pointer-events: none; }
 .space-hint kbd { display: inline-block; min-width: 1.2em; margin: 0 1px; padding: 0 4px; border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent); border-radius: 4px; background: var(--paper); text-align: center; font: inherit; font-weight: 600; color: var(--ink); }
+/* The level of a block (system, service, feature), small above its summary. */
+.panel .level { margin: -4px 0 8px; font: 600 11px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); }
 /* The 3D switches sit top right, clear of the key hints along the bottom. */
 .space-tools { position: absolute; right: 12px; top: 10px; z-index: 3; display: flex; gap: 6px; }
 .lock-btn[aria-pressed="true"], :root[data-style] .lock-btn[aria-pressed="true"], .slow-btn[aria-pressed="true"], :root[data-style] .slow-btn[aria-pressed="true"], .bird-btn[aria-pressed="true"], :root[data-style] .bird-btn[aria-pressed="true"] { background: var(--ink); background-color: var(--ink); color: var(--sheet); border-color: var(--ink); }

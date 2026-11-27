@@ -1,15 +1,16 @@
 // Checks the model against the repos: every file, function, ADR and diagram reference must exist, and anything in the
 // repo the model does not mention yet is listed.
 
+import { compareTraces, loadObserved, type TraceReport } from "./traces.ts";
 import { readCode } from "./code.ts";
 import { readAdrs } from "./live.ts";
 import { parseFlowchart } from "./mermaid.ts";
-import { anchorsOf, filesOf, matches, parseRef, remoteOf, repoRoot, type Model, type Ref } from "./model.ts";
+import { anchorsOf, filesOf, matches, parseRef, remoteOf, repoRoot, type Model, type Ref, KINDS } from "./model.ts";
 import { HOST_KINDS, redact } from "./remote.ts";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-export type Report = { errors: string[]; unmentioned: { files: string[]; adrs: string[] }; skipped: string[]; unreachable: string[]; stats: Record<string, number> };
+export type Report = { errors: string[]; unmentioned: { files: string[]; adrs: string[] }; skipped: string[]; unreachable: string[]; stats: Record<string, number>; /** The model against what traces saw, when there is a traces summary. */ traces?: TraceReport };
 
 const ID = /^[a-z][a-z0-9_]*$/;
 
@@ -68,6 +69,7 @@ export function checkModel(model: Model): Report {
   for (const [id, n] of Object.entries(model.nodes)) {
     if (!ID.test(id)) errors.push(`node "${id}": ids are lowercase letters, digits and _ (they are Mermaid ids)`);
     if (!n.title) errors.push(`node ${id}: no title`);
+    if (n.kind && !KINDS.includes(n.kind)) errors.push(`node ${id}: kind "${n.kind}" is not one of ${KINDS.join(", ")}`);
     if (n.anchors?.repo && !model.repos[n.anchors.repo]) errors.push(`node ${id}: unknown repo "${n.anchors.repo}"`);
     if (n.diagram) {
       const p = parseFlowchart(n.diagram);
@@ -143,7 +145,10 @@ export function checkModel(model: Model): Report {
     for (const f of filesOf(model, c.repo)) if (matches(f, c.include) && !matches(f, c.exclude ?? []) && !seen.has(f)) files.push(c.repo === D ? f : `${c.repo}:${f}`);
   }
   const unAdrs = adrs.filter((a) => !adrMentioned.has(a.num)).map((a) => `${a.num} ${a.title}`);
+  // What the running system says (fraktul traces), against what the model draws.
+  const observed = loadObserved(model);
   return {
+    ...(observed ? { traces: compareTraces(model, observed) } : {}),
     errors,
     unmentioned: { files, adrs: unAdrs },
     skipped: [...skipped],

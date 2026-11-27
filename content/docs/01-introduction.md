@@ -28,12 +28,15 @@ fraktul keeps both in one place and ties them together:
 
 | Feature | What it does |
 |---|---|
+| Every level | Systems, services, features, files and functions in one map, from the big picture to the code. |
+| Written by AI | An agent skill teaches your coding assistant to write and update the model. |
 | Diagrams you dive into | A box that is another block opens its diagram. Keep clicking: blocks, files, functions, source. |
 | Hover peeks | Hover a box to see its summary and a small copy of what's inside. |
 | The check | `fraktul check` fails on a missing file, function, decision record, diagram box or tour step. |
 | Tours | Step-by-step paths through the map, with branches, written in the model. |
 | Narration | Tours spoken by a local neural voice, with the highlight moving as it talks. |
 | Recorded walkthroughs | Talk while you click; voice and clicks replay together. |
+| Traces | What your OpenTelemetry traces say next to what you drew, and a check when they disagree. |
 | Live facts | Numbers and lists read from your project at build time. |
 | 3D view | The same level as a place you can fly through. |
 | Publishing | A static folder you can host anywhere, with a public mode that leaves the source out. |
@@ -58,5 +61,7 @@ the system is for and how its parts relate, which code can't tell you. fraktul m
 ## Where to go next
 
 - [Quickstart](/docs/getting-started): a map of your own project in a few minutes.
+- [Map it with AI](/docs/ai): have your coding assistant write it.
+- [The demo map](/shop/): an online shop of twenty services, mapped from its code and its traces.
 - [Core concepts](/docs/concepts): blocks, levels, anchors, the check and tours, in one page.
 - [Open the live map](/map): fraktul's own map, built from the example model in its repo.

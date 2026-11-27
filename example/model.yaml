@@ -112,19 +112,22 @@ nodes:
         tours_ok["Views, focus, cues, next, branches"]:::code
         coverage["Files the model does not mention"]:::code
         depth["Depth and tour counts (expect)"]:::code
+        traces["Calls the traces show that nobody drew"]:::code
         verdict{"Pass or fail"}
         ci(["CI runs it on every push"]):::ext
         load --> refs --> verdict
         load --> boxes --> verdict
         load --> tours_ok --> verdict
         load --> coverage --> verdict
+        load --> traces --> verdict
+        %% @link traces src/lib/traces.ts#compareTraces
         load --> depth --> verdict
         verdict --> ci
         %% @link load scripts/check-model.ts
         %% @link refs src/lib/check.ts#checkModel
         %% @link depth src/lib/check.ts#modelDepth
     anchors:
-      files: [scripts/check-model.ts, src/lib/init.ts]
+      files: [scripts/check-model.ts, src/lib/init.ts, src/lib/traces.ts]
       functions: ["src/lib/check.ts#checkModel", "src/lib/check.ts#modelDepth"]
 
   build:
@@ -218,7 +221,7 @@ nodes:
         public -.-> static
         %% @link cli bin/fraktul.ts#build
     anchors:
-      files: [bin/fraktul.ts, scripts/build-package.ts, scripts/release.ts, src/lib/head.ts, src/lib/docs.ts, src/lib/seo.ts, src/lib/features.ts, src/lib/shots.ts, scripts/llms-txt.ts, scripts/internal-pages.ts, scripts/site-images.ts, scripts/site-shots.ts]
+      files: [bin/fraktul.ts, scripts/build-package.ts, scripts/release.ts, src/lib/head.ts, src/lib/heading.ts, src/lib/docs.ts, src/lib/seo.ts, src/lib/features.ts, src/lib/shots.ts, scripts/llms-txt.ts, scripts/internal-pages.ts, scripts/site-images.ts, scripts/site-shots.ts]
 
 tours:
   - id: how-it-works

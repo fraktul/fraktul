@@ -3,7 +3,7 @@
 // git checkout that holds the model.
 
 import { execFileSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync, realpathSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import { originOf, parseRemote, type HostKind, type Remote } from "./remote.ts";
@@ -17,7 +17,14 @@ export const FRAKTUL = resolve(here, "../..");
 export const MODEL_PATH = resolve(process.env.FRAKTUL_MODEL ?? join(FRAKTUL, "example/model.yaml"));
 
 export type Status = "built" | "prototype" | "planned" | "external" | "proposed";
-export type Kind = "district" | "component" | "module" | "data" | "person" | "service" | "repo" | "doc" | "step";
+/**
+ * What a block is. The four that name a level of the picture, from 30,000 feet down: `system` (the whole thing, or one
+ * of several systems), `service` (something deployed and running), `feature` (something the product does, inside or
+ * across services), then files and functions, which fraktul reads from the code. `district` is an older word for
+ * system; the rest say what kind of thing a box stands for.
+ */
+export type Kind = "system" | "district" | "service" | "feature" | "component" | "module" | "data" | "person" | "repo" | "doc" | "step";
+export const KINDS: Kind[] = ["system", "district", "service", "feature", "component", "module", "data", "person", "repo", "doc", "step"];
 
 export type Anchors = {
   repo?: string;
@@ -36,6 +43,8 @@ export type ModelNode = {
   detail?: string;
   diagram?: string;
   live?: string[];
+  /** The name (or names) this block goes by in traces: OpenTelemetry's `service.name`. See src/lib/traces.ts. */
+  service?: string | string[];
   anchors?: Anchors;
   facts?: Record<string, string | number>;
 };
@@ -84,6 +93,8 @@ export type Model = {
   adrs_dir?: string;
   /** A module (relative to the model file) whose default export returns live fact blocks: see src/lib/live.ts. */
   live_module?: string;
+  /** The summary `fraktul traces` wrote, relative to the model file. Default: traces.json beside the model, if any. */
+  traces?: string;
   voice?: Voice;
   /** Requirements the check enforces: drill-down depth per top-level block ("*" for the rest), tours. */
   expect?: { depth?: Record<string, number>; tours?: number };
@@ -151,7 +162,8 @@ export function filesOf(m: Model, repo: string): string[] {
     try {
       files = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8", maxBuffer: 64 << 20, stdio: ["ignore", "pipe", "ignore"] }).split("\n").filter(Boolean);
       const top = execFileSync("git", ["rev-parse", "--show-toplevel"], { cwd: root, encoding: "utf8" }).trim();
-      const sub = relative(top, root);
+      // Through a symlink (or macOS's /var), `root` and git's own path differ in spelling: compare the real paths.
+      const sub = relative(realpathSync(top), realpathSync(root));
       if (sub) files = files.filter((f) => f.startsWith(`${sub}/`)).map((f) => f.slice(sub.length + 1));
     } catch {
       // Not a git repo: list only the folders the include globs name, never the rest.

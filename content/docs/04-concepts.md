@@ -19,8 +19,8 @@ nodes:
     summary: Turns finished orders into invoices.
 ```
 
-`kind` says what sort of thing it is (`district`, `component`, `module`, `data`, `person`, `service`, `repo`, `doc`,
-`step`). `status` says how real it is (`built`, `prototype`, `planned`, `proposed`, `external`). Planned blocks are
+`kind` says which level a block is (`system`, `service`, `feature`: see [Levels](/docs/levels)) or what sort of thing
+it stands for (`component`, `module`, `data`, `person`, `repo`, `doc`, `step`). `status` says how real it is (`built`, `prototype`, `planned`, `proposed`, `external`). Planned blocks are
 drawn dashed, and both fields shape the block in the [3D view](/docs/3d-view).
 
 ## Levels
@@ -35,7 +35,8 @@ The map is a stack of levels. You go down by clicking a box and up with Esc.
 | A file | its functions and the calls between them | generated |
 | A function | its callers, its callees and its source | generated |
 
-The top levels explain intent, which code can't. The bottom levels are read from the code on every build, so they
+[Levels](/docs/levels) describes the usual ladder: system, service, feature, file, function. The top levels explain
+intent, which code can't. The bottom levels are read from the code on every build, so they
 are never out of date. A box in a diagram becomes a door to the next level when its id is another block's id.
 
 ## Anchors

@@ -30,6 +30,9 @@ jobs:
       - uses: actions/setup-node@v5
         with: { node-version: 24, cache: npm }
       - run: npm ci
+      # The demo shop's map (/shop/) reads the OpenTelemetry Demo's code for its file and function levels.
+      - name: Check out the OpenTelemetry Demo (for /shop/)
+        run: git clone --quiet --depth 1 --branch 2.1.3 https://github.com/open-telemetry/opentelemetry-demo.git .demo/opentelemetry-demo
       - name: Unit tests and the example model's check
         run: npm test
       - name: Build fraktul.dev
@@ -37,7 +40,7 @@ jobs:
       # Every internal link and #fragment must lead somewhere, and every page needs its head tags.
       - name: Check the site's links and head tags
         run: |
-          FRAKTUL_SITE=1 node .claude/skills/bascik/scripts/check-links.mjs --dist site-dist --ignore /map   # links into the map are views, not ids (test/shots.test.ts checks them)
+          FRAKTUL_SITE=1 node .claude/skills/bascik/scripts/check-links.mjs --dist site-dist --ignore /map --ignore /shop   # links into the map are views, not ids (test/shots.test.ts checks them)
           FRAKTUL_SITE=1 node .claude/skills/bascik-seo/scripts/audit-seo.mjs --dist site-dist
       # The npm package is JavaScript (Node does not strip TypeScript in node_modules): build it, install it into an
       # empty project, and map the example with the installed CLI.
@@ -83,6 +86,9 @@ jobs:
           [ "$HAS_TOKEN" = "true" ] || { echo "::error::Repository secret CLOUDFLARE_API_TOKEN is not set (see DEPLOYMENT.md)"; exit 1; }
           [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || { echo "::error::Repository variable CLOUDFLARE_ACCOUNT_ID is not set (see DEPLOYMENT.md)"; exit 1; }
 
+      # The demo shop's map (/shop/) reads the OpenTelemetry Demo's code for its file and function levels.
+      - name: Check out the OpenTelemetry Demo (for /shop/)
+        run: git clone --quiet --depth 1 --branch 2.1.3 https://github.com/open-telemetry/opentelemetry-demo.git .demo/opentelemetry-demo
       - name: Build fraktul.dev
         run: |
           if [ "$GITHUB_REF" = "refs/heads/main" ]; then npm run site:build; else npm run site:build:preview; fi
@@ -146,7 +152,7 @@ jobs:
         if: github.ref != 'refs/heads/main' && steps.newest.outputs.newest == 'true'
         env:
           URL: ${{ steps.upload.outputs.url }}
-        run: node .github/scripts/smoke-test.mjs "$URL" /=200 /features=200 /docs=200 /docs/model=200 /map=200 /design=200 /favicon.svg=200 /og.png=200 /img/top-1280.webp=200 /vendor/fonts/manrope-latin-wght-normal.woff2=200 /no-such-page=404
+        run: node .github/scripts/smoke-test.mjs "$URL" /=200 /features=200 /docs=200 /docs/model=200 /map=200 /shop/=200 /design=200 /favicon.svg=200 /og.png=200 /img/top-1280.webp=200 /vendor/fonts/manrope-latin-wght-normal.woff2=200 /no-such-page=404
 
       # Status codes pass a page whose script fails; this opens the pages in Chromium and waits for the map to draw.
       - name: Install Chromium for the render test
@@ -157,7 +163,7 @@ jobs:
         if: github.ref != 'refs/heads/main' && steps.newest.outputs.newest == 'true'
         env:
           URL: ${{ steps.upload.outputs.url }}
-        run: node .github/scripts/render-test.mjs "$URL" /map=map "/map#check/refs=map" / /features /docs /docs/model /design
+        run: node .github/scripts/render-test.mjs "$URL" /map=map "/map#check/refs=map" /shop/=map / /features /ai /living-docs /docs /docs/model /design
 
       - name: Comment the Preview on the pull request
         if: github.ref != 'refs/heads/main' && steps.newest.outputs.newest == 'true' && steps.alias.outputs.pr != ''
@@ -181,8 +187,8 @@ jobs:
 
       - name: Smoke-test production
         if: github.ref == 'refs/heads/main' && steps.newest.outputs.newest == 'true'
-        run: node .github/scripts/smoke-test.mjs https://fraktul.dev /=200 /features=200 /docs=200 /map=200 /llms.txt=200 /sitemap.xml=200 /robots.txt=200 /og.png=200 /design=404 /no-such-page=404
+        run: node .github/scripts/smoke-test.mjs https://fraktul.dev /=200 /features=200 /ai=200 /living-docs=200 /docs=200 /map=200 /shop/=200 /llms.txt=200 /sitemap.xml=200 /robots.txt=200 /og.png=200 /design=404 /no-such-page=404
 
       - name: Render-test production
         if: github.ref == 'refs/heads/main' && steps.newest.outputs.newest == 'true'
-        run: node .github/scripts/render-test.mjs https://fraktul.dev /map=map / /features /docs
+        run: node .github/scripts/render-test.mjs https://fraktul.dev /map=map /shop/=map / /features /docs

@@ -12,7 +12,9 @@ export type PageMeta = { path: string; title: string; description: string; kind:
 
 const PAGES: PageMeta[] = [
   { path: "/", kind: "home", title: "fraktul: maps of software you can dive into", description: "One model file describes your system. fraktul checks it against the code and draws a map you click through, down to a line of source, with narrated tours." },
-  { path: "/features", kind: "page", title: "Features · fraktul", description: "What fraktul does, with screenshots of the live map: diagrams you click into, a check against the code, big files drawn as groups, narrated tours, 3D and deep links." },
+  { path: "/features", kind: "page", title: "Features · fraktul", description: "What fraktul does, with screenshots of live maps: every level from system to function, a check against code and traces, narrated tours, 3D and deep links." },
+  { path: "/ai", kind: "page", title: "Mapping with AI · fraktul", description: "Give your AI coding assistant the fraktul skill and ask for a map. It reads the code and writes the model; a check proves everything it named is real." },
+  { path: "/living-docs", kind: "page", title: "Documentation that stays true · fraktul", description: "Architecture diagrams go stale because nothing fails when they are wrong. fraktul checks the map against the code and your OpenTelemetry traces." },
   { path: "/docs", kind: "page", title: "Documentation · fraktul", description: "How to map a system with fraktul: a quickstart, the concepts, the model file, tours and narration, publishing, and every command." },
   { path: "/map", kind: "page", title: "fraktul, mapped with fraktul", description: "The live demo: fraktul's own architecture as a map you can click into, tour and listen to, built by fraktul from one model file." },
   // Internal: not linked, not indexed, and left out of production (scripts/internal-pages.ts).

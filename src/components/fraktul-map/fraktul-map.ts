@@ -130,7 +130,7 @@ function assemble(key: string, expanded: Set<string>, opts: { mini?: boolean } =
           if (openable(target) && target !== key) drill.push(rid(t.id));
           const st = target ? statusOf(target) : undefined;
           if (st === "planned") planned.push(rid(t.id));
-          if (target && nodeOf(target)?.kind === "district" && !t.cls) districts.push(rid(t.id));
+          if (target && ["district", "system"].includes(nodeOf(target)?.kind ?? "") && !t.cls) districts.push(rid(t.id));
         }
         return `${rid(t.id)}${shape}${t.inner ? "" : t.cls}`;
       });
@@ -646,6 +646,9 @@ function meta(): HTMLElement {
 
 function nodePanel(n: NodeInfo, isView: boolean): HTMLElement[] {
   const out: HTMLElement[] = [el("h2", null, n.title)];
+  // Which level of the picture this is: a system, a service, a feature. Files and functions say so themselves.
+  const level = ({ system: "System", district: "System", service: "Service", feature: "Feature" } as Record<string, string>)[n.kind ?? ""];
+  if (level) out.push(el("p", "level", level));
   if (n.summary) out.push(el("p", "summary", n.summary));
   for (const l of n.live ?? []) { const b = liveBlock(l); if (b) out.push(b); }
   const groups: [string, string][] = [["functions", "Functions"], ["files", "Code"], ["data", "Data"], ["docs", "Docs"], ["adrs", "Decisions (ADRs)"]];
@@ -1119,7 +1122,7 @@ const WORD_SHAPE: [RegExp, Family][] = [
   [/\b(repo|repos|repository|git|github|folder)\b/i, "folder"],
   [/\b(user|users|customer|person|people|you|someone|staff|coder|reviewer|team|author|reader|expert)\b/i, "person"],
 ];
-const KIND_SHAPE: Record<string, Family> = { district: "terrain", component: "package", module: "package", data: "database", person: "person", service: "server", repo: "folder", doc: "document", step: "gear" };
+const KIND_SHAPE: Record<string, Family> = { district: "terrain", system: "terrain", feature: "package", component: "package", module: "package", data: "database", person: "person", service: "server", repo: "folder", doc: "document", step: "gear" };
 const CLASS_SHAPE: Record<string, Family> = { human: "person", data: "database", ext: "cloud", model: "neural", code: "package", file: "document", fn: "gear", fnx: "gear", district: "terrain" };
 const SHAPE_TONE: Partial<Record<Family, string>> = { person: "human", database: "data", disk: "data", queue: "data", cloud: "ext", document: "file", gear: "fn", terrain: "district", neural: "model", tablet: "plain", server: "code", screen: "code", terminal: "code", package: "code", folder: "file" };
 /** The Mermaid shape a box was written with ("[(", "{", "([", "[[" …), from the parsed diagram. */
@@ -1147,7 +1150,7 @@ function shapeOf(b: Box, cls: string | undefined, title: string): Family {
   if (b.target?.startsWith("part:")) return "folder";
   if (n?.status === "external" || cls === "ext") return "cloud";
   if (cls === "human") return "person";
-  if (n?.kind === "district") return "terrain";
+  if (n?.kind === "district" || n?.kind === "system") return "terrain";
   const shape = mermaidShape(b);
   if (shape.startsWith("[(")) return /disk|storage|bucket|volume|drive/i.test(title) ? "disk" : "database";
   if (shape.startsWith("{")) return "diamond";

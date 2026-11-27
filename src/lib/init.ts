@@ -69,7 +69,7 @@ repos:
 nodes:
   system:
     title: ${q(title)}
-    kind: district
+    kind: system
     summary: "TODO: what this system is for, and who uses it."
     # Plain Mermaid. Give a box its own entry under nodes: (same id) and it becomes a door you can click into.
     diagram: |
@@ -93,7 +93,7 @@ ${b.files.map((f) => `        - ${q(f)}`).join("\n")}`).join("\n");
 nodes:
   system:
     title: ${q(title)}
-    kind: district
+    kind: system
     summary: "TODO: what this system is for, and who uses it."
     # Plain Mermaid. A box whose id is another block opens that block. fraktul cannot guess how the blocks connect:
     # add the arrows, for example \`${blocks[0].id} --> ${blocks[1]?.id ?? "somewhere"}\`.

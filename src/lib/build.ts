@@ -1,6 +1,7 @@
 // Everything the explorer page needs, built from the model and the repos it points at. Diagrams for files and
 // functions are generated here from the code, so the deepest levels never go out of date.
 
+import { compareTraces, loadObserved, serviceNodes, type ObservedEdge } from "./traces.ts";
 import { GROUP_OVER, groupFile, type Group, type Section } from "./groups.ts";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -153,6 +154,40 @@ export async function buildSite(model: Model = loadModel()): Promise<Site> {
       return { kind: a.kind, key, label: `${repoTag}${a.ref.path}${a.ref.fn ? ` → ${a.ref.fn}()` : ""}`, ...(present ? {} : { missing: true }) };
     });
     nodes[id] = { id, ...rest, anchors, usedIn: usedIn[id] ?? [] };
+  }
+
+  // What traces saw (fraktul traces): each block that stands for a service shows its real traffic, and the top of
+  // the map says what the traces show that the model does not.
+  const observed = loadObserved(model);
+  if (observed) {
+    const nodeOf = serviceNodes(model);
+    const name = (s: string) => (nodeOf.has(s) ? model.nodes[nodeOf.get(s)!].title : s);
+    const when = observed.from ? `${observed.from.slice(0, 10)}${observed.to && observed.to.slice(0, 10) !== observed.from.slice(0, 10) ? ` to ${observed.to.slice(0, 10)}` : ""}` : "";
+    const source = `${model.traces ?? "traces.json"}${when ? ` · traces from ${when}` : ""}`;
+    const note = (e: ObservedEdge) => `${e.calls.toLocaleString("en")} call${e.calls === 1 ? "" : "s"} · ${e.via.join(", ")} · p95 ${e.p95} ms${e.errors ? ` · ${e.errors} failed` : ""}`;
+    for (const [id, n] of Object.entries(model.nodes)) {
+      const mine = [n.service ?? []].flat();
+      if (!mine.length) continue;
+      const seen = mine.filter((s) => observed.services[s]);
+      const spans = seen.reduce((t, s) => t + observed.services[s].spans, 0), errors = seen.reduce((t, s) => t + observed.services[s].errors, 0);
+      const out = observed.edges.filter((e) => mine.includes(e.from) && !mine.includes(e.to)), into = observed.edges.filter((e) => mine.includes(e.to) && !mine.includes(e.from));
+      const key = (s: string) => (nodeOf.has(s) ? { key: `node:${nodeOf.get(s)}` } : {});
+      live.blocks[`traces:${id}`] = {
+        title: "Seen in traces",
+        rows: seen.length ? [["Service", mine.join(", ")], ["Spans", spans.toLocaleString("en")], ["Failed", `${errors.toLocaleString("en")} (${spans ? Math.round((1000 * errors) / spans) / 10 : 0}%)`], ...(seen[0] && observed.services[seen[0]].language ? [["Written in", observed.services[seen[0]].language!] as [string, string]] : [])] : [["Service", `${mine.join(", ")} (not in the traces)`]],
+        list: [...into.map((e) => ({ label: `← ${name(e.from)}`, note: note(e), ...key(e.from) })), ...out.map((e) => ({ label: `→ ${name(e.to)}`, note: note(e), ...key(e.to) }))],
+        source,
+      };
+      nodes[id].live = [...(nodes[id].live ?? []), `traces:${id}`];
+    }
+    const cmp = compareTraces(model, observed);
+    live.blocks.traces = {
+      title: `${Object.values(observed.services).filter((s) => !s.external).length} services seen in traces`,
+      rows: [["Traces", observed.traces.toLocaleString("en")], ["Spans", observed.spans.toLocaleString("en")], ["Calls between services", String(observed.edges.length)], ["Drawn on the map", `${observed.edges.length ? Math.round((100 * (observed.edges.filter((e) => nodeOf.has(e.from) && nodeOf.has(e.to)).length - cmp.undrawn.length)) / observed.edges.length) : 100}%`]],
+      list: [...cmp.undrawn.map((u) => ({ label: `${model.nodes[u.from].title} → ${model.nodes[u.to].title}`, note: "happens, but no diagram draws it", key: `node:${u.from}` })), ...cmp.unmapped.map((s) => ({ label: s, note: "in the traces, not on the map" }))],
+      source,
+    };
+    if (nodes[model.root]) nodes[model.root].live = [...(nodes[model.root].live ?? []), "traces"];
   }
 
   // A public build (FRAKTUL_PUBLIC=1, used for fraktul.dev while its repos are private) keeps the structure of the map,

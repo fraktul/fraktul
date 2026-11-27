@@ -16,7 +16,7 @@ const NODE_TS_DIRS = ["src/lib"];
 /** Only fraktul.dev uses these (its documentation pages and head tags): not part of the package. */
 const SITE_ONLY = ["docs.ts", "seo.ts", "shots.ts", "features.ts"];
 /** Copied as they are. */
-const AS_IS = ["src/components/fraktul-map", "src/pages/index.html", "src/pages/favicon.svg", "src/pages/css", "voice/render.py", "voice/requirements.txt", "example/model.yaml", "README.md", "CHANGELOG.md", "LICENSE"];
+const AS_IS = ["src/components/fraktul-map", "src/pages/index.html", "src/pages/favicon.svg", "src/pages/css", "voice/render.py", "voice/requirements.txt", "example/model.yaml", "skills", "README.md", "CHANGELOG.md", "LICENSE"];
 
 const renameImports = (code: string) =>
   code.replace(/(from\s+["'][^"']+)\.ts(["'])/g, "$1.js$2").replace(/(import\(\s*["'][^"']+)\.ts(["']\s*\))/g, "$1.js$2").replace(/(src=["'][^"']+)\.ts(["'])/g, "$1.js$2");

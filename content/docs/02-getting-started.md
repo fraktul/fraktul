@@ -25,6 +25,10 @@ Every example in these docs writes `fraktul <command>`. In a project that instal
 `npx fraktul <command>`, or plain `fraktul <command>` inside a `package.json` script.
 
 > [!TIP]
+> Have an AI coding assistant? It can do steps 2 and 3 for you. Run `npx fraktul skill`, then ask it to "map this
+> system with fraktul". See [Map it with AI](/docs/ai).
+
+> [!TIP]
 > No `package.json` in the project? `npx fraktul@latest <command>` runs it without installing anything into the
 > project, and `npm install --global fraktul` puts `fraktul` on your path.
 
@@ -37,7 +41,7 @@ fraktul init
 ```
 
 It writes `docs/arch/model.yaml` with one block per big folder, the files in each, one diagram that shows the blocks,
-and a short tour. It passes the check as it is. Your part is what code can't say: replace each `TODO` with a plain
+and a short tour. It also installs the [agent skill](/docs/ai), so an assistant can take it from there. It passes the check as it is. Your part is what code can't say: replace each `TODO` with a plain
 sentence, and draw the arrows between the boxes.
 
 Or write the model by hand. Create `docs/arch/model.yaml` in your project. fraktul looks for `./model.yaml` and then `./docs/arch/model.yaml`, so
@@ -117,6 +121,8 @@ This writes `fraktul-dist/index.html` and the files it loads. Any static host ca
 
 ## Next steps
 
+- [Map it with AI](/docs/ai): let your assistant write the rest.
+- [Levels](/docs/levels): systems, services, features, and how many of each you need.
 - [Core concepts](/docs/concepts) explains blocks, levels and anchors.
 - [The model file](/docs/model) lists every field.
 - [The check in CI](/docs/ci) keeps the map honest on every pull request.

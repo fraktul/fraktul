@@ -17,7 +17,7 @@ exists it stops with exit code `2` and says so.
 ## init
 
 ```bash
-fraktul init [model] [--force]
+fraktul init [model] [--force] [--no-skill]
 ```
 
 Writes a starter model from the folders git tracks: one block per big folder with its files anchored, one diagram that
@@ -27,6 +27,7 @@ Without a path it writes `docs/arch/model.yaml`.
 | Flag | Does |
 |---|---|
 | `--force` | Replace a model file that already exists. Without it, `init` stops with exit code `2`. |
+| `--no-skill` | Don't install the agent skill. Without it, `init` also copies the skill into `.claude/skills` and `.agents/skills`. |
 
 ## check
 
@@ -39,8 +40,34 @@ Checks every anchor, diagram box, narration cue and tour step against the code. 
 
 | Flag | Does |
 |---|---|
-| `--strict` | Also fail on files and decision records the model doesn't mention. |
+| `--strict` | Also fail on files and decision records the model doesn't mention, and on calls and services the traces show that the map does not. |
 | `--json` | Print the report as JSON. |
+
+## traces
+
+```bash
+fraktul traces <source>... [--model path] [--lookback 1h] [--limit 200] [--mermaid]
+```
+
+Reads OpenTelemetry traces and writes `traces.json` beside the model: the services, the calls between them, error
+counts and latency. A source is an OTLP JSON file, a folder of them, or the address of a Jaeger query service. See
+[Traces](/docs/traces).
+
+| Flag | Does |
+|---|---|
+| `--model <path>` | The model to write beside. Default: the usual two places. |
+| `--lookback <time>` | From Jaeger: how far back to read (`30m`, `1h`, `2d`). Default `1h`. |
+| `--limit <n>` | From Jaeger: traces to read per service. Default `200`. |
+| `--mermaid` | Print the observed service graph as a Mermaid flowchart and write nothing. |
+
+## skill
+
+```bash
+fraktul skill [--dir path]
+```
+
+Installs the fraktul agent skill into `.claude/skills/fraktul` and `.agents/skills/fraktul`, replacing an older copy.
+See [Map it with AI](/docs/ai).
 
 ## dev
 
@@ -110,6 +137,7 @@ model. See [Recorded walkthroughs](/docs/recordings).
 
 | Variable | Does |
 |---|---|
+| `FRAKTUL_URL` | The address the map will be published at. Adds a canonical link and `og:url` to the page. |
 | `FRAKTUL_PUBLIC=1` | Build without source code, file excerpts or links into the repos. See [Publishing](/docs/publishing#public-builds-of-private-code). |
 | `FRAKTUL_REPO_<KEY>` | Read the repo `<key>` from this path instead of its `path:`. The key is upper-cased, with other characters as `_`: `FRAKTUL_REPO_BILLING`. |
 

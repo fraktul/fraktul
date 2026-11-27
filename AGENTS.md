@@ -31,7 +31,7 @@ npm run package          # the npm package (JavaScript) into package/
 - Build markup with `html` from `@bascik/bascik/html`, never by joining strings.
 - Plain words in docs and comments. Comments say why, not what.
 - After changing the site: `npm run site:build`, then the link check and SEO audit CI runs
-  (`node .claude/skills/bascik/scripts/check-links.mjs --dist site-dist --ignore /map`,
+  (`node .claude/skills/bascik/scripts/check-links.mjs --dist site-dist --ignore /map --ignore /shop`,
   `node .claude/skills/bascik-seo/scripts/audit-seo.mjs --dist site-dist`).
 - After changing how the map looks: retake the site's screenshots (`npm run site:shots -- <url>`).
 
