@@ -18,7 +18,7 @@ exists trust a workflow, so the very first version is published once by hand:
 ```bash
 npx npm login
 node --no-warnings scripts/build-package.ts && (cd package && npm publish --access public)
-npx npm trust github fraktul --repo rinsesoft/fraktul --file release.yml --yes
+npx npm trust github fraktul --repo fraktul/fraktul --file release.yml --yes
 ```
 
 After that, every tag publishes from CI, and nobody needs an npm token.

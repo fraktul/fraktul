@@ -74,7 +74,7 @@ jobs:
     # Branch pushes deploy after the tests pass; main deploys without them (see the merged pull request check).
     # Only pushes to this repository deploy: a pull request never does, so a fork cannot reach the Cloudflare token.
     if: >-
-      !cancelled() && github.event_name == 'push' && github.repository == 'rinsesoft/fraktul' &&
+      !cancelled() && github.event_name == 'push' && github.repository == 'fraktul/fraktul' &&
       (github.ref == 'refs/heads/main' || needs.test.result == 'success')
     runs-on: ubuntu-latest
     permissions:

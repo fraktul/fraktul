@@ -24,6 +24,6 @@ project.
 ## Reporting
 
 Tell the maintainers privately: open the repository's
-[Security tab](https://github.com/rinsesoft/fraktul/security) and choose **Report a vulnerability**, marking the
+[Security tab](https://github.com/fraktul/fraktul/security) and choose **Report a vulnerability**, marking the
 report as a conduct concern. Reports are kept confidential. Maintainers may edit or remove comments, close or lock
 threads, and block people who do not follow this code.

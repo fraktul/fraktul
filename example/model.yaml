@@ -6,7 +6,7 @@ root: fraktul
 voice: { voice: bf_emma, speed: 1, say_as: { YAML: "yammel", JSON: "jason", CLI: "C L I", CI: "C I", ADR: "A D R", ADRs: "A D Rs", WASD: "W A S D", npm: "N P M", MLX: "M L X", "3D": "three D" } }
 
 repos:
-  fraktul: { path: ".", github: rinsesoft/fraktul, title: fraktul }
+  fraktul: { path: ".", github: fraktul/fraktul, title: fraktul }
 
 coverage:
   - repo: fraktul

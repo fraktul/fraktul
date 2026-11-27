@@ -4,7 +4,7 @@ Thanks for helping with fraktul. Bug reports, docs fixes and focused pull reques
 
 ## Before you start
 
-- Search the [issues](https://github.com/rinsesoft/fraktul/issues) first.
+- Search the [issues](https://github.com/fraktul/fraktul/issues) first.
 - For a larger change, open an issue so we can agree on the approach before you write code.
 - Report security problems privately. See [SECURITY.md](SECURITY.md).
 - Everyone is expected to follow the [code of conduct](CODE_OF_CONDUCT.md).
