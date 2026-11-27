@@ -3,12 +3,11 @@ title: Keeping the map true
 summary: Diagrams go out of date the day they are drawn. How fraktul notices, and a routine that keeps the map right.
 section: Guides
 ---
-Everyone knows how this goes. Someone draws the architecture. It is right for a week. Then a service is split, a
-queue is added, a module is renamed, and nobody updates the picture, because nothing tells them to. Six months
-later the diagram is wrong in ways nobody can list, so nobody trusts any of it.
+We all know diagrams go out of date almost as soon as they are drawn. A service is split, a queue is added, a module
+is renamed, and nobody updates the picture, because nothing tells them to. After a while the diagram is wrong in ways
+nobody can list, so nobody trusts it.
 
-Diagrams don't go stale because people are careless. They go stale because **nothing fails when they are wrong**.
-fraktul's answer is to make the map fail.
+**Nothing fails when a diagram is wrong**, so nobody fixes it. fraktul's answer is a map that can fail.
 
 ## Three things can be wrong
 

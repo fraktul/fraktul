@@ -6,8 +6,8 @@ section: Start
 fraktul's [own map](/map) is one small tool. To show what a map of a real system looks like, there is a second one:
 [the demo shop](/shop/).
 
-It maps the [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo), an open-source online shop
-that many teams already use to try out observability tools. About twenty services in a dozen languages, a
+It maps the [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo), the OpenTelemetry project's
+own demo application: an open-source online shop. About twenty services in a dozen languages, a
 database, a cache and a queue.
 
 ## What to look at
