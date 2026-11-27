@@ -10,12 +10,14 @@ through Worker routes `fraktul.dev/*` and `www.fraktul.dev/*` on top of the zone
 | `main` | no tests (the pull request's branch was tested). Deploys production only when the commit came from a merged pull request and is still the newest commit on main, then smoke-tests and render-tests https://fraktul.dev. A commit pushed straight to main does not deploy. |
 | a tag `v*.*.*` | `release.yml` publishes to npm (RELEASING.md). |
 
-Both builds are public (`FRAKTUL_PUBLIC=1`): fraktul's own map on /map keeps its blocks, files, functions and who calls
-whom, but leaves out source code and links into the repo. Drop it from the `site:build` scripts once the code is public.
+The two live maps ("fraktuls") are built after the site, each into its own folder with everything it needs
+(`npm run fraktuls:build`): fraktul's own map at /fraktuls/fraktul/ and the demo shop at /fraktuls/shop/. Both show
+their source, linked to GitHub. `src/site/_redirects` sends the old addresses (/map, /shop/) to the new ones.
 
-## The demo shop (/shop/)
+## The demo shop (/fraktuls/shop/)
 
-`npm run site:build` also builds `example/shop/model.yaml`, a map of the OpenTelemetry Demo, into `site-dist/shop/`.
+`npm run site:build` also builds `example/shop/model.yaml`, a map of the OpenTelemetry Demo, into
+`site-dist/fraktuls/shop/`.
 Its code levels need the demo's source at `.demo/opentelemetry-demo` (git-ignored); CI fetches the pinned tag with
 `npm run shop:setup` before building. Without the checkout the map still builds, with its service levels and traces but no code below them.
 

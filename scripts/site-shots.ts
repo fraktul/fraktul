@@ -19,7 +19,7 @@ const browser = await chromium.launch({ args: ["--use-angle=metal", "--enable-we
 for (const shot of SHOTS) {
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 2, colorScheme: "dark" });
   const page: Page = await context.newPage();
-  await page.goto(`${base}${shot.map ?? "/map"}${shot.link}`, { waitUntil: "load" });
+  await page.goto(`${base}${shot.map ?? "/fraktuls/fraktul/"}${shot.link}`, { waitUntil: "load" });
   await page.waitForSelector("svg g.node", { state: "attached", timeout: 30_000 });
   if (shot.link.includes("view=3d")) { await page.waitForSelector("canvas", { timeout: 30_000 }); await page.waitForTimeout(6500); }
   else await page.waitForTimeout(1200);

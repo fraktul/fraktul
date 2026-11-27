@@ -7,7 +7,7 @@ record your own.
 
 **[fraktul.dev](https://fraktul.dev)** · [Features](https://fraktul.dev/features) ·
 [Docs](https://fraktul.dev/docs) · [The live map](https://fraktul.dev/map) (fraktul, mapped with fraktul) ·
-[The demo shop](https://fraktul.dev/shop/) (twenty services, mapped from code and traces)
+[The demo shop](https://fraktul.dev/fraktuls/shop/) (twenty services, mapped from code and traces)
 
 ## Why
 

@@ -1,0 +1,3 @@
+/map /fraktuls/fraktul/ 301
+/shop /fraktuls/shop/ 301
+/shop/* /fraktuls/shop/:splat 301

@@ -3,8 +3,8 @@ title: The demo shop
 summary: A map of a real system of twenty services, with its traces. Look at it live, run it yourself, and break it to see the check work.
 section: Start
 ---
-fraktul's [own map](/map) is one small tool. To show what a map of a real system looks like, there is a second one:
-[the demo shop](/shop/).
+fraktul's [own map](/fraktuls/fraktul/) is one small tool. To show what a map of a real system looks like, there is a second one:
+[the demo shop](/fraktuls/shop/).
 
 It maps the [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo), the OpenTelemetry project's
 own demo application: an open-source online shop. About twenty services in a dozen languages, a
@@ -12,12 +12,12 @@ database, a cache and a queue.
 
 ## What to look at
 
-- **[The top level](/shop/#shop):** nine boxes. A shopper, the storefront, and the six things the shop does.
-- **[A feature](/shop/#delivery):** delivery, and the three services that make it happen.
-- **[A service](/shop/#checkout):** checkout, the conductor, and the eight calls it makes for every order.
-- **[Real traffic](/shop/#shop/checkout):** select checkout and its panel lists who calls it and what it calls,
+- **[The top level](/fraktuls/shop/#shop):** nine boxes. A shopper, the storefront, and the six things the shop does.
+- **[A feature](/fraktuls/shop/#delivery):** delivery, and the three services that make it happen.
+- **[A service](/fraktuls/shop/#checkout):** checkout, the conductor, and the eight calls it makes for every order.
+- **[Real traffic](/fraktuls/shop/#shop/checkout):** select checkout and its panel lists who calls it and what it calls,
   with counts and latency from traces.
-- **[A tour](/shop/#shop?tour=the-shop-in-two-minutes&step=1):** the shop in two minutes, for someone who has
+- **[A tour](/fraktuls/shop/#shop?tour=the-shop-in-two-minutes&step=1):** the shop in two minutes, for someone who has
   never seen the code. Press **Listen** to hear it. There are four tours under **Tours**, all narrated.
 - **Code:** open the storefront, then one of its API routes, then a function.
 

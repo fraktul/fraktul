@@ -22,7 +22,7 @@ code, or stop at whatever level answers your question.
 You write the top three, because code cannot say what a system is for. fraktul reads the bottom two on every
 build, so they are never out of date.
 
-[The demo map](/shop/) shows the whole ladder on a real system: an online shop of about twenty services. Its top
+[The demo map](/fraktuls/shop/) shows the whole ladder on a real system: an online shop of about twenty services. Its top
 level has nine boxes; three clicks later you are reading a function.
 
 ## Saying which level a block is

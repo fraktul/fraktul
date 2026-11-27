@@ -16,7 +16,7 @@ Shared <head> tags for fraktul.dev pages: the title, description and social card
   import { seoTags } from "@/lib/seo.ts";
   export default function () {
     const path = process.env.BASCIK_PAGE_PATH ?? "/";
-    const first = path === "/map" ? ["Inter"] : path === "/" ? ["Manrope", "Michroma", "Syncopate"] : ["Manrope", "Michroma"];
+    const first = path === "/" ? ["Manrope", "Michroma", "Syncopate"] : ["Manrope", "Michroma"];
     return html`${seoTags(path, process.env.BASCIK_SITE_URL)}${fontTags("/vendor/fonts/", first)}`;
   }
 </script>

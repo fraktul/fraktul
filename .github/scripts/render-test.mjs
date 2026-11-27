@@ -3,7 +3,7 @@
 // a page whose script fails; this does not. A map page must draw diagram boxes; any page must not throw.
 //
 // Usage: node .github/scripts/render-test.mjs <base-url> <path>[=map]...
-//   /map=map   the page must draw a fraktul map (at least one diagram box)
+//   /fraktuls/fraktul/=map   the page must draw a fraktul map (at least one diagram box)
 //   /docs      the page must load without a script error
 import { chromium } from "@playwright/test";
 

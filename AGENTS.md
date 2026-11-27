@@ -10,7 +10,7 @@ npm ci
 npm test                 # unit tests, then the example model's check
 npm run dev              # the map of example/model.yaml (fraktul itself) on :8080
 npm run site:dev         # fraktul.dev on :8095
-npm run site:build       # fraktul.dev into site-dist/
+npm run site:build       # fraktul.dev into site-dist/, with both live maps under site-dist/fraktuls/
 npm run package          # the npm package (JavaScript) into package/
 ```
 
@@ -31,7 +31,7 @@ npm run package          # the npm package (JavaScript) into package/
 - Build markup with `html` from `@bascik/bascik/html`, never by joining strings.
 - Plain words in docs and comments. Comments say why, not what.
 - After changing the site: `npm run site:build`, then the link check and SEO audit CI runs
-  (`node .claude/skills/bascik/scripts/check-links.mjs --dist site-dist --ignore /map --ignore /shop`,
+  (`node .claude/skills/bascik/scripts/check-links.mjs --dist site-dist --ignore /fraktuls`,
   `node .claude/skills/bascik-seo/scripts/audit-seo.mjs --dist site-dist`).
 - After changing how the map looks: retake the site's screenshots (`npm run site:shots -- <url>`).
 
