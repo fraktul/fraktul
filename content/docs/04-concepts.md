@@ -25,7 +25,7 @@ drawn dashed, and both fields shape the block in the [3D view](/docs/3d-view).
 
 ## Levels
 
-The map is a stack of levels. You go down by clicking a box and up with Esc.
+The fraktul is a stack of levels. You go down by clicking a box and up with Esc.
 
 | Level | Comes from | Written by |
 |---|---|---|
@@ -63,11 +63,11 @@ Paths are relative to the root of a repo. A model can span several repos; see [R
 file, a function, a decision record, a box another diagram reaches into, or a tour step. It also **lists** files the
 model doesn't mention yet, so new code shows up as "not mapped".
 
-Run it in CI and the map can't drift from the code. See [The check in CI](/docs/ci).
+Run it in CI and the fraktul can't drift from the code. See [The check in CI](/docs/ci).
 
 ## Tours
 
-A **tour** is a path through the map: a list of steps, each showing one diagram with a few boxes highlighted and a
+A **tour** is a path through the fraktul: a list of steps, each showing one diagram with a few boxes highlighted and a
 short card of text. Tours can branch, jump to other tours, and be spoken aloud by a local voice whose cues move the
 highlight as it talks.
 

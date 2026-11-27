@@ -3,7 +3,7 @@ title: The demo shop
 summary: A map of a real system of twenty services, with its traces. Look at it live, run it yourself, and break it to see the check work.
 section: Start
 ---
-fraktul's [own map](/fraktuls/fraktul/) is one small tool. To show what a map of a real system looks like, there is a second one:
+the [fraktul of fraktul itself](/fraktuls/fraktul/) is one small tool. To show what a map of a real system looks like, there is a second one:
 [the demo shop](/fraktuls/shop/).
 
 It maps the [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo), the OpenTelemetry project's
@@ -33,12 +33,12 @@ npx fraktul check
 npx fraktul dev
 ```
 
-`fraktul example shop` writes the map's two files into the demo's checkout: `docs/arch/model.yaml` (the map) and
+`fraktul example shop` writes the fraktul's two files into the demo's checkout: `docs/arch/model.yaml` (the fraktul) and
 `docs/arch/traces.json` (what its traces saw). Open [http://localhost:8080](http://localhost:8080).
 
 ## Break it
 
-The point of fraktul is that the map fails when it is wrong. Try it.
+The point of fraktul is that the fraktul fails when it is wrong. Try it.
 
 **Move a file.** Rename `src/payment/charge.js`, `git add` the change, and run the check:
 
@@ -51,7 +51,7 @@ The point of fraktul is that the map fails when it is wrong. Try it.
 from the `delivery` block's diagram. The traces know better:
 
 ```text
-Against the traces: 1 call not drawn, 0 services not on the map
+Against the traces: 1 call not drawn, 0 services not in the fraktul
   call     Shipping → Shipping quotes happens (6 calls in the traces) but no diagram draws shipping --> quote
 ```
 
@@ -69,7 +69,7 @@ npx fraktul check
 
 [Traces](/docs/traces) explains what is read and how the check uses it.
 
-## How this map was made
+## How this fraktul was made
 
 The way the [skill](/docs/ai) tells an assistant to: read the README and the compose file, find the handful of
 things the shop does, write one block per feature and per service with a summary a shopper would understand, then

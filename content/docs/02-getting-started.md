@@ -1,6 +1,6 @@
 ---
 title: Quickstart
-summary: Install fraktul from npm, write a first model, check it, and open the map.
+summary: Install fraktul from npm, write a first model, check it, and open the fraktul.
 section: Start
 ---
 This page takes you from nothing to a map of your own project. You need about ten minutes and a project in a git
@@ -72,7 +72,7 @@ nodes:
 
 Change the two file paths to real files in your project. Here is what this model says:
 
-- The map opens on `shop`, whose diagram has three boxes.
+- The fraktul opens on `shop`, whose diagram has three boxes.
 - `api` is the id of another block, so its box becomes a door: click it to go inside.
 - `api` names files but has no diagram of its own, so fraktul draws one from the code: the files, their functions and
   who calls whom. Click a file to see its functions, and a function to read its source.
@@ -95,16 +95,16 @@ with an error:
 > [!TIP]
 > A file you just created is not tracked yet. `git add` it, and the check finds it.
 
-## 4. Open the map
+## 4. Open the fraktul
 
 ```bash
 fraktul dev
 ```
 
-Open [http://localhost:8080](http://localhost:8080). The map rebuilds when you save the model. Use `--port 3000`
+Open [http://localhost:8080](http://localhost:8080). The fraktul rebuilds when you save the model. Use `--port 3000`
 to pick another port.
 
-In the map:
+In the fraktul:
 
 - **Click** a box with a badge to go inside. **Esc** or **Backspace** goes back up.
 - **Hover** a box to peek at what's inside.
@@ -125,4 +125,4 @@ This writes `fraktul-dist/index.html` and the files it loads. Any static host ca
 - [Levels](/docs/levels): systems, services, features, and how many of each you need.
 - [Core concepts](/docs/concepts) explains blocks, levels and anchors.
 - [The model file](/docs/model) lists every field.
-- [The check in CI](/docs/ci) keeps the map honest on every pull request.
+- [The check in CI](/docs/ci) keeps the fraktul honest on every pull request.

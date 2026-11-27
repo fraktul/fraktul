@@ -3,10 +3,10 @@ title: The 3D view
 summary: Fly through the level on screen as a place: the same boxes and arrows, standing where Mermaid drew them.
 section: Guides
 ---
-**3D** in the map's toolbar, or the **3** key, turns the diagram on screen into a place you can fly through. It shows
+**3D** in the fraktul's toolbar, or the **3** key, turns the diagram on screen into a place you can fly through. It shows
 the same boxes and arrows at the positions Mermaid drew them, so 2D and 3D always match. Press **3** again to go back.
 
-The flat map is the default. 3D is on when you switch it on, or when a link says so: the address gains `?view=3d`, so
+The flat, 2D view is the default. 3D is on when you switch it on, or when a link says so: the address gains `?view=3d`, so
 a link you copy while in 3D opens in 3D for whoever follows it.
 
 ## Where you start
@@ -16,7 +16,7 @@ in view. Blocks tower over you, which is the point: a place you stand in is easi
 on.
 
 **Bird's eye** (the button at the top right of the 3D view, or <kbd>B</kbd>) starts every level from above instead,
-looking across and down, like the two views of a street map. The map remembers which you prefer in this browser, and
+looking across and down, like the two views of a street map. The fraktul remembers which you prefer in this browser, and
 a link carries it as `&cam=bird`.
 
 ## Moving around

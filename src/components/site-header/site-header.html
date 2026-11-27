@@ -1,13 +1,26 @@
 <!-- @bascik
-fraktul.dev navigation: the bar (liquid chrome in y2k), the foil star, page links, GitHub, and the light and dark switch.
+fraktul.dev navigation: the bar (liquid chrome in y2k), the foil star, page links, the Demos menu of live fraktuls, GitHub, and the light and dark switch.
 -->
 <style>
   .nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; display: flex; align-items: center; gap: 20px; padding: 12px max(20px, env(safe-area-inset-right, 0px)) 12px max(20px, env(safe-area-inset-left, 0px)); background: var(--bar); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(0, 0, 0, 0.06); border-bottom: 1px solid var(--line); }
   .logo { display: flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; font: 400 17px/1 var(--display); letter-spacing: 0.08em; }
   .star { width: 28px; height: 28px; flex: none; background: var(--foil); background-size: 300% 100%; filter: drop-shadow(0.6px 0 0 rgba(10,11,13,0.45)) drop-shadow(-0.6px 0 0 rgba(10,11,13,0.45)) drop-shadow(0 0.6px 0 rgba(10,11,13,0.45)) drop-shadow(0 -0.6px 0 rgba(10,11,13,0.45)); clip-path: var(--mark-shape, path(evenodd, 'M0 0H28V28H0Z M3 3H25V25H3Z M11 11H25V25H11Z M13.5 13.5H22.5V22.5H13.5Z M17 17H22.5V22.5H17Z'));  }
-  .links { display: flex; gap: 6px; margin-left: auto; }
+  .links { display: flex; align-items: center; gap: 6px; margin-left: auto; }
   .links a { color: var(--ink); text-decoration: none; font: 500 14px var(--body); padding: 8px 12px; border-radius: 10px; transition: color 0.15s, background 0.15s; }
   .links a:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 7%, transparent); }
+  /* Demos: a menu of the live fraktuls. A <details>, so it opens without script; the script below only closes it. */
+  .menu { position: relative; }
+  .menu summary { display: flex; align-items: center; gap: 5px; margin: 0; list-style: none; cursor: pointer; color: var(--ink); font: 500 14px var(--body); padding: 8px 12px; border-radius: 10px; transition: background 0.15s; }
+  .menu summary::-webkit-details-marker { display: none; }
+  .menu summary:hover, .menu[open] summary { background: color-mix(in srgb, var(--ink) 7%, transparent); }
+  .menu summary svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.15s; }
+  .menu[open] summary svg { transform: rotate(180deg); }
+  .drop { position: absolute; right: 0; top: calc(100% + 8px); z-index: 20; width: min(300px, calc(100vw - 32px)); margin: 0; padding: 6px; list-style: none; border-radius: 14px; background: var(--sheet); border: 1px solid var(--line); box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.45); }
+  .links .drop a { display: grid; gap: 2px; padding: 10px 12px; border-radius: 10px; }
+  .drop strong { font: 700 14.5px/1.3 var(--body); color: var(--ink); }
+  .drop span { font: 400 13px/1.4 var(--body); color: var(--ink-2); }
+  .drop .all { margin-top: 4px; padding-top: 4px; border-top: 1px solid var(--line); }
+  .links .drop .all a { font: 500 13.5px/1.3 var(--body); color: var(--ink-2); }
   .gh { display: grid; place-items: center; flex: none; width: 36px; height: 36px; margin-right: -16px; border-radius: 10px; color: var(--ink); transition: background 0.15s; }
   .gh:hover { background: color-mix(in srgb, var(--ink) 7%, transparent); }
   .gh svg { width: 20px; height: 20px; fill: currentColor; }
@@ -20,16 +33,25 @@ fraktul.dev navigation: the bar (liquid chrome in y2k), the foil star, page link
   .switch[data-mode="dark"] .moon { display: block; }
   @media (prefers-reduced-motion: no-preference) { .star { animation: foil 9s linear infinite; } @keyframes foil { to { background-position: 300% 0; } } }
   /* A phone: the links sit closer so the theme switch stays on screen. */
-  @media (max-width: 640px) { .links a.hide-sm { display: none; } .nav { gap: 8px; } .logo { gap: 8px; font-size: 16px; } .links { gap: 0; } .links a { padding: 8px 7px; } .switch, .gh { width: 32px; } .gh { margin-right: -4px; } }
+  @media (max-width: 640px) { .links a.hide-sm { display: none; } .nav { gap: 8px; } .logo { gap: 8px; font-size: 16px; } .links { gap: 0; } .links a, .menu summary { padding: 8px 7px; } .switch, .gh { width: 32px; } .gh { margin-right: -4px; } }
   /* The narrowest phones: GitHub is in the footer too. */
-  @media (max-width: 350px) { .gh { display: none; } }
-  @media (max-width: 400px) { .nav { gap: 4px; } .logo { font-size: 15px; letter-spacing: 0.04em; } .links a { padding: 8px 5px; font-size: 13.5px; } }
+  /* On a phone the menu spans the screen under the bar, instead of hanging off the link. */
+  @media (max-width: 640px) { .drop { position: fixed; left: 12px; right: 12px; top: calc(env(safe-area-inset-top, 0px) + 58px); width: auto; } }
+  @media (max-width: 350px) { .gh, .menu summary svg { display: none; } .logo { letter-spacing: 0; } .links a, .menu summary { padding: 8px 4px; } .nav { padding-left: 12px; padding-right: 12px; } }
+  @media (max-width: 400px) { .nav { gap: 4px; } .logo { font-size: 15px; letter-spacing: 0.04em; } .links a, .menu summary { padding: 8px 5px; font-size: 13.5px; } }
 </style>
 <header class="nav" data-testid="site-header">
   <a class="logo" href="/" data-testid="site-header-home"><span class="star" aria-hidden="true"></span>fraktul</a>
   <nav class="links" aria-label="Main">
     <a href="/features" data-testid="site-header-features">Features</a>
-    <a href="/fraktuls" data-testid="site-header-fraktuls">Fraktuls</a>
+    <details class="menu" data-testid="site-header-demos">
+      <summary>Demos<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" /></svg></summary>
+      <ul class="drop">
+        <li><a href="/fraktuls/shop/" data-testid="site-header-demo-shop"><strong>Shop</strong><span>An online shop of twenty services, with its traces</span></a></li>
+        <li><a href="/fraktuls/fraktul/" data-testid="site-header-demo-fraktul"><strong>fraktul</strong><span>The tool itself, down to its source</span></a></li>
+        <li class="all"><a href="/fraktuls" data-testid="site-header-demo-all">About the demos</a></li>
+      </ul>
+    </details>
     <a href="/docs" data-testid="site-header-docs">Docs</a>
   </nav>
   <a class="gh" href="https://github.com/fraktul/fraktul" aria-label="fraktul on GitHub" data-testid="site-header-github"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.27-.01-1.18-.02-2.14-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.16 1.18a10.9 10.9 0 0 1 5.76 0c2.19-1.49 3.16-1.18 3.16-1.18.63 1.58.23 2.75.11 3.04.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.68.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" /></svg></a>
@@ -56,4 +78,12 @@ fraktul.dev navigation: the bar (liquid chrome in y2k), the foil star, page link
   // With no switch made, the page follows the system as it changes (sunset, a settings change).
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", show);
   show();
+
+  // The Demos menu closes on a click outside it, on Escape, and when focus leaves it.
+  const menu = document.querySelector<HTMLDetailsElement>("[data-testid=site-header-demos]");
+  if (menu) {
+    document.addEventListener("click", (e) => { if (menu.open && !menu.contains(e.target as Node)) menu.open = false; });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && menu.open) { menu.open = false; menu.querySelector("summary")?.focus(); } });
+    menu.addEventListener("focusout", (e) => { if (menu.open && e.relatedTarget && !menu.contains(e.relatedTarget as Node)) menu.open = false; });
+  }
 </script>

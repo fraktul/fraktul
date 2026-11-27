@@ -1,11 +1,11 @@
 ---
 title: Traces
-summary: Read OpenTelemetry traces into the map, so it shows which services really talk to each other, and the check notices when the diagram disagrees.
+summary: Read OpenTelemetry traces into the fraktul, so it shows which services really talk to each other, and the check notices when the diagram disagrees.
 section: Guides
 ---
 The repository tells fraktul what each service contains. It does not say which services call each other in
 production: that is in your traces. If your system already sends OpenTelemetry traces, `fraktul traces` reads them
-and adds what really happens to the map.
+and adds what really happens to the fraktul.
 
 You get two things:
 
@@ -88,7 +88,7 @@ fraktul check
 ```
 
 ```text
-Against the traces: 1 call not drawn, 1 service not on the map
+Against the traces: 1 call not drawn, 1 service not in the fraktul
   call     Checkout → Email happens (417 calls in the traces) but no diagram draws checkout --> email
   service  fraud-detection is in the traces; no block says service: fraud-detection
   unseen   cart --> ad is drawn, but the traces never showed that call
@@ -106,13 +106,13 @@ nobody has seen in a week of traces may be a call that was removed.
 
 An arrow counts as drawn when any diagram in the model has it, in that direction, between the two blocks.
 
-## In the map
+## In the fraktul
 
 A block with `service:` gets a **Seen in traces** section in its panel: its span count and failure rate, the language
 it is written in when the traces say, and one line per caller and per callee with call count, protocol and 95th
 percentile latency. Each line opens the other service.
 
-The top of the map gets a summary: how many services and calls the traces hold, how much of that the map draws, and
+The top of the fraktul gets a summary: how many services and calls the traces hold, how much of that the fraktul draws, and
 the list of what is missing.
 
 ## Start from the traces

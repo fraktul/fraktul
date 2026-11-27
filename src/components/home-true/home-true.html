@@ -18,12 +18,12 @@ what the running system's traces show.
 </style>
 <div class="y2k-band right"><section class="sec" id="true" data-bascik-preserve="id" data-testid="home-true" aria-labelledby="true-title">
   <span class="eyebrow">Documentation that stays true</span>
-  <h2 class="head y2k-head" id="true-title">A map that says when it has gone out of date</h2>
+  <h2 class="head y2k-head" id="true-title">A fraktul that says when it has gone out of date</h2>
   <p class="sub">We all know diagrams go out of date almost as soon as they are drawn. Nothing fails when a diagram is wrong, so nobody fixes it. fraktul's check fails, in the pull request that caused it, in three cases.</p>
   <ul class="grid">
     <li class="card y2k-card"><h3>The code moved</h3><p>A file was renamed or a function deleted. The check names the block and the path, and the build stops.</p><pre class="out"><span class="bad">✗</span> node api: file src/api/orders.ts
   is not in the repo</pre></li>
-    <li class="card y2k-card"><h3>The code grew</h3><p>Someone, or some AI, added a module that is on no diagram. It is listed until it has a place on the map.</p><pre class="out"><span class="c">In the repo, not in the model yet:</span>
+    <li class="card y2k-card"><h3>The code grew</h3><p>Someone, or some AI, added a module that is on no diagram. It is listed until it has a place on the fraktul.</p><pre class="out"><span class="c">In the repo, not in the model yet:</span>
   file  src/billing/dunning.ts</pre></li>
     <li class="card y2k-card"><h3>Production disagrees</h3><p>Your OpenTelemetry traces show a call between two services that no diagram draws. The check lists it until one does.</p><pre class="out"><span class="c">call</span> Checkout → Email happens
   (417 calls) but no diagram draws it</pre></li>

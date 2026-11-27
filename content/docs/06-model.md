@@ -12,7 +12,7 @@ the project root: the git checkout that holds the model, or `project_root` if yo
 version: 1
 title: Shop system map              # the page title
 brand: Shop                         # the name in the top bar (default: title)
-root: shop                          # the block the map opens on
+root: shop                          # the block the fraktul opens on
 default_repo: main                  # anchors that name no repo use this one
 adrs_dir: docs/adr                  # decision records (optional)
 live_module: live.ts                # facts read at build time (optional)
@@ -71,7 +71,7 @@ tours:
 | Field | Required | What it does |
 |---|---|---|
 | `version` | yes | Always `1`. |
-| `root` | yes | Id of the block the map opens on. |
+| `root` | yes | Id of the block the fraktul opens on. |
 | `repos` | yes | Where the code lives. See [Repos](#repos). |
 | `nodes` | yes | The blocks. See [Blocks](#blocks). |
 | `title` | no | Page title. Default: `System map`. |
@@ -84,7 +84,7 @@ tours:
 | `voice` | no | Narration settings. See [Tours and narration](/docs/tours). |
 | `expect` | no | Promises the check enforces. See [Expectations](#expectations). |
 | `coverage` | no | Files the check expects the model to mention. See [Coverage](#coverage). |
-| `tours` | no | Guided paths through the map. See [Tours and narration](/docs/tours). |
+| `tours` | no | Guided paths through the fraktul. See [Tours and narration](/docs/tours). |
 
 ## Repos
 
@@ -115,8 +115,8 @@ A repo that isn't checked out (on CI, say) is skipped and named in the check's o
 
 ### Source links
 
-Every file, function and decision record in the map links to its source on the repo's host, pinned to the commit that
-was read, so a deployed map keeps pointing at the code it was built from. GitHub, GitLab, Bitbucket, Azure DevOps and
+Every file, function and decision record in the fraktul links to its source on the repo's host, pinned to the commit that
+was read, so a deployed fraktul keeps pointing at the code it was built from. GitHub, GitLab, Bitbucket, Azure DevOps and
 Gitea or Forgejo (including Codeberg) are supported. A username, password or token in a remote URL is dropped and
 never printed. A repo with no remote has no source links. A repo that isn't checked out links to its default branch.
 
@@ -182,7 +182,7 @@ coverage:
 ```
 
 The check lists every matching file the model doesn't mention yet. With `--strict` it fails until they are all
-placed, so new modules can't stay off the map unnoticed.
+placed, so new modules can't stay off the fraktul unnoticed.
 
 ## Expectations
 

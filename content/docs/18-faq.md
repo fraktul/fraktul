@@ -37,17 +37,17 @@ Not checked (repo not on this machine): billing
 The repo's `path` doesn't exist here. This is normal on CI, where only the project is checked out: the check still
 verifies everything else. Check the repo out and set `FRAKTUL_REPO_BILLING` to its folder to include it.
 
-## The map shows no source links
+## The fraktul shows no source links
 
 Source links come from `remote:`, `github:`, or the checkout's `origin`. A repo with none of them has no links. A
 self-hosted server whose name doesn't say what it runs needs `remote_kind`. A build with `FRAKTUL_PUBLIC=1` has no
 source links on purpose.
 
-## My code is private. Can I publish the map?
+## My code is private. Can I publish the fraktul?
 
 Yes. Build with `FRAKTUL_PUBLIC=1` and the page keeps the blocks, files, functions and who calls whom, but leaves out
 source code, file excerpts and links into the repos. For a repo whose contents should never be read at all, set
-`private: true`: the map shows its file names only. See [Publishing](/docs/publishing).
+`private: true`: the fraktul shows its file names only. See [Publishing](/docs/publishing).
 
 ## How do I install fraktul?
 
@@ -57,8 +57,8 @@ TypeScript; the npm package is a JavaScript build of the same code, because Node
 
 ## Does fraktul send my code anywhere?
 
-No. The check, the build and the voice all run on your machine. The map is a static page that loads no code from a
-CDN or a font service: Mermaid, three.js and the fonts ship with fraktul and are served beside the page, so a map works
+No. The check, the build and the voice all run on your machine. The fraktul is a static page that loads no code from a
+CDN or a font service: Mermaid, three.js and the fonts ship with fraktul and are served beside the page, so a fraktul works
 on an internal network or offline.
 
 ## `fraktul voice` fails
@@ -80,7 +80,7 @@ voice: { voice: af_heart, say_as: { SKU: "S K U", kubectl: "cube control" } }
 ## The record button is missing
 
 Recording needs the microphone, which browsers allow only on `localhost` or `https://` pages, and a browser with
-`MediaRecorder`. Open the map with `fraktul dev` or from an https host.
+`MediaRecorder`. Open the fraktul with `fraktul dev` or from an https host.
 
 ## Narration plays the old text
 
