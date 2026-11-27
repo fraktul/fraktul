@@ -1,6 +1,6 @@
 ---
 name: fraktul
-description: Map a software system with fraktul - write or update the model file (docs/arch/model.yaml) that fraktul turns into a clickable map from the whole system down to the source. Use when asked to map, diagram or document an architecture or codebase; to explain how a system, service or feature works; to prepare a handover, onboarding or knowledge-transfer walkthrough; to write or narrate a tour; when `fraktul check` fails or lists unmapped files, undrawn calls or unmapped services; when code was added, moved or renamed and the map must follow; or when adding OpenTelemetry traces to the map.
+description: Map a software system with fraktul - write or update the model file (docs/arch/model.yaml) that fraktul turns into a clickable map from the whole system down to the source. Use when asked to map, diagram or document an architecture or codebase; to explain how a system, service or feature works; to prepare a handover, onboarding or knowledge-transfer walkthrough; to write or narrate a tour; when `fraktul check` fails or lists unmapped files, undrawn calls or unmapped services; when code was added, moved or renamed and the fraktul must follow; or when adding OpenTelemetry traces to the fraktul.
 license: MIT
 metadata:
   author: Rinsesoft
@@ -40,7 +40,7 @@ files git tracks, so `git add` a new file before checking.
 
 ## The levels
 
-A map has as many levels as the system needs. Name each block's level with `kind`:
+A fraktul has as many levels as the system needs. Name each block's level with `kind`:
 
 | Level | `kind` | What it is | What its diagram shows |
 |---|---|---|---|
@@ -51,7 +51,7 @@ A map has as many levels as the system needs. Name each block's level with `kind
 
 Other kinds say what a box stands for: `component`, `module`, `data`, `person`, `repo`, `doc`, `step`.
 
-Rules that make a map readable:
+Rules that make a fraktul readable:
 
 - **Five to nine boxes per diagram.** More than that, group some into a block and give it its own diagram.
 - **One sentence a non-engineer understands** in every `summary`. Say what the part is for, not how it is built.
@@ -69,7 +69,7 @@ Rules that make a map readable:
 ```yaml
 version: 1
 title: Shop system map
-root: shop                       # the node the map opens on
+root: shop                       # the node the fraktul opens on
 repos:
   main: { path: "." }            # more repos: other: { path: "../other", github: owner/other }
 coverage:                        # files `check --strict` expects the model to mention
@@ -141,13 +141,13 @@ tours:
 - Write for someone who does not know the code. Explain a term the first time it appears.
 - `npx fraktul voice` speaks `say:` with a local neural voice (Apple silicon only). Do not run it unless asked.
 
-## Keeping the map true
+## Keeping the fraktul true
 
-A map is only worth having while it is right. When you change code in a project that has a model:
+A fraktul is only worth having while it is right. When you change code in a project that has a model:
 
 - **Same change, same pull request.** Moved or renamed a file or function the model names: fix the anchor. Added a
   module: add it to a block, or add a block. Changed how two parts talk: redraw the arrow.
-- Run `npx fraktul check` before you finish. A failing check is a real bug in the map, never something to silence.
+- Run `npx fraktul check` before you finish. A failing check is a real bug in the fraktul, never something to silence.
 - If a tour step's box is gone, rewrite the step, do not delete the tour.
 - Do not paste numbers into summaries (counts, versions, dates): they go stale. Use `live:` facts for those
   (https://fraktul.dev/docs/live-facts).
@@ -177,7 +177,7 @@ payloads and no attribute values. Commit it.
 |---|---|
 | `fraktul init [model]` | A starter model from the project's folders |
 | `fraktul check [model] [--strict] [--json]` | Every reference must exist; `--strict` also fails on unmapped files, calls and services |
-| `fraktul dev [model] [--port 8080]` | The live map, rebuilt as the model or code changes |
+| `fraktul dev [model] [--port 8080]` | The live fraktul, rebuilt as the model or code changes |
 | `fraktul build [model] [--out dir]` | A static folder for any host. `FRAKTUL_PUBLIC=1` leaves the source out |
 | `fraktul traces <source>... [--model path] [--mermaid]` | Traces into `traces.json` |
 | `fraktul voice [model]` | Speak the tours' narration (Apple silicon) |

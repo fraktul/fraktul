@@ -7,6 +7,8 @@ fraktul draws a map of a software system that you can click down through, from t
 source. You describe the big pieces once, in one YAML file kept in your project. fraktul reads everything below them
 from the code itself.
 
+A map made this way is called a **fraktul**. These docs use that word for the thing you build and publish.
+
 ## The problem it solves
 
 Understanding a system is now the slow part of building software. Someone takes over a project and gets an hour of
@@ -22,18 +24,18 @@ fraktul keeps both in one place and ties them together:
 - **The code writes the bottom.** Files, functions, who calls whom and the source are read from the repo on every
   build, so the deepest levels can't go out of date.
 - **A check ties them together.** When the model names a file or function that no longer exists, the check fails,
-  so the map breaks in CI instead of quietly lying.
+  so the fraktul breaks in CI instead of quietly lying.
 
 ## What you get
 
 | Feature | What it does |
 |---|---|
-| Every level | Systems, services, features, files and functions in one map, from the big picture to the code. |
+| Every level | Systems, services, features, files and functions in one fraktul, from the big picture to the code. |
 | Written by AI | An agent skill teaches your coding assistant to write and update the model. |
 | Diagrams you dive into | A box that is another block opens its diagram. Keep clicking: blocks, files, functions, source. |
 | Hover peeks | Hover a box to see its summary and a small copy of what's inside. |
 | The check | `fraktul check` fails on a missing file, function, decision record, diagram box or tour step. |
-| Tours | Step-by-step paths through the map, with branches, written in the model. |
+| Tours | Step-by-step paths through the fraktul, with branches, written in the model. |
 | Narration | Tours spoken by a local neural voice, with the highlight moving as it talks. |
 | Recorded walkthroughs | Talk while you click; voice and clicks replay together. |
 | Traces | What your OpenTelemetry traces say next to what you drew, and a check when they disagree. |
@@ -64,4 +66,4 @@ the system is for and how its parts relate, which code can't tell you. fraktul m
 - [Map it with AI](/docs/ai): have your coding assistant write it.
 - [The demo shop](/docs/demo): an online shop of twenty services, mapped from its code and its traces. Open it, or run it yourself.
 - [Core concepts](/docs/concepts): blocks, levels, anchors, the check and tours, in one page.
-- [Open the live map](/fraktuls/fraktul/): fraktul's own map, built from the example model in its repo.
+- [Open the live fraktul](/fraktuls/fraktul/): the fraktul of fraktul itself, built from the example model in its repo.

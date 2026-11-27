@@ -6,7 +6,7 @@ where you click from the whole system down to a line of source, follow tours, li
 record your own.
 
 **[fraktul.dev](https://fraktul.dev)** · [Features](https://fraktul.dev/features) ·
-[Docs](https://fraktul.dev/docs) · [The live map](https://fraktul.dev/map) (fraktul, mapped with fraktul) ·
+[Docs](https://fraktul.dev/docs) · [The live fraktul](https://fraktul.dev/map) (fraktul, mapped with fraktul) ·
 [The demo shop](https://fraktul.dev/fraktuls/shop/) (twenty services, mapped from code and traces)
 
 ## Why
@@ -30,16 +30,16 @@ silicon Mac with [uv](https://docs.astral.sh/uv/) and ffmpeg.
 npx fraktul skill      # install the agent skill: then ask your AI assistant to "map this system with fraktul"
 npx fraktul init       # or start by hand: a starter model at docs/arch/model.yaml, from your project's folders
 npx fraktul check      # every file, function, diagram box and tour step it names must exist
-npx fraktul dev        # the live map at http://localhost:8080
+npx fraktul dev        # the live fraktul at http://localhost:8080
 npx fraktul build      # a static folder (fraktul-dist/) for any host
 npx fraktul voice      # speak the tours (local; the first run sets up the voice engine)
-npx fraktul traces http://jaeger:16686   # what OpenTelemetry traces saw, for the map and the check
+npx fraktul traces http://jaeger:16686   # what OpenTelemetry traces saw, for the fraktul and the check
 ```
 
 Every command takes the model's path; without one, fraktul looks for `./model.yaml`, then `./docs/arch/model.yaml`.
 The full guide is at [fraktul.dev/docs](https://fraktul.dev/docs/getting-started).
 
-The map is a static page. Mermaid, three.js and its fonts ship with fraktul and are served beside it, so it loads
+The fraktul is a static page. Mermaid, three.js and its fonts ship with fraktul and are served beside it, so it loads
 nothing from a CDN and nothing about your code leaves your machine.
 
 ## Written by your AI assistant
@@ -51,7 +51,7 @@ assistant the levels, the conventions and the check loop. Then ask it to map the
 
 ## Levels
 
-One map holds every altitude: the **system** from 30,000 feet, each **service**, each **feature**, then the files and
+One fraktul holds every altitude: the **system** from 30,000 feet, each **service**, each **feature**, then the files and
 functions fraktul reads from the code. `kind: system | service | feature` says which level a block is.
 [Levels](https://fraktul.dev/docs/levels).
 
@@ -62,7 +62,7 @@ model: services, the calls between them, error counts and latency (no payloads).
 and its panel shows the real traffic; `fraktul check` lists calls the traces show that no diagram draws, and
 `--strict` fails on them. [Traces](https://fraktul.dev/docs/traces). `example/shop/` is the OpenTelemetry Demo mapped
 this way: `npm run shop:setup && npm run shop:dev` shows it, `npm run shop:traces` runs the shop in Docker and reads
-fresh traces, and `npx fraktul example shop` puts the map into anyone's checkout of the demo
+fresh traces, and `npx fraktul example shop` puts the fraktul into anyone's checkout of the demo
 ([example/shop/README.md](example/shop/README.md)).
 
 ## The model
@@ -71,7 +71,7 @@ fresh traces, and `npx fraktul example shop` puts the map into anyone's checkout
 version: 1
 title: Shop system map                # page title
 brand: Shop system map                # top-left name
-root: shop                            # the node the map opens on
+root: shop                            # the node the fraktul opens on
 default_repo: main                    # anchors without a repo prefix
 adrs_dir: docs/adr                    # NNNN-title.md files with a "- Status:" line (optional)
 live_module: live.ts                  # facts read at build time (optional, see below)
@@ -126,7 +126,7 @@ Only git-tracked files are read, so ignored, licensed or local data never enters
 ### Source links
 
 Local paths are only used while building. The page links every file, function and ADR to its source on the repo's
-host instead, pinned to the commit that was read, so a deployed map keeps pointing at the code it was built from.
+host instead, pinned to the commit that was read, so a deployed fraktul keeps pointing at the code it was built from.
 
 - **Where the repo lives**: `remote:` (any clone or web URL), or `github: owner/repo` as shorthand. With neither,
   fraktul reads the checkout's `git remote get-url origin`. A repo with no remote simply has no links.
@@ -187,7 +187,7 @@ tours:
   captions and cues are timed exactly. Audio goes to `<model dir>/.fraktul/voice/` (keep it out of git: it is rebuilt
   from the text). Numbers like 77427 are read digit by digit; `say_as` fixes other words. Voices: `af_heart`,
   `am_michael`, `bf_emma`, `am_fenrir` and the rest of Kokoro's list.
-- In the map, **Listen** plays a tour: captions follow, the highlight moves with the cues, and the tour moves on by
+- In the fraktul, **Listen** plays a tour: captions follow, the highlight moves with the cues, and the tour moves on by
   itself (pausing at branches).
 - **Record a walkthrough** (Tours → Record) captures your microphone and every view you open, box you hover and box
   you click. Save downloads one file; `fraktul import-recording <file>` puts it in `<model dir>/recordings/` (commit
@@ -223,7 +223,7 @@ ratio, in a pastel iridescent foil (`--mark-shape` and `--foil` in tokens.css).
 ## fraktul.dev
 
 `npm run site:dev` serves the home page, the features page, the documentation (`content/docs/*.md`), the design system
-and fraktul's own map; `npm run site:build` writes `site-dist/`. The site's screenshots of the map and its social card
+and the fraktul of fraktul itself; `npm run site:build` writes `site-dist/`. The site's screenshots of the fraktul and its social card
 are committed (`npm run site:shots -- <url of a running build>`, `npm run site:images`). Every branch deploys a preview and `main` deploys production on
 Cloudflare: see [DEPLOYMENT.md](DEPLOYMENT.md). Tags `v*.*.*` publish to npm: see [RELEASING.md](RELEASING.md).
 
@@ -235,7 +235,7 @@ fraktul is TypeScript run by Node's own type stripping; the npm package is a Jav
 ```bash
 npm ci
 npm test            # parser, code reader, grouping, init, the example model, and a broken model the check must catch
-npm run dev         # fraktul's own map (example/model.yaml)
+npm run dev         # the fraktul of fraktul itself (example/model.yaml)
 npm run site:dev    # fraktul.dev
 npm run package     # the npm package, in package/
 ```

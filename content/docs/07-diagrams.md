@@ -90,7 +90,7 @@ it. To get good groups, give a long file a few section headings. They help its h
 
 ## Links to any view
 
-The address bar always says where you are, so any moment of the map can be shared:
+The address bar always says where you are, so any moment of the fraktul can be shared:
 
 | Link | Opens |
 |---|---|
@@ -101,7 +101,7 @@ The address bar always says where you are, so any moment of the map can be share
 | `#check?view=3d&cam=bird` | The level in 3D, from a bird's eye |
 
 A block's id is written with `-` for `_`. File, group and function levels have links too: open one and copy the
-address. Without `view=3d` a link opens the flat map.
+address. Without `view=3d` a link opens the flat, 2D view.
 
 ## Colours
 

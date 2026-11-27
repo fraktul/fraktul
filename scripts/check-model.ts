@@ -27,7 +27,7 @@ if (process.argv.includes("--json")) {
   }
   if (r.traces) {
     const t = r.traces, title = (id: string) => model.nodes[id]?.title ?? id;
-    console.log(`\nAgainst the traces: ${t.undrawn.length} call${t.undrawn.length === 1 ? "" : "s"} not drawn, ${t.unmapped.length} service${t.unmapped.length === 1 ? "" : "s"} not on the map`);
+    console.log(`\nAgainst the traces: ${t.undrawn.length} call${t.undrawn.length === 1 ? "" : "s"} not drawn, ${t.unmapped.length} service${t.unmapped.length === 1 ? "" : "s"} not in the fraktul`);
     for (const u of t.undrawn) console.log(`  call     ${title(u.from)} → ${title(u.to)} happens (${u.calls} calls in the traces) but no diagram draws ${u.from} --> ${u.to}`);
     for (const s of t.unmapped) console.log(`  service  ${s} is in the traces; no block says service: ${s}`);
     for (const u of t.unseen) console.log(`  unseen   ${u.from} --> ${u.to} is drawn, but the traces never showed that call`);

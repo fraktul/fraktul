@@ -4,14 +4,14 @@ summary: Talk while you click; your voice and every step are saved together and 
 section: Guides
 ---
 Some explanations are better in a person's own words. A recorded walkthrough captures your microphone together with
-every view you open, every box you hover and every box you click. Played back, the map follows along: the same views,
+every view you open, every box you hover and every box you click. Played back, the fraktul follows along: the same views,
 the same boxes, at the same moments.
 
 ## Record
 
-1. Open the map, for example with `fraktul dev`.
+1. Open the fraktul, for example with `fraktul dev`.
 2. Open **Tours**, then **Record a walkthrough**.
-3. Allow the microphone, then talk while you click through the map.
+3. Allow the microphone, then talk while you click through the fraktul.
 4. **Stop**, then **Play it back** to check it.
 5. Give it a title, a line about it and your name, then **Save file**. The browser downloads one `.json` file with the
    audio inside.
@@ -20,7 +20,7 @@ the same boxes, at the same moments.
 > Browsers only allow the microphone on `localhost` or `https://` pages. The record button is hidden in a browser that
 > can't record.
 
-## Add it to the map
+## Add it to the fraktul
 
 ```bash
 fraktul import-recording ~/Downloads/how-orders-work.json

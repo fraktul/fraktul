@@ -1,9 +1,9 @@
 ---
 title: Publishing
-summary: Build the map into static files and host it anywhere, with or without the source code.
+summary: Build the fraktul into static files and host it anywhere, with or without the source code.
 section: Guides
 ---
-A built map is static files: no server code, no database. Any host that serves files can serve it.
+A built fraktul is static files: no server code, no database. Any host that serves files can serve it.
 
 ## Build
 
@@ -15,7 +15,7 @@ fraktul build --out fraktul-dist
 
 | Path | What it is |
 |---|---|
-| `index.html` | The map: styles, diagrams and all the model and code data in one page. |
+| `index.html` | The fraktul: styles, diagrams and all the model and code data in one page. |
 | `vendor/` | fraktul's own copies of Mermaid, three.js and the fonts. The page loads nothing from a CDN or a font service. |
 | `voice/` | Narration audio, when you ran `fraktul voice`. |
 | `recordings/` | Audio of recorded walkthroughs, when the model has any. |
@@ -38,7 +38,7 @@ deep. Files in a repo marked `private: true` appear by name only.
 FRAKTUL_PUBLIC=1 fraktul build --out fraktul-dist
 ```
 
-With `FRAKTUL_PUBLIC=1`, the page keeps the map's structure (blocks, files, functions and who calls whom) but leaves out
+With `FRAKTUL_PUBLIC=1`, the page keeps the fraktul's structure (blocks, files, functions and who calls whom) but leaves out
 source code, file excerpts and links into the repos. fraktul.dev publishes fraktul's own map this way.
 
 ## Static hosting
@@ -55,7 +55,7 @@ does.
 
 ## Build in CI
 
-Building in CI keeps the published map in step with the code. In GitHub Actions, after the check:
+Building in CI keeps the published fraktul in step with the code. In GitHub Actions, after the check:
 
 ```yaml
 - run: npx fraktul build --out fraktul-dist
@@ -64,4 +64,4 @@ Building in CI keeps the published map in step with the code. In GitHub Actions,
 ```
 
 See [The check in CI](/docs/ci) for getting fraktul into the workflow. Narration can't be rendered on a Linux runner,
-so a map built in CI has no **Listen** buttons. To publish narration, build on the Mac that ran `fraktul voice`.
+so a fraktul built in CI has no **Listen** buttons. To publish narration, build on the Mac that ran `fraktul voice`.

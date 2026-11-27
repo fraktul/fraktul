@@ -11,16 +11,16 @@ const OG_ALT = "fraktul: a system diagram where one box opens into a smaller dia
 export type PageMeta = { path: string; title: string; description: string; kind: "home" | "page" | "doc" | "none"; section?: string };
 
 const PAGES: PageMeta[] = [
-  { path: "/", kind: "home", title: "fraktul: maps of software you can dive into", description: "One model file describes your system. fraktul checks it against the code and draws a map you click through, down to a line of source, with narrated tours." },
-  { path: "/features", kind: "page", title: "Features · fraktul", description: "What fraktul does, with screenshots of live maps: every level from system to function, a check against code and traces, narrated tours, 3D and deep links." },
-  { path: "/ai", kind: "page", title: "Mapping with AI · fraktul", description: "Give your AI coding assistant the fraktul skill and ask for a map. It reads the code and writes the model; a check proves everything it named is real." },
-  { path: "/demo", kind: "page", title: "The demo: a real system, mapped · fraktul", description: "The OpenTelemetry Demo shop, about twenty services, mapped with fraktul from its code and its traces. Open the map, or run it yourself in five commands." },
-  { path: "/living-docs", kind: "page", title: "Documentation that stays true · fraktul", description: "Architecture diagrams go stale because nothing fails when they are wrong. fraktul checks the map against the code and your OpenTelemetry traces." },
+  { path: "/", kind: "home", title: "fraktul: maps of software you can dive into", description: "One model file describes your system. fraktul checks it against the code and draws a fraktul you click through, down to a line of source, with narrated tours." },
+  { path: "/features", kind: "page", title: "Features · fraktul", description: "What fraktul does, with screenshots of live fraktuls: every level from system to function, a check against code and traces, narrated tours, 3D and deep links." },
+  { path: "/ai", kind: "page", title: "Mapping with AI · fraktul", description: "Give your AI coding assistant the fraktul skill and ask for a fraktul. It reads the code and writes the model; a check proves everything it named is real." },
+  { path: "/demo", kind: "page", title: "The demo: a real system, mapped · fraktul", description: "The OpenTelemetry Demo shop, about twenty services, mapped with fraktul from its code and its traces. Open the fraktul, or run it yourself in five commands." },
+  { path: "/living-docs", kind: "page", title: "Documentation that stays true · fraktul", description: "Architecture diagrams go stale because nothing fails when they are wrong. fraktul checks the fraktul against the code and your OpenTelemetry traces." },
   { path: "/docs", kind: "page", title: "Documentation · fraktul", description: "How to map a system with fraktul: a quickstart, the concepts, the model file, tours and narration, publishing, and every command." },
   { path: "/fraktuls", kind: "page", title: "Fraktuls: live maps made with fraktul", description: "A fraktul is a map of a system made with fraktul. Two are live: a demo shop of twenty services with its traces, and fraktul itself. Both have narrated tours." },
   // Internal: not linked, not indexed, and left out of production (scripts/internal-pages.ts).
   { path: "/design", kind: "none", title: "Design system · fraktul (internal)", description: "fraktul's two styles, flat and y2k, in light and dark: tokens, type, controls and the rules that keep text readable." },
-  { path: "/404", kind: "none", title: "Not found · fraktul", description: "This page is not on the map." },
+  { path: "/404", kind: "none", title: "Not found · fraktul", description: "This page is not in the fraktul." },
 ];
 
 /** Every page of fraktul.dev that a reader can land on, docs included. */

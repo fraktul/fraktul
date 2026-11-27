@@ -3,14 +3,14 @@
 //
 //   fraktul init   [model] [--force] [--no-skill] a starter model from the project's folders, and the agent skill
 //   fraktul check  [model] [--strict] [--json]   every anchor, diagram box and tour step must exist
-//   fraktul dev    [model] [--port 8080]         live map, rebuilt when the model or the code changes
+//   fraktul dev    [model] [--port 8080]         live fraktul, rebuilt when the model or the code changes
 //   fraktul build  [model] [--out dir]           one self-contained page (+ voice/ and recordings/)
 //   fraktul artifact [model] [--out dir]         the page without <html>/<head>, for a claude.ai Artifact
 //   fraktul voice  [model] [--tour id] [--voice name] [--setup]   speak the tours' narration (local, Kokoro on MLX)
-//   fraktul import-recording <file.json> [model] a walkthrough saved from the map's recorder → recordings/
+//   fraktul import-recording <file.json> [model] a walkthrough saved from the fraktul's recorder → recordings/
 //   fraktul traces <file|folder|jaeger-url>... [--model path] [--mermaid]   what OpenTelemetry traces saw → traces.json
 //   fraktul example shop                         put the demo shop's map into a checkout of the OpenTelemetry Demo
-//   fraktul skill  [--dir path]                  install the fraktul agent skill, so an AI assistant can write the map
+//   fraktul skill  [--dir path]                  install the fraktul agent skill, so an AI assistant can write the fraktul
 //
 // [model] defaults to ./model.yaml, then ./docs/arch/model.yaml.  --version prints the version.
 // Installed from npm: `npx fraktul check`, or `fraktul` from a package.json script. Docs: https://fraktul.dev/docs
@@ -91,7 +91,7 @@ switch (cmd) {
     if (!flags.has("no-skill")) for (const dir of [".claude/skills", ".agents/skills"]) cpSync(join(FRAKTUL, "skills", "fraktul"), join(top, dir, "fraktul"), { recursive: true });
     const shown = relative(process.cwd(), target);
     const arg = ["model.yaml", join("docs", "arch", "model.yaml")].includes(shown) ? "" : ` ${shown}`;
-    console.log(`fraktul: wrote ${shown}\n\n  Replace the TODOs and draw the arrows, then:\n    fraktul check${arg}   every file it names must exist\n    fraktul dev${arg}     open the map\n\n  The model file: https://fraktul.dev/docs/model${flags.has("no-skill") ? "" : `\n  Or let an AI assistant write it: the fraktul skill is in .claude/skills and .agents/skills. Ask: "Map this system with fraktul."`}`);
+    console.log(`fraktul: wrote ${shown}\n\n  Replace the TODOs and draw the arrows, then:\n    fraktul check${arg}   every file it names must exist\n    fraktul dev${arg}     open the fraktul\n\n  The model file: https://fraktul.dev/docs/model${flags.has("no-skill") ? "" : `\n  Or let an AI assistant write it: the fraktul skill is in .claude/skills and .agents/skills. Ask: "Map this system with fraktul."`}`);
     break;
   }
   case "check": {
@@ -116,7 +116,7 @@ switch (cmd) {
     const page = readFileSync(join(out, "index.html"), "utf8");
     const head = (page.match(/<head[^>]*>([\s\S]*?)<\/head>/i)?.[1] ?? "").replace(/<meta charset[^>]*>/i, "").replace(/<meta name="viewport"[^>]*>/i, "");
     const body = page.match(/<body[^>]*>([\s\S]*?)<\/body>/i)?.[1] ?? "";
-    // An Artifact runs its page alone, so Mermaid goes inside it (a map on a host loads it from vendor/ after painting).
+    // An Artifact runs its page alone, so Mermaid goes inside it (a fraktul on a host loads it from vendor/ after painting).
     const mermaidJs = readFileSync(join(out, "vendor", "mermaid.min.js"), "utf8").replace(/<\/script/gi, "<\\/script");
     writeFileSync(join(out, "artifact.html"), `${head}\n<script>${mermaidJs}</script>\n${body}\n`);
     console.log(`fraktul: ${join(out, "artifact.html")} (Mermaid inlined); publish voice/ and recordings/ beside it`);
@@ -138,7 +138,7 @@ switch (cmd) {
   }
   case "traces": {
     // Traces in (OTLP JSON files, a folder of them, or a Jaeger address), a small summary out: services and the calls
-    // between them. The check and the map compare it with what the model draws.
+    // between them. The check and the fraktul compare it with what the model draws.
     const { fetchJaeger, observedMermaid, readSpans, summarize } = await import(`../src/lib/traces${EXT}`);
     if (!args.length) { console.error("Usage: fraktul traces <otlp.json | folder | http://jaeger:16686>... [--model path] [--lookback 1h] [--limit 200] [--mermaid]"); process.exit(2); }
     const spans = [];
@@ -164,11 +164,11 @@ switch (cmd) {
     const dir = join("docs", "arch");
     if (existsSync(join(dir, "model.yaml")) && !flags.has("force")) { console.error(`fraktul: ${join(dir, "model.yaml")} already exists. Pass --force to replace it.`); process.exit(2); }
     mkdirSync(dir, { recursive: true });
-    // In fraktul's own repo the demo sits in .demo/ and the map links home to fraktul.dev; here the repo is this folder.
+    // In fraktul's own repo the demo sits in .demo/ and the fraktul links home to fraktul.dev; here the repo is this folder.
     const model = readFileSync(join(FRAKTUL, "example", "shop", "model.yaml"), "utf8").replace('path: ".demo/opentelemetry-demo"', 'path: "."').replace(/^home: .*\n/m, "");
     writeFileSync(join(dir, "model.yaml"), model);
     cpSync(join(FRAKTUL, "example", "shop", "traces.json"), join(dir, "traces.json"));
-    console.log(`fraktul: wrote ${join(dir, "model.yaml")} and ${join(dir, "traces.json")}\n\n    fraktul check   the map against the code and the traces\n    fraktul dev     open the map\n\n  About this map: https://fraktul.dev/demo`);
+    console.log(`fraktul: wrote ${join(dir, "model.yaml")} and ${join(dir, "traces.json")}\n\n    fraktul check   the fraktul against the code and the traces\n    fraktul dev     open the fraktul\n\n  About this fraktul: https://fraktul.dev/demo`);
     break;
   }
   case "skill": {
@@ -196,7 +196,7 @@ switch (cmd) {
     delete rec.audio;
     rec.file = `${id}.${ext}`;
     writeFileSync(join(dir, `${id}.json`), JSON.stringify(rec, null, 2) + "\n");
-    console.log(`fraktul: saved ${join(dir, `${id}.json`)} and ${rec.file}. Rebuild the map to include it.`);
+    console.log(`fraktul: saved ${join(dir, `${id}.json`)} and ${rec.file}. Rebuild the fraktul to include it.`);
     break;
   }
   default:

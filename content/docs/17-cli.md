@@ -40,7 +40,7 @@ Checks every anchor, diagram box, narration cue and tour step against the code. 
 
 | Flag | Does |
 |---|---|
-| `--strict` | Also fail on files and decision records the model doesn't mention, and on calls and services the traces show that the map does not. |
+| `--strict` | Also fail on files and decision records the model doesn't mention, and on calls and services the traces show that the fraktul does not. |
 | `--json` | Print the report as JSON. |
 
 ## traces
@@ -67,7 +67,7 @@ fraktul example shop [--force]
 ```
 
 Run inside a checkout of the [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo): writes the
-demo shop's map and its traces summary to `docs/arch/`. See [The demo shop](/docs/demo).
+demo shop's fraktul and its traces summary to `docs/arch/`. See [The demo shop](/docs/demo).
 
 ## skill
 
@@ -84,7 +84,7 @@ See [Map it with AI](/docs/ai).
 fraktul dev [model] [--port 8080]
 ```
 
-Serves the map at `http://localhost:8080` and rebuilds it when anything in the model's folder changes: the model, the
+Serves the fraktul at `http://localhost:8080` and rebuilds it when anything in the model's folder changes: the model, the
 live module, recordings and narration audio.
 
 | Flag | Does |
@@ -97,7 +97,7 @@ live module, recordings and narration audio.
 fraktul build [model] [--out fraktul-dist]
 ```
 
-Builds the map into a folder for static hosting: `index.html`, `vendor/`, and `voice/` and `recordings/` when there
+Builds the fraktul into a folder for static hosting: `index.html`, `vendor/`, and `voice/` and `recordings/` when there
 are any. The folder is replaced on every build. See [Publishing](/docs/publishing).
 
 | Flag | Does |
@@ -139,18 +139,18 @@ the model. Needs Apple silicon, uv and ffmpeg. See [Tours and narration](/docs/t
 fraktul import-recording <walkthrough.json> [model]
 ```
 
-Takes a walkthrough saved from the map's recorder and writes its events and audio into `recordings/` next to the
+Takes a walkthrough saved from the fraktul's recorder and writes its events and audio into `recordings/` next to the
 model. See [Recorded walkthroughs](/docs/recordings).
 
 ## Environment variables
 
 | Variable | Does |
 |---|---|
-| `FRAKTUL_URL` | The address the map will be published at. Adds a canonical link and `og:url` to the page. |
+| `FRAKTUL_URL` | The address the fraktul will be published at. Adds a canonical link and `og:url` to the page. |
 | `FRAKTUL_PUBLIC=1` | Build without source code, file excerpts or links into the repos. See [Publishing](/docs/publishing#public-builds-of-private-code). |
 | `FRAKTUL_REPO_<KEY>` | Read the repo `<key>` from this path instead of its `path:`. The key is upper-cased, with other characters as `_`: `FRAKTUL_REPO_BILLING`. |
 
-## In the map
+## In the fraktul
 
 | Key | Does |
 |---|---|
@@ -162,5 +162,5 @@ model. See [Recorded walkthroughs](/docs/recordings).
 | <kbd>Space</kbd> | Pause or resume narration |
 | <kbd>→</kbd> | Next tour step |
 
-A link can open the map on a block: add `#billing-api` to the map's URL to open the block `billing_api` (underscores
+A link can open the fraktul on a block: add `#billing-api` to the fraktul's URL to open the block `billing_api` (underscores
 are written as dashes). The address bar follows as you click, so you can copy a link to any block.

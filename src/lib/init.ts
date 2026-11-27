@@ -57,7 +57,7 @@ export function starterModel(name: string, files: string[]): string {
 # Next:
 #   1. Replace each TODO with a sentence a newcomer would understand.
 #   2. Draw the arrows in the diagram below: who calls whom, where the data goes.
-#   3. Run \`fraktul check\`, then \`fraktul dev\` to open the map.
+#   3. Run \`fraktul check\`, then \`fraktul dev\` to open the fraktul.
 version: 1
 title: ${q(`${title} system map`)}
 root: system
@@ -103,7 +103,7 @@ ${blocks.map((b) => `        ${b.id}`).join("\n")}
 
 ${nodes}
 
-# A tour walks someone through the map, one step at a time. Add \`say:\` to a step and \`fraktul voice\` narrates it.
+# A tour walks someone through the fraktul, one step at a time. Add \`say:\` to a step and \`fraktul voice\` narrates it.
 tours:
   - id: first-look
     title: A first look

@@ -1,9 +1,9 @@
 ---
 title: Live facts
-summary: Numbers, lists and decision records read from the project at every build, never typed into the map.
+summary: Numbers, lists and decision records read from the project at every build, never typed into the fraktul.
 section: Guides
 ---
-A map that repeats a number by hand is wrong the day that number changes. fraktul reads facts at build time instead,
+A fraktul that repeats a number by hand is wrong the day that number changes. fraktul reads facts at build time instead,
 and shows them in a block's side panel.
 
 ## Decision records

@@ -1,12 +1,12 @@
 ---
 title: Levels
-summary: Systems, services, features, files and functions - one map from 30,000 feet down to a line of code.
+summary: Systems, services, features, files and functions - one fraktul from 30,000 feet down to a line of code.
 section: Concepts
 ---
 Most diagrams show one altitude. An architecture slide shows the systems and nothing below. A call graph shows the
 functions and nothing above. People need both, and they need to get from one to the other.
 
-A fraktul map is every altitude in one place. You start at 30,000 feet and click down until you are reading the
+A fraktul is every altitude in one place. You start at 30,000 feet and click down until you are reading the
 code, or stop at whatever level answers your question.
 
 ## The ladder
@@ -45,7 +45,7 @@ nodes:
     summary: Gives a customer their money back, in full or in part.
 ```
 
-The map shows the level above each block's summary, and the [3D view](/docs/3d-view) draws each level differently.
+The fraktul shows the level above each block's summary, and the [3D view](/docs/3d-view) draws each level differently.
 The other kinds (`component`, `module`, `data`, `person`, `repo`, `doc`, `step`) say what a box stands for rather
 than how high up it is.
 
@@ -62,7 +62,7 @@ be a door into the service that performs it.
 
 ## Explaining a system to someone who doesn't write code
 
-The top of the map is for everyone, so write it for everyone:
+The top of the fraktul is for everyone, so write it for everyone:
 
 - **Summaries in plain words.** "Takes the customer's card and asks the bank for the money", not "wraps the payment
   SDK".

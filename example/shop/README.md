@@ -3,7 +3,7 @@
 A map of a real system: the [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo) ("Astronomy
 Shop"), an online shop made of about twenty services in a dozen languages. It is the OpenTelemetry project's own demo application, so you may know it.
 
-The map is live at [fraktul.dev/fraktuls/shop](https://fraktul.dev/fraktuls/shop/). It shows what fraktul's own map cannot:
+The fraktul is live at [fraktul.dev/fraktuls/shop](https://fraktul.dev/fraktuls/shop/). It shows what the fraktul of fraktul itself cannot:
 
 - **Every level.** The system from 30,000 feet, the features (browsing, the cart, paying, delivery), each service,
   then the code.
@@ -15,25 +15,25 @@ The map is live at [fraktul.dev/fraktuls/shop](https://fraktul.dev/fraktuls/shop
 
 | File | What it is |
 |---|---|
-| `model.yaml` | The map: 26 blocks, 9 diagrams, 4 narrated tours |
+| `model.yaml` | The fraktul: 26 blocks, 9 diagrams, 4 narrated tours |
 | `.fraktul/voice/` | The tours' narration, spoken by `fraktul voice` on a Mac |
 | `traces.json` | What the traces saw: 17 services and 24 kinds of call between them, from 315 traces |
 | `setup.sh` | Fetches the demo's source, for the code levels |
 | `capture.sh` | Runs the shop in Docker and reads fresh traces |
 | `otelcol-extras.yml` | The one Collector setting `capture.sh` adds: export traces to a file |
 
-## See the map (no Docker)
+## See the fraktul (no Docker)
 
 In a checkout of fraktul:
 
 ```bash
 npm ci
 npm run shop:setup     # clones the demo's source into .demo/ (about 60 MB)
-npm run shop:dev       # the map at http://localhost:8094
+npm run shop:dev       # the fraktul at http://localhost:8094
 npm run shop:check     # the model against the code and the traces
 ```
 
-Without `shop:setup` the map still works, down to the service level; the code levels need the source.
+Without `shop:setup` the fraktul still works, down to the service level; the code levels need the source.
 
 From the npm package, without the fraktul repo: clone the demo, then let fraktul put the model in it.
 
@@ -66,7 +66,7 @@ Then try what the check is for. Delete an arrow from a diagram in `model.yaml` (
 `delivery`) and run `npm run shop:check`:
 
 ```text
-Against the traces: 1 call not drawn, 0 services not on the map
+Against the traces: 1 call not drawn, 0 services not in the fraktul
   call     Shipping → Shipping quotes happens (6 calls in the traces) but no diagram draws shipping --> quote
 ```
 

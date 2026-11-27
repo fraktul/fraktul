@@ -3,8 +3,8 @@ title: Tours and narration
 summary: Walk someone through the system in writing, or in a real voice spoken on your own Mac.
 section: Guides
 ---
-A tour is a path through the map. Each step shows one diagram, highlights a few boxes and shows a short card of text.
-Readers open tours from **Tours** in the map's top bar.
+A tour is a path through the fraktul. Each step shows one diagram, highlights a few boxes and shows a short card of text.
+Readers open tours from **Tours** in the fraktul's top bar.
 
 ## Write a tour
 
@@ -96,7 +96,7 @@ not spoken again. Audio goes to `.fraktul/voice/` next to the model.
 
 > [!WARNING]
 > Voice needs a Mac with Apple silicon, [uv](https://docs.astral.sh/uv/) and ffmpeg on the `PATH`. The rest of fraktul
-> runs anywhere, and a map without rendered audio simply has no **Listen** button.
+> runs anywhere, and a fraktul without rendered audio simply has no **Listen** button.
 
 > [!NOTE]
 > Keep `.fraktul/` out of git: it is rebuilt from the text. Add `.fraktul/` to your `.gitignore`. To publish narration,
@@ -131,11 +131,11 @@ Codes like `77427` or `G2212` (an order number, a part number) are read digit by
 
 ## Listening
 
-In the map, **Listen** plays a tour. Captions follow the voice, the highlight moves with the cues, and the tour moves on
+In the fraktul, **Listen** plays a tour. Captions follow the voice, the highlight moves with the cues, and the tour moves on
 by itself, pausing at branches so the listener can choose. **Space** pauses and resumes; the right arrow goes to the
 next step.
 
-The tour card is a small window: drag it by its title bar to wherever it's out of the way (the map remembers where),
+The tour card is a small window: drag it by its title bar to wherever it's out of the way (the fraktul remembers where),
 fold it to its title bar with **–**, and unfold it with the same button. The voice keeps going while it's folded. In 3D,
 the camera follows the tour from block to block.
 
