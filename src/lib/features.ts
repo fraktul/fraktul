@@ -24,13 +24,13 @@ const FEATURES: Feature[] = [
   },
   {
     id: "levels", eyebrow: "Every altitude", title: "Systems, services, features, files, functions",
-    body: ["Most diagrams show one altitude. A fraktul map has all of them: the whole system from 30,000 feet, each service, each feature step by step, then the files and functions the code itself provides.", "So you can explain a complex system to someone who has never seen the code, and take an engineer from the same picture down to the function they need to change. It is one map, so the big picture and the code cannot drift apart."],
+    body: ["Most diagrams show one altitude. A fraktul map has all of them: the whole system from 30,000 feet, each service, each feature step by step, then the files and functions the code itself provides.", "Use the top of it to explain even a complex system to someone non-technical. The same map takes an engineer from that picture down to the function they need to change."],
     points: ["Each block says which level it is: system, service or feature", "A small app needs two written levels; a platform needs three or four", "A tour that stays on the top two levels explains the system to anyone"],
     shots: ["shop"], doc: ["Levels", "/docs/levels"],
   },
   {
     id: "ai", eyebrow: "Written by AI", title: "Your assistant writes the map",
-    body: ["The model is a plain text file with a check that says when it is wrong, which makes it a good job for an AI coding assistant. Install the fraktul skill, ask for a map in one sentence, and the assistant reads the code, writes the levels and works the check until every reference is real.", "You review what only a person can judge: whether the words are true and the picture is the one you would draw."],
+    body: ["The model is a plain text file, and a check says when it is wrong, so an AI coding assistant can write it. Install the fraktul skill and ask for a map. The assistant reads the code, writes the levels and reruns the check until every file and function it named exists.", "You review what the check cannot: whether the words are true, and whether the picture is the one you would draw."],
     code: { label: "Shell", text: "$ npx fraktul skill\nfraktul: .claude/skills/fraktul\nfraktul: .agents/skills/fraktul\n\n> Map this system with fraktul." },
     doc: ["Map it with AI", "/docs/ai"],
   },
@@ -58,7 +58,7 @@ const FEATURES: Feature[] = [
   },
   {
     id: "3d", eyebrow: "A bonus", title: "Walk through it in 3D",
-    body: ["Press 3 and the level on screen becomes a place: the same boxes and arrows, standing where the diagram drew them. You start on the ground in front of it with everything in view, or switch to a bird's eye. Shape follows what a thing is, height follows lines of code, and planned blocks are holograms.", "Most people will live in the flat map. The 3D view is there because a system you can stand inside is easier to remember."],
+    body: ["Press 3 and the level on screen becomes a place: the same boxes and arrows, standing where the diagram drew them. You start on the ground in front of it with everything in view, or switch to a bird's eye. Shape follows what a thing is, height follows lines of code, and planned blocks are holograms.", "Most people will use the flat map. The 3D view is a bonus, and it is there because walking through a system is fun."],
     points: ["Drag to look, WASD to move, click a block to fly in", "Tours fly the camera from stop to stop", "three.js ships with fraktul and loads only when 3D is switched on"],
     shots: ["3d", "3d-bird"], doc: ["3D view", "/docs/3d-view"],
   },
@@ -70,7 +70,7 @@ const FEATURES: Feature[] = [
   },
   {
     id: "check", eyebrow: "Kept true", title: "A check that fails when the map stops matching the code",
-    body: ["Diagrams go stale because nothing complains. fraktul check does: a moved file, a renamed function, a deleted decision record, a diagram box that leads nowhere or a tour step that points at nothing fails the build, and names the block and the path.", "It also lists the files your model does not mention yet. With AI writing much of the code, that list is how the picture keeps up."],
+    body: ["Diagrams go stale because nothing complains. fraktul check does: a moved file, a renamed function, a deleted decision record, a diagram box that leads nowhere or a tour step that points at nothing fails the build, and names the block and the path.", "It also lists the files your model does not mention yet. With AI writing most of the code, that list is how the map keeps up."],
     code: { label: "Shell", text: "$ npx fraktul check\n8 nodes, 8 diagrams, 8 tours (43 steps)\n\n1 broken reference:\n  ✗ node api: file src/api/orders.ts is not in the repo\n    (moved, renamed, deleted, or not tracked by git)" },
     doc: ["The check in CI", "/docs/ci"],
   },
@@ -108,35 +108,35 @@ export const SITE_PAGES: Record<string, Page> = {
     ctas: [["Open the live map", "/map"], ["Quickstart", "/docs/getting-started"]], sections: FEATURES, more: MORE, end: START,
   },
   ai: {
-    eyebrow: "Mapping with AI", title: "Your assistant reads the code. fraktul keeps it honest.",
-    lede: "Nobody has time to draw the architecture, and nobody has to. Give your AI coding assistant the fraktul skill and ask for a map. It writes the model; a check proves that everything it named is real.",
+    eyebrow: "Mapping with AI", title: "Your AI assistant can write the whole map",
+    lede: "Give your AI coding assistant the fraktul skill and ask for a map. It reads the code and writes the model. A check then proves that every file, function and tour step it named exists.",
     ctas: [["Set it up", "/docs/ai"], ["Open a finished map", "/map"]],
     sections: [
       {
-        id: "skill", eyebrow: "One command", title: "A skill your assistant already knows how to use",
-        body: ["fraktul ships an agent skill: the instructions an assistant needs to map a system well. Which levels to write, how many boxes a diagram can hold, how to phrase a summary a non-engineer understands, and how to work the check until it passes.", "It installs into the two folders assistants read, so it works with Claude Code, GitHub Copilot, Cursor, Codex, Gemini CLI and others. Commit it and the whole team has it."],
+        id: "skill", eyebrow: "One command", title: "One command installs the skill",
+        body: ["fraktul ships an agent skill: the instructions an assistant needs to map a system well. Which levels to write, how many boxes a diagram can hold, how to phrase a summary a non-engineer understands, and how to work the check until it passes.", "It installs into .claude/skills and .agents/skills, the two folders that Claude Code, GitHub Copilot, Cursor, Codex and Gemini CLI read skills from. Commit them and the whole team has it."],
         code: { label: "Shell", text: "$ npm install --save-dev fraktul\n$ npx fraktul skill\nfraktul: .claude/skills/fraktul\nfraktul: .agents/skills/fraktul" },
         doc: ["Map it with AI", "/docs/ai"],
       },
       {
-        id: "ask", eyebrow: "One sentence", title: "Ask for a map the way you would ask a colleague",
+        id: "ask", eyebrow: "One sentence", title: "Ask for a map in one sentence",
         body: ["The assistant reads the README, the routes and the deploy files, finds the three to seven big parts, and writes each level down to where the code can take over. Then it runs the check, fixes what it got wrong, and writes the tour a new teammate should take first.", "After that, ask for more: another level under one service, a tour for a non-technical audience, or the calls your traces show that the map is missing."],
         code: { label: "Prompts", text: "Map this system with fraktul.\n\nAdd a level under checkout: its features, one block each.\n\nWrite a tour that follows one order from the browser\nto the bank, for someone non-technical.\n\nPull the traces from our Jaeger and draw the calls\nthe map is missing." },
       },
       {
-        id: "honest", eyebrow: "The guardrail", title: "An assistant can be wrong. The check can't be talked round.",
+        id: "honest", eyebrow: "The guardrail", title: "When the assistant gets it wrong, the check says so",
         body: ["An AI will sometimes name a file that does not exist or a function that was renamed last week. In a wiki page nobody would notice. In a fraktul model the check fails and says exactly which reference is wrong, so the assistant fixes it before you ever see it.", "Below the levels it wrote, nothing is generated by a model at all: files, functions, calls and source are read straight from the code."],
-        code: { label: "Shell", text: "$ npx fraktul check\n2 broken references:\n  ✗ node payments: file src/pay/stripe.ts is not in the repo\n  ✗ tour first-order step 4: focus \"ledger\" is not a box in payments\n\n$ npx fraktul check\nAll references resolve." },
+        code: { label: "Shell (an example)", text: "$ npx fraktul check\n2 broken references:\n  ✗ node payments: file src/pay/stripe.ts is not in the repo\n  ✗ tour first-order step 4: focus \"ledger\" is not a box in payments\n\n$ npx fraktul check\nAll references resolve." },
         doc: ["The check in CI", "/docs/ci"],
       },
       {
-        id: "review", eyebrow: "Your part", title: "You review the meaning, not the plumbing",
-        body: ["The check proves the map matches the code. It cannot prove the words are true. That is the part left for you, and it is the interesting part: is each summary what you would tell a new teammate, and is the top diagram the one you would draw on a whiteboard?", "The skill tells the assistant to list what it guessed, so you know where to look."],
+        id: "review", eyebrow: "Your part", title: "What is left for you to review",
+        body: ["The check proves the map matches the code. It cannot prove the words are true. That part is yours: whether each summary is what you would tell a new teammate, and whether the top diagram is the one you would draw on a whiteboard.", "The skill tells the assistant to list what it guessed, so you know where to look."],
         points: ["Summaries: what the part is for, in plain words", "Arrows: the flow you would draw yourself", "What was left out, and whether you agree"],
       },
       {
         id: "current", eyebrow: "Every change after", title: "The assistant that writes the code updates the map",
-        body: ["AI now writes much of the code, faster than anyone reads it. The same assistant can keep the picture current: tell it once that the project has a map, and every change that moves a file or adds a module updates the model in the same pull request.", "When it forgets, the check in CI fails and the fix is one line."],
+        body: ["AI now writes most of the code. The same assistant can keep the map current: tell it once that the project has a map, and every change that moves a file or adds a module updates the model in the same pull request.", "When it forgets, the check in CI fails and the fix is one line."],
         code: { label: "AGENTS.md", text: "This project has a fraktul map (docs/arch/model.yaml).\nWhen you add, move or rename code, update the model in\nthe same change and run `npx fraktul check` before you finish." },
         doc: ["Keeping the map true", "/docs/keeping-it-true"],
       },
@@ -145,7 +145,7 @@ export const SITE_PAGES: Record<string, Page> = {
   },
   demo: {
     eyebrow: "The demo", title: "A real system, mapped: twenty services and their traces",
-    lede: "fraktul's own map is one small tool. This one is the OpenTelemetry Demo, an open-source online shop that teams everywhere use to try out observability tools: about twenty services, a dozen languages, a database, a cache and a queue. Open it, or run it yourself in five commands.",
+    lede: "fraktul's own map is one small tool. This one is the OpenTelemetry project's demo application, an open-source online shop: about twenty services in a dozen languages, with a database, a cache and a queue. Open it, or run it yourself in five commands.",
     ctas: [["Open the shop's map", "/shop/"], ["Run it yourself", "/docs/demo"]],
     sections: [
       {
@@ -179,13 +179,13 @@ export const SITE_PAGES: Record<string, Page> = {
     end: START,
   },
   "living-docs": {
-    eyebrow: "Documentation that stays true", title: "Every architecture diagram is out of date. This one tells you.",
-    lede: "A diagram is right the day it is drawn. Then a service is split, a queue is added, a module is renamed, and nothing tells anyone to update the picture. fraktul makes the map fail when it is wrong, so it gets fixed in the pull request that broke it.",
+    eyebrow: "Documentation that stays true", title: "A map that says when it has gone out of date",
+    lede: "We all know diagrams go out of date almost as soon as they are drawn. A service is split, a queue is added, a module is renamed, and nothing tells anyone to update the picture. fraktul's check fails when the map is wrong, so it gets fixed in the pull request that caused it.",
     ctas: [["The routine", "/docs/keeping-it-true"], ["Connect your traces", "/docs/traces"]],
     sections: [
       {
         id: "why-stale", eyebrow: "The real problem", title: "Diagrams go stale because nothing fails",
-        body: ["Code that is wrong fails a test. A diagram that is wrong just sits there, quietly misleading the next person who trusts it. After a few months nobody can say which parts are still true, so nobody trusts any of it, and the team is back to asking the one person who remembers.", "The fix is not more discipline. It is a map that can fail."],
+        body: ["Code that is wrong fails a test. A diagram that is wrong just sits there. After a few months nobody can say which parts are still true, so the team goes back to asking the one person who remembers.", "What fixes that is a map that can fail."],
       },
       {
         id: "moved", eyebrow: "Drift, one", title: "The code moved",
@@ -195,7 +195,7 @@ export const SITE_PAGES: Record<string, Page> = {
       },
       {
         id: "grew", eyebrow: "Drift, two", title: "The code grew, and the map did not",
-        body: ["New code is the quieter failure: a module nobody put on any diagram. Tell fraktul which files matter and it lists every one the map does not mention. In strict mode new code cannot merge until it has a place.", "With AI writing much of the code, this list is how the picture keeps up with the repository."],
+        body: ["New code is the quieter failure: a module nobody put on any diagram. Tell fraktul which files matter and it lists every one the map does not mention. In strict mode new code cannot merge until it has a place.", "With AI writing most of the code, this list is how the map keeps up with the repository."],
         code: { label: "Shell", text: "$ npx fraktul check --strict\nIn the repo but not in the model yet (2 files):\n  file  src/billing/dunning.ts\n  file  src/billing/retry.ts" },
       },
       {
@@ -207,7 +207,7 @@ export const SITE_PAGES: Record<string, Page> = {
       },
       {
         id: "below", eyebrow: "No drift at all", title: "Below what you wrote, nothing can go stale",
-        body: ["The file and function levels are not documentation. They are read from the code on every build: the functions in a file, who calls whom, the source itself, linked to the commit it was read from. There is nothing to keep up to date."],
+        body: ["The file and function levels are read from the code on every build: the functions in a file, who calls whom, and the source itself, linked to the commit it was read from. There is nothing there to keep up to date."],
         shots: ["source"],
       },
       {
@@ -289,7 +289,7 @@ export function demoBand(): SafeHtml {
     <div class="show-copy">
       <p class="docs-eyebrow">See it on a real system</p>
       <h2 class="show-head y2k-head" id="demo-title">Twenty services, mapped from code and traces</h2>
-      <p>This is the OpenTelemetry Demo, the open-source shop teams use to try out observability tools. Its map goes from nine boxes anyone can follow down to the function that charges the card, and every service shows the traffic its traces recorded.</p>
+      <p>This is the OpenTelemetry project's demo application, an open-source online shop. Its map goes from nine boxes anyone can follow down to the function that charges the card, and every service shows the traffic its traces recorded.</p>
       <p>Open it here, or run it on your own machine in five commands.</p>
       <div class="docs-hero-ctas"><a class="pill main" href="/shop/" data-testid="home-demo-open">Open the shop's map</a><a class="pill" href="/demo" data-testid="home-demo-page">About the demo</a></div>
     </div>

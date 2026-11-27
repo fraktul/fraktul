@@ -1,8 +1,7 @@
 # The demo shop
 
 A map of a real system: the [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo) ("Astronomy
-Shop"), an online shop made of about twenty services in a dozen languages. It is the system many people already use
-to try out observability tools, so you may know it.
+Shop"), an online shop made of about twenty services in a dozen languages. It is the OpenTelemetry project's own demo application, so you may know it.
 
 The map is live at [fraktul.dev/shop](https://fraktul.dev/shop/). It shows what fraktul's own map cannot:
 

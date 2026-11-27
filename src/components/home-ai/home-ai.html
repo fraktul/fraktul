@@ -18,19 +18,20 @@ Let an AI assistant write the map: install the agent skill, ask in one sentence,
 <section class="sec" id="ai" data-bascik-preserve="id" data-testid="home-ai" aria-labelledby="ai-title">
   <div class="copy">
     <span class="eyebrow">Written by your assistant</span>
-    <h2 class="head y2k-head" id="ai-title">You don't draw the map. Your AI does.</h2>
-    <p>The model is a plain text file with a check that says when it is wrong. That is exactly the kind of work an AI coding assistant is good at: it reads the code faster than you can, writes the levels, and runs the check until everything it named is real.</p>
+    <h2 class="head y2k-head" id="ai-title">Your AI assistant can write the whole map</h2>
+    <p>The model is a plain text file, and a check says when it is wrong. So an AI coding assistant can write it: it reads the code, writes the levels, and reruns the check until every file and function it named exists.</p>
     <ol class="steps">
-      <li>Install the fraktul skill. It works with Claude Code, Copilot, Cursor, Codex and Gemini CLI.</li>
+      <li>Install the fraktul skill. It goes into <code>.claude/skills</code> and <code>.agents/skills</code>, the folders coding assistants read skills from.</li>
       <li>Ask for a map, in one sentence.</li>
-      <li>Review the part only a person can judge: are the words true, and is this the picture you would draw?</li>
+      <li>Review what the check can't: whether the words are true, and whether this is the picture you would draw.</li>
     </ol>
     <div class="more">
       <a class="pill main" href="/ai" data-testid="home-ai-page">Mapping with AI</a>
       <a class="pill" href="/docs/ai" data-testid="home-ai-docs">Set it up</a>
     </div>
   </div>
-  <pre class="term y2k-screen" aria-label="Installing the skill and asking an assistant for a map"><span class="c">$</span> npm install --save-dev fraktul
+  <pre class="term y2k-screen" aria-label="An example of installing the skill and asking an assistant for a map"><span class="c"># An example session. Your assistant's words and numbers will differ.</span>
+<span class="c">$</span> npm install --save-dev fraktul
 <span class="c">$</span> npx fraktul skill
 fraktul: .claude/skills/fraktul
 fraktul: .agents/skills/fraktul
