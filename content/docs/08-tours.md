@@ -107,7 +107,7 @@ Options: `--tour <id>` renders one tour, `--voice <name>` overrides the voice, `
 ## Voice settings
 
 ```yaml
-voice: { voice: bf_emma, speed: 1, say_as: { NCCI: "N C C I", SQL: "sequel" } }
+voice: { voice: bf_emma, speed: 1, say_as: { SKU: "S K U", SQL: "sequel" } }
 
 tours:
   - id: one-order
@@ -127,7 +127,7 @@ tours:
 - `say_as`: words the voice gets wrong, and how to say them. Set it on the model's `voice:`.
 - A tour's own `voice:` overrides the model's for that tour.
 
-Codes like `77427` or `G2212` are read digit by digit. Four-digit years starting with 19 or 20 stay years.
+Codes like `77427` or `G2212` (an order number, a part number) are read digit by digit. Four-digit years starting with 19 or 20 stay years.
 
 ## Listening
 

@@ -74,7 +74,7 @@ on an internal network or offline.
 Add it to `say_as` under the model's `voice:`, spelled the way it should sound:
 
 ```yaml
-voice: { voice: af_heart, say_as: { NCCI: "N C C I", kubectl: "cube control" } }
+voice: { voice: af_heart, say_as: { SKU: "S K U", kubectl: "cube control" } }
 ```
 
 ## The record button is missing

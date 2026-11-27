@@ -35,6 +35,7 @@ const og = `<!doctype html><html><head><meta charset="utf-8" />
   .ln { stroke: #4a4f57; stroke-width: 1.4; fill: none; }
   .zoom { stroke: #4a4f57; stroke-dasharray: 3 5; stroke-width: 1.2; fill: none; opacity: 0.7; }
   .lbl { font: 600 11px Manrope, sans-serif; fill: #0a0b0d; }
+  .cap { font: 500 8px "JetBrains Mono", monospace; letter-spacing: 0.14em; fill: #4a4f57; }
   .code { font: 400 11px "JetBrains Mono", monospace; fill: #0a0b0d; }
   .url { position: absolute; left: 72px; bottom: 56px; font: 400 18px/1 Michroma, sans-serif; letter-spacing: 0.14em; color: #0a0b0d; }
 </style></head><body>
@@ -48,21 +49,24 @@ const og = `<!doctype html><html><head><meta charset="utf-8" />
   <svg class="art" viewBox="0 0 520 440">
     <defs><linearGradient id="rim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" /><stop offset="0.48" stop-color="#9aa1aa" /><stop offset="0.52" stop-color="#3c4149" /><stop offset="1" stop-color="#e6e8eb" /></linearGradient></defs>
     <rect class="frame" x="10" y="20" width="300" height="200" rx="16" /><rect class="edge" x="10" y="20" width="300" height="200" rx="16" />
-    <rect class="box" x="34" y="56" width="92" height="40" rx="9" /><text class="lbl" x="80" y="81" text-anchor="middle">Teams</text>
-    <rect class="box hot" x="172" y="56" width="112" height="40" rx="9" /><text class="lbl" x="228" y="81" text-anchor="middle">Answer core</text>
-    <rect class="box" x="100" y="150" width="120" height="40" rx="9" /><text class="lbl" x="160" y="175" text-anchor="middle">Sources</text>
+    <text class="cap" x="28" y="43">YOUR SYSTEM</text>
+        <rect class="box" x="34" y="56" width="92" height="40" rx="9" /><text class="lbl" x="80" y="81" text-anchor="middle">Storefront</text>
+    <rect class="box hot" x="172" y="56" width="112" height="40" rx="9" /><text class="lbl" x="228" y="81" text-anchor="middle">Checkout</text>
+    <rect class="box" x="100" y="150" width="120" height="40" rx="9" /><text class="lbl" x="160" y="175" text-anchor="middle">Orders</text>
     <path class="ln" d="M126 76 H172 M228 96 C228 130 200 130 186 150 M80 96 C80 128 110 130 130 150" />
     <path class="zoom" d="M284 56 L300 150 M284 96 L470 310" />
     <rect class="frame" x="230" y="150" width="240" height="160" rx="14" /><rect class="edge" x="230" y="150" width="240" height="160" rx="14" />
-    <rect class="box" x="250" y="178" width="80" height="34" rx="8" /><text class="lbl" x="290" y="199" text-anchor="middle">Sort</text>
-    <rect class="box hot" x="370" y="178" width="80" height="34" rx="8" /><text class="lbl" x="410" y="199" text-anchor="middle">Read</text>
-    <rect class="box" x="310" y="254" width="84" height="34" rx="8" /><text class="lbl" x="352" y="275" text-anchor="middle">Decide</text>
+    <text class="cap" x="246" y="170">INSIDE CHECKOUT</text>
+        <rect class="box" x="250" y="178" width="80" height="34" rx="8" /><text class="lbl" x="290" y="199" text-anchor="middle">Cart</text>
+    <rect class="box hot" x="370" y="178" width="80" height="34" rx="8" /><text class="lbl" x="410" y="199" text-anchor="middle">Pay</text>
+    <rect class="box" x="310" y="254" width="84" height="34" rx="8" /><text class="lbl" x="352" y="275" text-anchor="middle">Ship</text>
     <path class="ln" d="M330 195 H370 M410 212 C410 236 380 236 370 254" />
     <path class="zoom" d="M450 212 L470 330 M450 178 L512 330" />
     <rect class="frame" x="300" y="330" width="210" height="96" rx="12" /><rect class="edge" x="300" y="330" width="210" height="96" rx="12" />
-    <text class="code" x="316" y="356">readFacts(table, q) {</text>
-    <text class="code" x="330" y="378" style="fill: #1d4fd8">readChoices(…)</text>
-    <text class="code" x="330" y="400">checkNumber(…)</text>
+    <text class="cap" x="316" y="349">THE CODE</text>
+        <text class="code" x="316" y="368">chargeCard(order) {</text>
+    <text class="code" x="330" y="387" style="fill: #1d4fd8">authorize(card)</text>
+    <text class="code" x="330" y="406">saveReceipt(order)</text>
   </svg>
   <div class="url">fraktul.dev</div>
 </body></html>`;

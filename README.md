@@ -71,12 +71,12 @@ fresh traces, and `npx fraktul example shop` puts the map into anyone's checkout
 version: 1
 title: Shop system map                # page title
 brand: Shop system map                # top-left name
-root: city                            # the node the map opens on
+root: shop                            # the node the map opens on
 default_repo: main                    # anchors without a repo prefix
 adrs_dir: docs/adr                    # NNNN-title.md files with a "- Status:" line (optional)
 live_module: live.ts                  # facts read at build time (optional, see below)
-voice: { voice: bf_emma, speed: 1, say_as: { NCCI: "N C C I" } }
-expect: { tours: 3, depth: { answer_core: 3, "*": 2 } }    # requirements the check enforces (optional)
+voice: { voice: bf_emma, speed: 1, say_as: { SKU: "S K U" } }
+expect: { tours: 3, depth: { checkout: 3, "*": 2 } }       # requirements the check enforces (optional)
 
 repos:
   main: { path: "." }                                       # source links from the checkout's git origin
@@ -90,22 +90,22 @@ coverage:                             # files the check expects the model to men
     exclude: ["**/*.test.ts"]
 
 nodes:
-  calculator:                         # the id is also the Mermaid box id: lowercase, digits, _
-    title: Unit calculator
-    kind: component                   # district · component · module · data · person · service · repo · doc · step
-    status: prototype                 # built · prototype · planned · proposed · external
+  checkout:                           # the id is also the Mermaid box id: lowercase, digits, _
+    title: Checkout
+    kind: service                     # system · service · feature · component · module · data · person · repo · doc · step
+    status: built                     # built · prototype · planned · proposed · external
     summary: One paragraph in plain words.
-    live: [run]                       # live fact blocks to show
+    live: [orders]                    # live fact blocks to show
     anchors:
-      files: [eval/calc.ts]
-      functions: ["eval/calc.ts#fractionBlocks"]
-      data: [tables/planning.json]
-      docs: [eval/README.md]
+      files: [src/checkout/index.ts]
+      functions: ["src/checkout/pay.ts#chargeCard"]
+      data: [config/shipping-rates.json]
+      docs: [src/checkout/README.md]
       adrs: ["0009"]
       repo: main                      # default repo for these paths; `other:path` names another
     diagram: |                        # plain Mermaid flowchart
       flowchart LR
-        read["Read facts"]:::model --> blocks["Blocks of 5"]
+        cart["Read the cart"] --> pay["Charge the card"] --> payments
 ```
 
 ### How diagrams chain
@@ -164,28 +164,28 @@ fraktul and loads the first time 3D is switched on. The design is in `docs/3d-vi
 
 ```yaml
 tours:
-  - id: one-question
-    title: Follow one coder's question
+  - id: one-order
+    title: Follow one order
     summary: One line for the tour list.
     voice: { voice: am_michael }      # optional, per tour
     steps:
-      - id: q-sort                    # optional; needed when something jumps here
-        view: sort                    # whose diagram is shown
-        expand: [sort_guards]         # optional
-        focus: [reader_1, reader_2]   # highlighted boxes
-        title: Two models sort it
+      - id: o-pay                     # optional; needed when something jumps here
+        view: checkout                # whose diagram is shown
+        expand: [payments]            # optional
+        focus: [cart, pay]            # highlighted boxes
+        title: Checkout takes the money
         text: Short text on the tour card.
         say: >-                       # narration: say more than the card shows
-          Sorting means one decision. [[reader_1, reader_2]] Two models sort it on their own.
-          [[sort_guards]] Code guards check the known traps.
-        next: q-read                  # default: the next step
-        branches: [{ label: "Units over a course", to: q-calc }]   # step id or tour:<id>
+          Paying is two steps. [[cart]] Checkout reads the cart to get the total,
+          [[pay]] then asks payments to charge the card.
+        next: o-ship                  # default: the next step
+        branches: [{ label: "The card is declined", to: o-declined }]   # step id or tour:<id>
 ```
 
 - `[[box, other]]` in `say:` moves the highlight at that point of the narration. The check validates every cue.
 - `fraktul voice` speaks each step with Kokoro (82M) on Apple silicon through mlx-audio, one sentence at a time, so
   captions and cues are timed exactly. Audio goes to `<model dir>/.fraktul/voice/` (keep it out of git: it is rebuilt
-  from the text). Codes like 77427 are read digit by digit; `say_as` fixes other words. Voices: `af_heart`,
+  from the text). Numbers like 77427 are read digit by digit; `say_as` fixes other words. Voices: `af_heart`,
   `am_michael`, `bf_emma`, `am_fenrir` and the rest of Kokoro's list.
 - In the map, **Listen** plays a tour: captions follow, the highlight moves with the cues, and the tour moves on by
   itself (pausing at branches).
@@ -200,7 +200,7 @@ tours:
 
 ```ts
 export default function (ctx) {          // ctx: { project, modelDir, repoRoot(repo), adrs }
-  return { run: { title: "Latest run", bar: [{ label: "right", value: 631, tone: "good" }], rows: [["Right", 631]], source: "results/v8.json" } };
+  return { run: { title: "Latest run", bar: [{ label: "passed", value: 631, tone: "good" }], rows: [["Passed", 631]], source: "results/v8.json" } };
 }
 ```
 
