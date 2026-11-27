@@ -1,6 +1,6 @@
 ---
 title: Publishing
-summary: Build the map into static files and host it anywhere, or publish it as a claude.ai Artifact.
+summary: Build the map into static files and host it anywhere, with or without the source code.
 section: Guides
 ---
 A built map is static files: no server code, no database. Any host that serves files can serve it.
@@ -65,13 +65,3 @@ Building in CI keeps the published map in step with the code. In GitHub Actions,
 
 See [The check in CI](/docs/ci) for getting fraktul into the workflow. Narration can't be rendered on a Linux runner,
 so a map built in CI has no **Listen** buttons. To publish narration, build on the Mac that ran `fraktul voice`.
-
-## claude.ai Artifacts
-
-```bash
-fraktul artifact --out fraktul-dist
-```
-
-This runs a normal build, then writes `fraktul-dist/artifact.html`: the page without its `<html>` and `<head>`
-wrapper, with Mermaid inlined so the page works alone. three.js loads from a CDN the first time 3D is switched on.
-Publish `voice/` and `recordings/` beside it if the map uses them.

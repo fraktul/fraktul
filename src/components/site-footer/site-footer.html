@@ -1,11 +1,83 @@
 <!-- @bascik
-fraktul.dev footer.
+fraktul.dev footer: the brand with its tagline and the GitHub and npm buttons, three columns of links, and a chrome
+strip with who makes it. Laid out like the Bascik docs footer, in fraktul's y2k materials.
 -->
 <style>
-  .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 24px max(20px, env(safe-area-inset-right, 0px)) 32px max(20px, env(safe-area-inset-left, 0px)); border-top: 1px solid var(--line); color: var(--ink); font-size: 13px; background: var(--bar); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(0, 0, 0, 0.06); }
-  .foot a { color: var(--ink); }
+  .foot { position: relative; overflow: hidden; margin-top: 0; color: var(--ink); background: linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%); border-top: 1px solid var(--line); }
+  /* One soft foil glow behind the brand, like the hero's. */
+  .glow { position: absolute; width: 460px; height: 280px; left: -140px; top: -120px; border-radius: 50%; background: var(--brand); filter: blur(80px); opacity: 0.28; pointer-events: none; }
+  .inner { position: relative; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr); gap: clamp(28px, 6vw, 88px); max-width: 1200px; margin: 0 auto; padding: 56px max(20px, env(safe-area-inset-right, 0px)) 44px max(20px, env(safe-area-inset-left, 0px)); }
+  .logo { display: inline-flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; font: 400 19px/1 var(--display); letter-spacing: 0.08em; }
+  .star { width: 30px; height: 30px; flex: none; background: var(--foil); background-size: 300% 100%; clip-path: var(--mark-shape); filter: drop-shadow(0.6px 0 0 rgba(10, 11, 13, 0.45)) drop-shadow(-0.6px 0 0 rgba(10, 11, 13, 0.45)) drop-shadow(0 0.6px 0 rgba(10, 11, 13, 0.45)) drop-shadow(0 -0.6px 0 rgba(10, 11, 13, 0.45)); }
+  .tag { margin: 16px 0 20px; max-width: 30ch; font: 400 15px/1.55 var(--body); color: var(--ink-2); }
+  .out { display: flex; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  /* Round chrome buttons, the same metal as the hero's main button. */
+  .ico { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: var(--ink); border: 1.5px solid transparent; background: radial-gradient(70% 55% at 50% 10%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 100%) padding-box, linear-gradient(180deg, var(--metal-0), var(--metal-1) 42%, var(--metal-2) 54%, var(--metal-3) 78%, var(--metal-4)) padding-box, var(--rim) border-box; box-shadow: inset 0 -3px 6px rgba(0, 0, 0, 0.12), 0 8px 16px -10px rgba(0, 0, 0, 0.5); transition: filter 0.15s, transform 0.1s; }
+  .ico:hover { filter: brightness(1.05); }
+  .ico:active { transform: scale(0.96); }
+  .ico svg { width: 20px; height: 20px; fill: currentColor; }
+  .cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .head { margin: 4px 0 14px; font: 400 10.5px/1 var(--display); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-2); }
+  .cols ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; }
+  .cols a { display: inline-block; padding: 6px 0; color: var(--ink); text-decoration: none; font: 500 14.5px/1.35 var(--body); }
+  .cols a:hover, .base a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  /* The strip along the bottom is the same chrome as the bar at the top of the page. */
+  .base { position: relative; background: var(--bar); border-top: 1px solid var(--line); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(0, 0, 0, 0.06); }
+  .base-inner { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; max-width: 1200px; margin: 0 auto; padding: 16px max(20px, env(safe-area-inset-right, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px)); font: 500 13px/1.5 var(--body); color: var(--ink); }
+  .base a { color: var(--ink); text-decoration: none; font-weight: 700; }
+  @media (prefers-reduced-motion: no-preference) { .star { animation: foil 9s linear infinite; } @keyframes foil { to { background-position: 300% 0; } } }
+  @media (max-width: 860px) { .inner { grid-template-columns: 1fr; padding-top: 44px; } }
+  @media (max-width: 520px) { .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; } }
 </style>
 <footer class="foot" data-testid="site-footer">
-  <span>fraktul by Rinsesoft. Built with <a href="https://bascik.dev">Bascik</a>.</span>
-  <nav aria-label="Footer"><a href="/features">Features</a> · <a href="/docs">Docs</a> · <a href="/map">Map</a> · <a href="https://www.npmjs.com/package/fraktul">npm</a> · <a href="/llms.txt">llms.txt</a></nav>
+  <span class="glow" aria-hidden="true"></span>
+  <div class="inner">
+    <div>
+      <a class="logo" href="/" data-testid="site-footer-home"><span class="star" aria-hidden="true"></span>fraktul</a>
+      <p class="tag">Maps of software you can dive into, all the way down to the code.</p>
+      <ul class="out" aria-label="fraktul elsewhere">
+        <li><a class="ico" href="https://github.com/rinsesoft/fraktul" aria-label="fraktul on GitHub" data-testid="site-footer-github"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.27-.01-1.18-.02-2.14-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.16 1.18a10.9 10.9 0 0 1 5.76 0c2.19-1.49 3.16-1.18 3.16-1.18.63 1.58.23 2.75.11 3.04.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.68.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" /></svg></a></li>
+        <li><a class="ico" href="https://www.npmjs.com/package/fraktul" aria-label="fraktul on npm" data-testid="site-footer-npm"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 2h20v20H2Zm3.8 3.8v12.4H12V8.9h3.1v9.3h3.1V5.8Z" fill-rule="evenodd" /></svg></a></li>
+      </ul>
+    </div>
+    <nav class="cols" aria-label="Footer">
+      <div>
+        <p class="head">Product</p>
+        <ul>
+          <li><a href="/features">Features</a></li>
+          <li><a href="/map">The live map</a></li>
+          <li><a href="/#why">Why it exists</a></li>
+          <li><a href="/docs/getting-started">Quickstart</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="head">Docs</p>
+        <ul>
+          <li><a href="/docs">Overview</a></li>
+          <li><a href="/docs/concepts">Core concepts</a></li>
+          <li><a href="/docs/model">The model file</a></li>
+          <li><a href="/docs/cli">CLI reference</a></li>
+          <li><a href="/docs/faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="head">Project</p>
+        <ul>
+          <li><a href="https://github.com/rinsesoft/fraktul">GitHub</a></li>
+          <li><a href="https://www.npmjs.com/package/fraktul">npm</a></li>
+          <li><a href="https://github.com/rinsesoft/fraktul/issues">Report a problem</a></li>
+          <li><a href="https://rinsesoft.com">Rinsesoft</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <div class="base">
+    <div class="base-inner">
+      <span><script data-bascik-build-once type="text/typescript">
+        import { html } from "@bascik/bascik/html";
+        export default function () { return html`&copy; ${String(new Date().getFullYear())}`; }
+      </script> <a href="https://rinsesoft.com" data-testid="site-footer-rinsesoft">Rinsesoft</a>. MIT licensed.</span>
+      <span>Built with <a href="https://bascik.dev">Bascik</a>.</span>
+    </div>
+  </div>
 </footer>

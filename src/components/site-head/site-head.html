@@ -1,5 +1,5 @@
 <!-- @bascik
-Shared <head> tags for fraktul.dev pages: the title, description and social card of the page being built, fraktul's own fonts, and the saved theme and style applied before first paint.
+Shared <head> tags for fraktul.dev pages: the title, description and social card of the page being built, fraktul's own fonts, and the theme (the system's, or the reader's switch for this session) and style applied before first paint.
 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -21,7 +21,8 @@ Shared <head> tags for fraktul.dev pages: the title, description and social card
   }
 </script>
 <script>
-  try { var t = localStorage.getItem("fraktul-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
+  // Light or dark follows the system. A reader's own switch is kept for the session (this tab), then the system rules again.
+  try { var t = sessionStorage.getItem("fraktul-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
   // fraktul.dev always wears the y2k style; the map itself defaults to flat.
   document.documentElement.dataset.style = "y2k";
 </script>

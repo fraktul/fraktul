@@ -1,5 +1,5 @@
 <!-- @bascik
-fraktul.dev navigation: the bar (liquid chrome in y2k), the foil star, page links, and the light and dark switch.
+fraktul.dev navigation: the bar (liquid chrome in y2k), the foil star, page links, GitHub, and the light and dark switch.
 -->
 <style>
   .nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; display: flex; align-items: center; gap: 20px; padding: 12px max(20px, env(safe-area-inset-right, 0px)) 12px max(20px, env(safe-area-inset-left, 0px)); background: var(--bar); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(0, 0, 0, 0.06); border-bottom: 1px solid var(--line); }
@@ -8,11 +8,17 @@ fraktul.dev navigation: the bar (liquid chrome in y2k), the foil star, page link
   .links { display: flex; gap: 6px; margin-left: auto; }
   .links a { color: var(--ink); text-decoration: none; font: 500 14px var(--body); padding: 8px 12px; border-radius: 10px; transition: color 0.15s, background 0.15s; }
   .links a:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 7%, transparent); }
+  .gh { display: grid; place-items: center; flex: none; width: 36px; height: 36px; margin-right: -8px; border-radius: 10px; color: var(--ink); transition: background 0.15s; }
+  .gh:hover { background: color-mix(in srgb, var(--ink) 7%, transparent); }
+  .gh svg { width: 20px; height: 20px; fill: currentColor; }
   .switch { font: 500 13px var(--body); padding: 7px 12px; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); background: var(--btn); color: var(--ink); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); cursor: pointer; transition: border-color 0.15s; }
   .switch:hover { border-color: color-mix(in srgb, var(--ink) 30%, transparent); }
   @media (prefers-reduced-motion: no-preference) { .star { animation: foil 9s linear infinite; } @keyframes foil { to { background-position: 300% 0; } } }
   /* A phone: the links sit closer so the theme switch stays on screen. */
-  @media (max-width: 640px) { .links a.hide-sm { display: none; } .nav { gap: 8px; } .logo { gap: 8px; font-size: 16px; } .links { gap: 0; } .links a { padding: 8px 7px; } .switch { flex: none; } }
+  @media (max-width: 640px) { .links a.hide-sm { display: none; } .nav { gap: 8px; } .logo { gap: 8px; font-size: 16px; } .links { gap: 0; } .links a { padding: 8px 7px; } .switch { flex: none; } .gh { width: 32px; margin-right: -4px; } }
+  /* The narrowest phones: GitHub is in the footer too. */
+  @media (max-width: 350px) { .gh { display: none; } }
+  @media (max-width: 400px) { .nav { gap: 4px; } .logo { font-size: 15px; letter-spacing: 0.04em; } .links a { padding: 8px 5px; font-size: 13.5px; } .switch { padding: 7px 9px; } }
 </style>
 <header class="nav" data-testid="site-header">
   <a class="logo" href="/" data-testid="site-header-home"><span class="star" aria-hidden="true"></span>fraktul</a>
@@ -21,6 +27,7 @@ fraktul.dev navigation: the bar (liquid chrome in y2k), the foil star, page link
     <a href="/docs" data-testid="site-header-docs">Docs</a>
     <a href="/map" data-testid="site-header-map">Map</a>
   </nav>
+  <a class="gh" href="https://github.com/rinsesoft/fraktul" aria-label="fraktul on GitHub" data-testid="site-header-github"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.27-.01-1.18-.02-2.14-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.16 1.18a10.9 10.9 0 0 1 5.76 0c2.19-1.49 3.16-1.18 3.16-1.18.63 1.58.23 2.75.11 3.04.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.68.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" /></svg></a>
   <button class="switch" id="theme" type="button" aria-label="Theme" data-testid="site-header-theme">◐</button>
 </header>
 <script type="text/typescript">
@@ -36,8 +43,12 @@ fraktul.dev navigation: the bar (liquid chrome in y2k), the foil star, page link
     const dark = root.dataset.theme === "dark" || (!root.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
     const next = dark ? "light" : "dark";
     root.dataset.theme = next;
-    try { localStorage.setItem("fraktul-theme", next); } catch (e) { /* private window */ }
+    const system = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    // Kept for this session only. Switching back to what the system says hands the choice back to the system.
+    try { if (next === system) { sessionStorage.removeItem("fraktul-theme"); delete root.dataset.theme; } else sessionStorage.setItem("fraktul-theme", next); } catch (e) { /* private window */ }
     show();
   });
+  // With no switch made, the page follows the system as it changes (sunset, a settings change).
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", show);
   show();
 </script>

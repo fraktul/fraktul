@@ -85,8 +85,3 @@ Recording needs the microphone, which browsers allow only on `localhost` or `htt
 ## Narration plays the old text
 
 Audio is rendered from `say:` when you run `fraktul voice`. After changing the text, run it again and rebuild.
-
-## Does fraktul send my code anywhere?
-
-No. The check, the build and the voice all run on your machine. The built page loads Mermaid and three.js from its own
-`vendor/` folder. The only exception is an Artifact page, which loads three.js from a CDN when 3D is switched on.

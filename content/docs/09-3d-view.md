@@ -74,5 +74,4 @@ so the place stays familiar.
 ## Loading
 
 three.js ships with fraktul and is served beside the page in `vendor/`, like Mermaid. It loads the first time someone
-switches to 3D, so the 2D map stays light. A page published as a claude.ai Artifact has no `vendor/` folder and loads
-three.js from a CDN instead.
+switches to 3D, so the 2D map stays light.

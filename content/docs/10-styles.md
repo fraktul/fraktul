@@ -3,8 +3,9 @@ title: Styles and themes
 summary: Two looks for the map, flat and y2k, each in light and dark.
 section: Guides
 ---
-The map comes in two styles, and each style has a light and a dark theme. Readers choose in the map's top bar; the
-choice is remembered in their browser.
+The map comes in two styles, and each style has a light and a dark theme. Readers choose in the map's top bar. The
+style is remembered in their browser. Light or dark follows their system; switching it by hand lasts for the session
+(the browser tab), and after that the system decides again.
 
 ## Styles
 

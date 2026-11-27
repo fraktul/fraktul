@@ -66,6 +66,11 @@ You don't draw the code levels. A block with file or function anchors and no dia
 
 None of this is written by hand, so it can't go out of date.
 
+Functions call each other in every direction, so a function's level shows both sides: **who calls it on the left,
+what it calls on the right**. Clicking either one swaps the function you are looking at; it does not take you deeper.
+The breadcrumbs always say where a function lives (block, file, group, function), not the calls you followed to reach
+it, so **Up** takes you to its file however long you have been wandering.
+
 ### Big files stay readable
 
 A file with dozens of functions, drawn with every call as a line, is a hairball. fraktul draws a file of more than 20

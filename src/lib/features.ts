@@ -64,7 +64,7 @@ const FEATURES: Feature[] = [
   },
   {
     id: "publish", eyebrow: "Shipping it", title: "One static page, hosted anywhere",
-    body: ["fraktul build writes a folder: one page, the diagrams' data, and the audio. Any static host serves it, and it loads no code from a CDN. For a private codebase, a public build keeps the structure and leaves out the source and the links into the repo.", "The same page can be pasted into a claude.ai Artifact, so a map can sit next to the conversation about it."],
+    body: ["fraktul build writes a folder: one page, the diagrams' data, and the audio. Any static host serves it, and it loads no code from a CDN. For a private codebase, a public build keeps the structure and leaves out the source and the links into the repo."],
     doc: ["Publishing", "/docs/publishing"],
   },
 ];

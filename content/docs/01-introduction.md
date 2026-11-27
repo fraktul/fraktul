@@ -36,7 +36,7 @@ fraktul keeps both in one place and ties them together:
 | Recorded walkthroughs | Talk while you click; voice and clicks replay together. |
 | Live facts | Numbers and lists read from your project at build time. |
 | 3D view | The same level as a place you can fly through. |
-| Publishing | One page you can host anywhere, or paste into a claude.ai Artifact. |
+| Publishing | A static folder you can host anywhere, with a public mode that leaves the source out. |
 
 ## How it fits together
 

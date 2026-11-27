@@ -119,7 +119,8 @@ export function docPage(slug: string): SafeHtml {
   const prev = docs[i - 1], next = docs[i + 1];
   const { html: body, headings } = render(doc.body);
   const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
-  const hasToc = headings.filter((h) => h.depth === 2).length >= 3;
+  // Every page with sections lists them, however few: a reader should find "On this page" in the same place each time.
+  const hasToc = toc.length > 0;
   return html`<div class="docs-layout${hasToc ? " has-toc" : ""}">
     ${sidebar(docs, slug)}
     <article class="prose" data-testid="docs-article">

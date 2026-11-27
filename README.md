@@ -30,7 +30,6 @@ npx fraktul init       # a starter model at docs/arch/model.yaml, from your proj
 npx fraktul check      # every file, function, diagram box and tour step it names must exist
 npx fraktul dev        # the live map at http://localhost:8080
 npx fraktul build      # a static folder (fraktul-dist/) for any host
-npx fraktul artifact   # one HTML file, for a claude.ai Artifact
 npx fraktul voice      # speak the tours (local; the first run sets up the voice engine)
 ```
 

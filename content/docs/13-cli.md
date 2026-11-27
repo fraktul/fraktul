@@ -74,8 +74,9 @@ are any. The folder is replaced on every build. See [Publishing](/docs/publishin
 fraktul artifact [model] [--out fraktul-dist]
 ```
 
-Runs `build`, then writes `artifact.html` into the same folder: the page without `<html>` and `<head>`, with Mermaid
-inlined, for a claude.ai Artifact.
+Runs `build`, then also writes `artifact.html` into the same folder: the page as one fragment, without `<html>` and
+`<head>` and with Mermaid inside it, for a host that wraps the page in its own document and can't serve files beside
+it. Most projects want `build`.
 
 | Flag | Does |
 |---|---|

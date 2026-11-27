@@ -192,7 +192,13 @@ function openKey(key: string, o: { replace?: boolean; expanded?: string[]; push?
   if (kindOf(key) === "adr" || (!hasDiagram(key) && SITE.files[key])) { select(key); return; }
   if (!hasDiagram(key)) { select(key); return; }
   const v: View = { key, expanded: o.expanded ?? [...(SITE.diagrams[key].expand ?? [])] };
-  if (o.replace) stack = [v]; else stack.push(v);
+  const at = stack.findIndex((x) => x.key === key);
+  if (o.replace) stack = [v];
+  // A level already on the way down: go back up to it instead of stacking it a second time.
+  else if (at >= 0) stack = stack.slice(0, at + 1);
+  // Code: the breadcrumbs say where the thing lives, not every call that was followed to reach it.
+  else if (isCode(key)) stack = housed(stack.map((x) => x.key), key).map((k) => stack.find((x) => x.key === k) ?? (k === key ? v : { key: k, expanded: [] }));
+  else stack.push(v);
   selected = null;
   syncHash();
   draw();
@@ -223,6 +229,22 @@ function syncHash() {
   if (q.length) want += `?${q.join("&")}`;
   if (location.hash.slice(1) !== want) history.replaceState(null, "", `#${want}`);
 }
+// Functions call each other in every direction: a caller is not "above" the function it calls, and following calls
+// could go on for ever. So a code level always sits in the same place, under the block it was reached from:
+// block › file › (group of a big file) › function. Opening a caller or a callee swaps the function, it does not go deeper.
+const isCode = (key: string) => ["file", "part", "fn"].includes(kindOf(key));
+function homeOf(key: string): string[] {
+  const k = kindOf(key);
+  const file = k === "fn" ? SITE.fns[key]?.file : k === "part" ? SITE.parts?.[key]?.file : key;
+  const part = k === "fn" ? Object.values(SITE.parts ?? {}).find((p) => p.functions.includes(key))?.key : k === "part" ? key : undefined;
+  return [file, part, k === "fn" ? key : undefined].filter((x): x is string => !!x && hasDiagram(x));
+}
+/** `path` with its code levels replaced by where `key` lives. */
+function housed(path: string[], key: string): string[] {
+  let n = path.length;
+  while (n > 1 && isCode(path[n - 1])) n--;
+  return [...path.slice(0, n), ...homeOf(key)];
+}
 /** The way down to any level: through the model's diagrams, then through files and functions. */
 function stackTo(key: string): string[] {
   if (kindOf(key) === "node") return pathTo(key.slice(5));
@@ -234,10 +256,10 @@ function stackTo(key: string): string[] {
     if (k === key) break;
     for (const t of Object.values(SITE.diagrams[k]?.targets ?? {})) if (hasDiagram(t) && !prev.has(t)) { prev.set(t, k); q.push(t); }
   }
-  if (!prev.has(key)) return [start, key];
+  if (!prev.has(key)) return housed([start], key);
   const path: string[] = [];
   for (let k: string | null = key; k; k = prev.get(k) ?? null) path.unshift(k);
-  return path;
+  return housed(path.slice(0, -1), key);
 }
 
 // ───────────── drawing ─────────────
@@ -1335,10 +1357,10 @@ function fromHash() {
   if (to3d !== in3d) set3d(to3d);
 }
 window.addEventListener("hashchange", fromHash);
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { mermaidReady = false; peekCache.clear(); if (stack.length) draw(true); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { mermaidReady = false; peekCache.clear(); showTheme(); if (stack.length) draw(true); });
 new MutationObserver(() => { mermaidReady = false; peekCache.clear(); if (stack.length) draw(true); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-style"] });
 
-// Theme: system → light → dark, remembered in this browser.
+// Theme: the system's by default; the reader's switch is kept for this session.
 const themeBtn = document.getElementById("theme-btn") as HTMLButtonElement;
 function showTheme() {
   const isDark = document.documentElement.dataset.theme === "dark" || (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
@@ -1350,7 +1372,9 @@ themeBtn.addEventListener("click", () => {
   const isDark = document.documentElement.dataset.theme === "dark" || (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
   const next = isDark ? "light" : "dark";
   document.documentElement.dataset.theme = next;
-  try { localStorage.setItem("fraktul-theme", next); } catch { /* private window */ }
+  const system = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  // Kept for this session only. Switching back to what the system says hands the choice back to the system.
+  try { if (next === system) { sessionStorage.removeItem("fraktul-theme"); delete document.documentElement.dataset.theme; } else sessionStorage.setItem("fraktul-theme", next); } catch { /* private window */ }
   showTheme();
 });
 showTheme();
