@@ -34,5 +34,5 @@ Both styles follow the same rules, and every text colour meets WCAG AA contrast 
 
 ## Seeing every token
 
-The [design page](/design) on fraktul.dev shows both styles in light and dark: colours, type, controls and diagram
-boxes. The tokens themselves are in fraktul's `src/pages/css/tokens.css`.
+The tokens are in fraktul's `src/pages/css/tokens.css`: one block per style and theme, with colours, type, radii and
+the diagram box colours. To see both styles side by side, switch the style and the theme in the map's toolbar.

@@ -28,12 +28,12 @@ diagram boxes and the rules. Switch style and theme in the header.
   .node { padding: 10px 14px; border-radius: var(--r-sm); border: 1.5px solid; font: 600 13px var(--body); color: var(--ink); }
   .mat { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
   .mat div { height: 72px; border-radius: var(--r-md); border: 1px solid var(--line); display: flex; align-items: end; padding: 8px 10px; font: 12px var(--mono); color: var(--ink); }
-  .marks { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+  .marks { display: grid; grid-template-columns: minmax(0, 320px); gap: 14px; }
   .marks figure { margin: 0; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--sheet); overflow: hidden; }
   .stage { height: 170px; display: grid; place-items: center; background: var(--canvas); border-bottom: 1px solid var(--line); }
-  .mk { width: 28px; height: 28px; background: var(--foil); background-size: 300% 100%; transform: scale(4.2); transform-origin: center; }
+  .mk { width: 28px; height: 28px; clip-path: var(--mark-shape); background: var(--foil); background-size: 300% 100%; transform: scale(4.2); transform-origin: center; }
   .navstrip { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bar); box-shadow: var(--gloss); border-bottom: 1px solid var(--line); }
-  .mk-sm { width: 28px; height: 28px; flex: none; background: var(--foil); background-size: 300% 100%; filter: drop-shadow(0.6px 0 0 rgba(10,11,13,0.45)) drop-shadow(-0.6px 0 0 rgba(10,11,13,0.45)) drop-shadow(0 0.6px 0 rgba(10,11,13,0.45)) drop-shadow(0 -0.6px 0 rgba(10,11,13,0.45)); }
+  .mk-sm { width: 28px; height: 28px; flex: none; clip-path: var(--mark-shape); background: var(--foil); background-size: 300% 100%; filter: drop-shadow(0.6px 0 0 rgba(10,11,13,0.45)) drop-shadow(-0.6px 0 0 rgba(10,11,13,0.45)) drop-shadow(0 0.6px 0 rgba(10,11,13,0.45)) drop-shadow(0 -0.6px 0 rgba(10,11,13,0.45)); }
   .nv { font: 400 15px/1 var(--display); letter-spacing: 0.08em; color: var(--ink); }
   .marks figcaption { padding: 10px 12px; font-size: 14px; color: var(--ink-2); line-height: 1.45; }
   .marks strong { color: var(--ink); }
@@ -52,14 +52,7 @@ diagram boxes and the rules. Switch style and theme in the header.
 
   <h2>Logo</h2>
   <div class="marks">
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-c)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-dive-c)"></span><span class="nv">fraktul</span></div><figcaption><strong>Dive, golden</strong> (the logo): golden-ratio sizes, a thinner inner frame.</figcaption></figure>
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-dive)"></span><span class="nv">fraktul</span></div><figcaption><strong>Dive</strong>: the first cut, two cutouts.</figcaption></figure>
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-steps)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-steps)"></span><span class="nv">fraktul</span></div><figcaption><strong>Steps</strong>: each square half the last, receding into the corner.</figcaption></figure>
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-3)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-dive-3)"></span><span class="nv">fraktul</span></div><figcaption><strong>Dive, three thin cutouts</strong>: gaps 2.2 of 28.</figcaption></figure>
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-3-open)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-dive-3-open)"></span><span class="nv">fraktul</span></div><figcaption><strong>Dive, three hairline cutouts</strong>: gaps 1.6 of 28.</figcaption></figure>
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-b)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-dive-b)"></span><span class="nv">fraktul</span></div><figcaption><strong>Dive, halves</strong>: each part half the one around it.</figcaption></figure>
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-d)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-dive-d)"></span><span class="nv">fraktul</span></div><figcaption><strong>Dive, big core</strong>: a larger inner frame.</figcaption></figure>
-    <figure><div class="stage"><span class="mk" style="clip-path: var(--mark-dive-e)"></span></div><div class="navstrip"><span class="mk-sm" style="clip-path: var(--mark-dive-e)"></span><span class="nv">fraktul</span></div><figcaption><strong>Dive, heavy</strong>: thicker frames, a smaller core.</figcaption></figure>
+    <figure><div class="stage"><span class="mk"></span></div><div class="navstrip"><span class="mk-sm"></span><span class="nv">fraktul</span></div><figcaption><strong>Dive, golden</strong>: a frame, a smaller frame and a solid square tucked into its corner, sized by the golden ratio, in the foil.</figcaption></figure>
   </div>
 
   <h2>Colour</h2>

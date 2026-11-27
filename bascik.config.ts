@@ -26,6 +26,8 @@ export default defineConfig({
       { script: existsSync("scripts/copy-media.ts") ? "scripts/copy-media.ts" : "scripts/copy-media.js", phase: "post", watch: [dirname(model)] },
       // fraktul.dev also publishes llms.txt, its pages as one list for AI assistants.
       ...(site ? [{ script: "scripts/llms-txt.ts", phase: "post" as const }] : []),
+      // The design system page is for our own use: built for dev and previews, left out of production.
+      ...(site ? [{ script: "scripts/internal-pages.ts", phase: "post" as const }] : []),
     ],
   },
   scripts: {

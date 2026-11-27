@@ -188,12 +188,12 @@ Two styles share one token structure (`src/pages/css/tokens.css`), each in light
 **flat**, the default (a quiet modern UI: flat neutral surfaces, one blue accent, Inter), and **y2k**, opt-in (a
 liquid-chrome nav, wide Michroma titles, a holographic foil logo, brushed-metal diagram boxes, modern glass controls). Components read only tokens. Rules:
 body text sits on a flat surface; gradients are for bars, buttons, the logo and the tour strip; every text colour meets
-WCAG AA. The live reference is the design page of fraktul.dev (`npm run site:dev`, then /design).
+WCAG AA. The reference page is internal: `npm run site:dev`, then /design (also on pull request previews; production leaves it out).
 
 ## Logo
 
 Dive, golden: a frame with a smaller frame and a solid square tucked into its corner, sized by the golden
-ratio, in a pastel iridescent foil (`--mark-shape` and `--foil` in tokens.css). The candidates are kept on /design.
+ratio, in a pastel iridescent foil (`--mark-shape` and `--foil` in tokens.css).
 
 ## fraktul.dev
 

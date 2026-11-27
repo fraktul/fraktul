@@ -15,7 +15,8 @@ const PAGES: PageMeta[] = [
   { path: "/features", kind: "page", title: "Features · fraktul", description: "What fraktul does, with screenshots of the live map: diagrams you click into, a check against the code, big files drawn as groups, narrated tours, 3D and deep links." },
   { path: "/docs", kind: "page", title: "Documentation · fraktul", description: "How to map a system with fraktul: a quickstart, the concepts, the model file, tours and narration, publishing, and every command." },
   { path: "/map", kind: "page", title: "fraktul, mapped with fraktul", description: "The live demo: fraktul's own architecture as a map you can click into, tour and listen to, built by fraktul from one model file." },
-  { path: "/design", kind: "page", title: "Design system · fraktul", description: "fraktul's two styles, flat and y2k, in light and dark: tokens, type, controls and the rules that keep text readable." },
+  // Internal: not linked, not indexed, and left out of production (scripts/internal-pages.ts).
+  { path: "/design", kind: "none", title: "Design system · fraktul (internal)", description: "fraktul's two styles, flat and y2k, in light and dark: tokens, type, controls and the rules that keep text readable." },
   { path: "/404", kind: "none", title: "Not found · fraktul", description: "This page is not on the map." },
 ];
 

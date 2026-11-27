@@ -218,7 +218,7 @@ nodes:
         public -.-> static
         %% @link cli bin/fraktul.ts#build
     anchors:
-      files: [bin/fraktul.ts, scripts/build-package.ts, scripts/release.ts, src/lib/head.ts, src/lib/docs.ts, src/lib/seo.ts, src/lib/features.ts, src/lib/shots.ts, scripts/llms-txt.ts, scripts/site-images.ts, scripts/site-shots.ts]
+      files: [bin/fraktul.ts, scripts/build-package.ts, scripts/release.ts, src/lib/head.ts, src/lib/docs.ts, src/lib/seo.ts, src/lib/features.ts, src/lib/shots.ts, scripts/llms-txt.ts, scripts/internal-pages.ts, scripts/site-images.ts, scripts/site-shots.ts]
 
 tours:
   - id: how-it-works
