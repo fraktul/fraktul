@@ -23,11 +23,11 @@
   ],
   "homepage": "https://fraktul.dev",
   "bugs": {
-    "url": "https://github.com/rinsesoft/fraktul/issues"
+    "url": "https://github.com/fraktul/fraktul/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rinsesoft/fraktul.git"
+    "url": "git+https://github.com/fraktul/fraktul.git"
   },
   "license": "MIT",
   "author": "Rinsesoft (https://fraktul.dev)",

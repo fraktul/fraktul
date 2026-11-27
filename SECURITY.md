@@ -4,7 +4,7 @@
 
 Please report security problems privately. Do not open a public issue.
 
-1. Open the [Security tab](https://github.com/rinsesoft/fraktul/security) of the repository.
+1. Open the [Security tab](https://github.com/fraktul/fraktul/security) of the repository.
 2. Choose **Report a vulnerability** to start a private security advisory.
 3. Describe the version, the impact, and the steps to reproduce.
 

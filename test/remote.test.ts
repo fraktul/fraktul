@@ -5,10 +5,10 @@ import { parseRemote, redact, sourceUrl } from "../src/lib/remote.ts";
 
 test("remote: clone and web URLs on each host become the repo's web home", () => {
   const web = (u: string, k?: any) => parseRemote(u, k)?.web ?? null;
-  assert.equal(web("git@github.com:rinsesoft/fraktul.git"), "https://github.com/rinsesoft/fraktul");
-  assert.equal(web("https://github.com/rinsesoft/fraktul"), "https://github.com/rinsesoft/fraktul");
-  assert.equal(web("ssh://git@github.com/rinsesoft/fraktul.git"), "https://github.com/rinsesoft/fraktul");
-  assert.equal(web("https://github.com/rinsesoft/fraktul/tree/main/src"), "https://github.com/rinsesoft/fraktul");
+  assert.equal(web("git@github.com:fraktul/fraktul.git"), "https://github.com/fraktul/fraktul");
+  assert.equal(web("https://github.com/fraktul/fraktul"), "https://github.com/fraktul/fraktul");
+  assert.equal(web("ssh://git@github.com/fraktul/fraktul.git"), "https://github.com/fraktul/fraktul");
+  assert.equal(web("https://github.com/fraktul/fraktul/tree/main/src"), "https://github.com/fraktul/fraktul");
   assert.equal(web("git@gitlab.com:acme/platform/billing.git"), "https://gitlab.com/acme/platform/billing");
   assert.equal(web("https://gitlab.com/acme/platform/billing/-/tree/main"), "https://gitlab.com/acme/platform/billing");
   assert.equal(web("git@bitbucket.org:acme/billing.git"), "https://bitbucket.org/acme/billing");
