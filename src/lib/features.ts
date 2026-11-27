@@ -7,7 +7,7 @@ import { SHOTS } from "./shots.ts";
 export function shot(id: string, sizes = "(max-width: 900px) 92vw, 620px"): SafeHtml {
   const s = SHOTS.find((x) => x.id === id);
   if (!s) throw new Error(`No screenshot called ${id} (src/lib/shots.ts)`);
-  return html`<a class="shot" href="${(s.map ?? "/map") + s.link}" data-testid="shot-${s.id}">
+  return html`<a class="shot" href="${(s.map ?? "/fraktuls/fraktul/") + s.link}" data-testid="shot-${s.id}">
     <img src="/img/${s.id}-1280.webp" srcset="/img/${s.id}-720.webp 720w, /img/${s.id}-1280.webp 1280w" sizes="${sizes}" width="1280" height="800" alt="${s.alt}" loading="lazy" decoding="async" />
     <span class="shot-open">Open this view live<span aria-hidden="true"> →</span></span>
   </a>`;
@@ -65,7 +65,7 @@ const FEATURES: Feature[] = [
   {
     id: "links", eyebrow: "Sharing", title: "Every view is a link",
     body: ["The address bar always says where you are: the level, the selected box, the stop of a tour, and whether you are in 2D or 3D. Copy it into a pull request, a ticket or a chat and the reader lands on exactly that spot."],
-    code: { label: "Links", text: "/map#check                           a level\n/map#check/refs                      a box on it, selected\n/map#fraktul?tour=how-it-works&step=2  a stop on a tour\n/map#check?view=3d                   the level in 3D, from the ground\n/map#check?view=3d&cam=bird          the same, from above" },
+    code: { label: "Links", text: "/fraktuls/fraktul/#check  a level\n/fraktuls/fraktul/#check/refs  a box on it, selected\n/fraktuls/fraktul/#fraktul?tour=how-it-works&step=2  a stop on a tour\n/fraktuls/fraktul/#check?view=3d  the level in 3D, from the ground\n/fraktuls/fraktul/#check?view=3d&cam=bird  the same, from above" },
     doc: ["Diagrams", "/docs/diagrams"],
   },
   {
@@ -105,12 +105,12 @@ export const SITE_PAGES: Record<string, Page> = {
   features: {
     eyebrow: "Features", title: "Everything a map of your system should do",
     lede: "fraktul turns one model file and your code into a map people can explore, a check that keeps it true, and tours that explain it. Every picture on this page is a live map: click one to open that view.",
-    ctas: [["Open the live map", "/map"], ["Quickstart", "/docs/getting-started"]], sections: FEATURES, more: MORE, end: START,
+    ctas: [["Open the live map", "/fraktuls/fraktul/"], ["Quickstart", "/docs/getting-started"]], sections: FEATURES, more: MORE, end: START,
   },
   ai: {
     eyebrow: "Mapping with AI", title: "Your AI assistant can write the whole map",
     lede: "Give your AI coding assistant the fraktul skill and ask for a map. It reads the code and writes the model. A check then proves that every file, function and tour step it named exists.",
-    ctas: [["Set it up", "/docs/ai"], ["Open a finished map", "/map"]],
+    ctas: [["Set it up", "/docs/ai"], ["Open a finished map", "/fraktuls/fraktul/"]],
     sections: [
       {
         id: "skill", eyebrow: "One command", title: "One command installs the skill",
@@ -146,7 +146,7 @@ export const SITE_PAGES: Record<string, Page> = {
   demo: {
     eyebrow: "The demo", title: "A real system, mapped: twenty services and their traces",
     lede: "fraktul's own map is one small tool. This one is the OpenTelemetry project's demo application, an open-source online shop: about twenty services in a dozen languages, with a database, a cache and a queue. Open it, or run it yourself in five commands.",
-    ctas: [["Open the shop's map", "/shop/"], ["Run it yourself", "/docs/demo"], ["fraktul's own map", "/map"]],
+    ctas: [["Open the shop's map", "/fraktuls/shop/"], ["Run it yourself", "/docs/demo"], ["fraktul's own map", "/fraktuls/fraktul/"]],
     sections: [
       {
         id: "top", eyebrow: "30,000 feet", title: "Nine boxes explain twenty services",
@@ -166,7 +166,7 @@ export const SITE_PAGES: Record<string, Page> = {
       {
         id: "tours", eyebrow: "For everyone", title: "Four narrated tours, from a two-minute overview to one order",
         body: ["\"The shop in two minutes\" stays at the top level and explains the whole system in six stops, in words a shopper would understand. \"Follow one order\" goes down into checkout and walks a purchase through the services, to the message on the queue.", "Two more cover how a product page is built and what keeps the shop running. Press Listen on any of them: the voice was generated on a Mac, and the highlight moves with it."],
-        code: { label: "Links", text: "/shop/#shop?tour=the-shop-in-two-minutes&step=1\n/shop/#shop?tour=follow-one-order&step=1\n/shop/#storefront?tour=how-a-page-is-built&step=1\n/shop/#basket?tour=keeping-the-shop-running&step=1" },
+        code: { label: "Links", text: "/fraktuls/shop/#shop?tour=the-shop-in-two-minutes&step=1\n/fraktuls/shop/#shop?tour=follow-one-order&step=1\n/fraktuls/shop/#storefront?tour=how-a-page-is-built&step=1\n/fraktuls/shop/#basket?tour=keeping-the-shop-running&step=1" },
         doc: ["Tours and narration", "/docs/tours"],
       },
       {
@@ -290,9 +290,41 @@ export function demoBand(): SafeHtml {
       <p class="docs-eyebrow">See it on a real system</p>
       <h2 class="show-head y2k-head" id="demo-title">Twenty services, mapped from code and traces</h2>
       <p>This is the OpenTelemetry project's demo application, an open-source online shop. Its map goes from nine boxes anyone can follow down to the function that charges the card, and every service shows the traffic its traces recorded.</p>
-      <p>Open it here, or run it on your own machine in five commands. There is a second live map too: <a href="/map" data-testid="home-demo-own">fraktul itself, mapped with fraktul</a>, with narrated tours.</p>
-      <div class="docs-hero-ctas"><a class="pill main" href="/shop/" data-testid="home-demo-open">Open the shop's map</a><a class="pill" href="/demo" data-testid="home-demo-page">About the demo</a></div>
+      <p>Open it here, or run it on your own machine in five commands. There is a second live map too: <a href="/fraktuls/fraktul/" data-testid="home-demo-own">fraktul itself, mapped with fraktul</a>, with narrated tours.</p>
+      <div class="docs-hero-ctas"><a class="pill main" href="/fraktuls/shop/" data-testid="home-demo-open">Open the shop's map</a><a class="pill" href="/demo" data-testid="home-demo-page">About the demo</a></div>
     </div>
     <div class="show-screen y2k-screen">${shot("traces", "(max-width: 900px) 92vw, 700px")}</div>
   </div>`;
+}
+
+/** The /fraktuls page: what a fraktul is, and the live ones, each with a picture and what to try in it. */
+export function fraktulsPage(): SafeHtml {
+  const live = [
+    { href: "/fraktuls/shop/", shot: "shop", name: "The demo shop", line: "The OpenTelemetry project's demo application: an online shop of about twenty services in a dozen languages.",
+      points: ["Every level: the system, its features, each service, then the code", "Each service shows the traffic its traces recorded", "Four narrated tours, from a two-minute overview to one order"], more: ["About this fraktul", "/demo"] },
+    { href: "/fraktuls/fraktul/", shot: "top", name: "fraktul itself", line: "The tool, mapped with the tool: the model file, the check, the build, the map page, the voice and publishing.",
+      points: ["Source for every function, linked to the commit on GitHub", "A file of more than a hundred functions, drawn as groups", "Eight narrated tours of how fraktul works"], more: ["Its model file", "https://github.com/fraktul/fraktul/blob/main/example/model.yaml"] },
+  ];
+  return html`<header class="docs-hero feat-hero">
+    <div class="feat-hero-inner">
+      <p class="docs-eyebrow">Fraktuls</p>
+      <h1 class="docs-hero-title">Live maps made with fraktul</h1>
+      <p class="docs-lede">A fraktul is a map of a system made with fraktul: one page you click through, from the big picture down to the exact code. These two are live. Open one, press Tours, and listen.</p>
+    </div>
+  </header>
+  ${live.map((f, i) => html`<section class="feat${i % 2 ? " flip" : ""}" aria-labelledby="live-${f.shot}">
+    <div class="feat-copy">
+      <p class="docs-eyebrow">${f.href.replace(/^\/|\/$/g, "")}</p>
+      <h2 class="y2k-head" id="live-${f.shot}">${f.name}</h2>
+      <p>${f.line}</p>
+      <ul>${f.points.map((p) => html`<li>${p}</li>`)}</ul>
+      <div class="docs-hero-ctas"><a class="pill main" href="${f.href}" data-testid="fraktuls-open-${f.shot}">Open it</a><a class="pill" href="${f.more[1]}">${f.more[0]}</a></div>
+    </div>
+    <div class="feat-media">${shot(f.shot)}</div>
+  </section>`)}
+  <section class="feat-end">
+    <h2 class="y2k-head">Make one of your system</h2>
+    <div class="code-block"><div class="code-bar"><span>Shell</span><button class="copy" type="button" aria-label="Copy code">Copy</button></div><pre><code>${START.code}</code></pre></div>
+    <div class="docs-hero-ctas"><a class="pill main" href="/docs/getting-started">Read the quickstart</a><a class="pill" href="/docs/ai">Map it with AI</a></div>
+  </section>`;
 }

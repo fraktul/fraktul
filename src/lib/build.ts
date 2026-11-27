@@ -215,7 +215,7 @@ export async function buildSite(model: Model = loadModel()): Promise<Site> {
   }
   const recDir = join(model.dir, "recordings");
   const recordings = existsSync(recDir) ? readdirSync(recDir).filter((f) => f.endsWith(".json")).map((f) => JSON.parse(readFileSync(join(recDir, f), "utf8"))).filter((r) => r.file && existsSync(join(recDir, r.file))).map((r) => ({ ...r, file: `recordings/${r.file}` })) : [];
-  return { voice, recordings, meta: { built: new Date().toISOString(), commit: headOf(model, D), root: model.root, home: model.home ?? (process.env.FRAKTUL_SITE ? "/" : null), repos, defaultRepo: D, title: model.title ?? "System map", brand: model.brand ?? model.title ?? "System map", voice: model.voice ?? null }, nodes, diagrams, files, fns, parts, live, tours: model.tours };
+  return { voice, recordings, meta: { built: new Date().toISOString(), commit: headOf(model, D), root: model.root, home: model.home ?? process.env.FRAKTUL_HOME ?? (process.env.FRAKTUL_SITE ? "/" : null), repos, defaultRepo: D, title: model.title ?? "System map", brand: model.brand ?? model.title ?? "System map", voice: model.voice ?? null }, nodes, diagrams, files, fns, parts, live, tours: model.tours };
 }
 
 function fnLabel(f: FnInfo, withFile = false): string {

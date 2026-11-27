@@ -17,7 +17,7 @@ const PAGES: PageMeta[] = [
   { path: "/demo", kind: "page", title: "The demo: a real system, mapped · fraktul", description: "The OpenTelemetry Demo shop, about twenty services, mapped with fraktul from its code and its traces. Open the map, or run it yourself in five commands." },
   { path: "/living-docs", kind: "page", title: "Documentation that stays true · fraktul", description: "Architecture diagrams go stale because nothing fails when they are wrong. fraktul checks the map against the code and your OpenTelemetry traces." },
   { path: "/docs", kind: "page", title: "Documentation · fraktul", description: "How to map a system with fraktul: a quickstart, the concepts, the model file, tours and narration, publishing, and every command." },
-  { path: "/map", kind: "page", title: "fraktul, mapped with fraktul", description: "The live demo: fraktul's own architecture as a map you can click into, tour and listen to, built by fraktul from one model file." },
+  { path: "/fraktuls", kind: "page", title: "Fraktuls: live maps made with fraktul", description: "A fraktul is a map of a system made with fraktul. Two are live: a demo shop of twenty services with its traces, and fraktul itself. Both have narrated tours." },
   // Internal: not linked, not indexed, and left out of production (scripts/internal-pages.ts).
   { path: "/design", kind: "none", title: "Design system · fraktul (internal)", description: "fraktul's two styles, flat and y2k, in light and dark: tokens, type, controls and the rules that keep text readable." },
   { path: "/404", kind: "none", title: "Not found · fraktul", description: "This page is not on the map." },

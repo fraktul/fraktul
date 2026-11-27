@@ -46,8 +46,6 @@ private repository of a free organization, so the order matters:
    outside contributors' pull requests. It should end with "Every setting is applied."
 4. Open a pull request from a fork (or ask someone to) and confirm it runs the tests, waits for approval first, and
    does not deploy.
-5. Drop `FRAKTUL_PUBLIC=1` from the `site:build` scripts so fraktul's own map shows its source (DEPLOYMENT.md), and
-   remove the `REPO_PRIVATE` note above once a release has published with provenance.
 
 What the protections are:
 

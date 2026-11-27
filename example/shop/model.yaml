@@ -7,7 +7,7 @@
 version: 1
 title: Astronomy Shop, mapped with fraktul
 brand: Astronomy Shop
-home: /
+home: /fraktuls
 root: shop
 default_repo: demo
 voice: { voice: am_michael, speed: 1, say_as: { gRPC: "G R P C", Valkey: "val key", PostgreSQL: "postgres", flagd: "flag D", nginx: "engine X", API: "A P I", "C++": "C plus plus", ".NET": "dot net", "Node.js": "node J S", "Next.js": "next J S", PHP: "P H P" } }

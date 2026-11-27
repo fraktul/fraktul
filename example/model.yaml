@@ -1,6 +1,6 @@
 # fraktul, mapped with fraktul. It is the map on fraktul.dev/map, the tutorial tours, and the fixture the tests check.
 version: 1
-title: fraktul
+title: fraktul, mapped with fraktul
 brand: fraktul
 root: fraktul
 voice: { voice: bf_emma, speed: 1, say_as: { YAML: "yammel", JSON: "jason", CLI: "C L I", CI: "C I", ADR: "A D R", ADRs: "A D Rs", WASD: "W A S D", npm: "N P M", MLX: "M L X", "3D": "three D" } }
