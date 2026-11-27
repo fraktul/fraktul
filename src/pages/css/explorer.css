@@ -313,16 +313,21 @@ pre.code:not(.numbered) { padding: 10px 12px; }
 .space-label.is-focus { color: var(--space-focus); }
 .space-label.is-dim { color: var(--space-label-dim); }
 /* Key hints sit on their own glass strip so they read on any sky, light or dark. */
-.space-hint { position: absolute; z-index: 3; left: 12px; bottom: 10px; margin: 0; padding: 5px 10px; max-width: calc(100% - 150px); font: 500 11.5px/1.7 var(--mono); color: var(--ink-2);
+.space-hint { position: absolute; z-index: 3; left: 12px; bottom: 10px; margin: 0; padding: 5px 10px; max-width: calc(100% - 210px); font: 500 11.5px/1.7 var(--mono); color: var(--ink-2);
   background: color-mix(in srgb, var(--sheet) 88%, transparent); border: 1px solid var(--line); border-radius: 8px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); pointer-events: none; }
 .space-hint kbd { display: inline-block; min-width: 1.2em; margin: 0 1px; padding: 0 4px; border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent); border-radius: 4px; background: var(--paper); text-align: center; font: inherit; font-weight: 600; color: var(--ink); }
-.lock-btn { position: absolute; right: 12px; bottom: 10px; z-index: 3; }
-.lock-btn[aria-pressed="true"], :root[data-style] .lock-btn[aria-pressed="true"] { background: var(--ink); background-color: var(--ink); color: var(--sheet); border-color: var(--ink); }
+.space-tools { position: absolute; right: 12px; bottom: 10px; z-index: 3; display: flex; gap: 6px; }
+.lock-btn[aria-pressed="true"], :root[data-style] .lock-btn[aria-pressed="true"], .slow-btn[aria-pressed="true"], :root[data-style] .slow-btn[aria-pressed="true"] { background: var(--ink); background-color: var(--ink); color: var(--sheet); border-color: var(--ink); }
 /* Locked: a crosshair marks what a click opens. */
 .space.is-locked::after { content: ""; position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; pointer-events: none;
   background: linear-gradient(var(--space-label), var(--space-label)) center / 2px 100% no-repeat, linear-gradient(var(--space-label), var(--space-label)) center / 100% 2px no-repeat; opacity: 0.8; }
 .space-error { position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%); max-width: 80%; margin: 0; color: var(--space-label); font: 400 14px/1.5 var(--body); text-align: center; }
-@media (pointer: coarse) { .space-hint { display: none; } }
+.touch-hint { display: none; }
+/* Touch screens: no keyboard hints, mouse lock, slow switch or recording (it needs a desk, a mouse and the local map). */
+@media (hover: none) and (pointer: coarse) {
+  .space-hint:not(.touch-hint), .space-tools, .rec { display: none !important; }
+  .touch-hint { display: block; max-width: none; right: 12px; }
+}
 
 /* Details panel: hide it to give the diagram the whole width (\ or the panel button). */
 .stage.panel-closed { grid-template-columns: minmax(0, 1fr) 0; }
@@ -348,3 +353,18 @@ pre.code:not(.numbered) { padding: 10px 12px; }
 .card-min { width: 26px; height: 26px; padding: 0; display: inline-grid; place-items: center; }
 .card-min::before { content: ""; width: 10px; height: 1.5px; background: currentColor; }
 .tour-card.is-min .card-min::before { height: 8px; width: 9px; background: none; border: 1.5px solid currentColor; border-radius: 2px; box-sizing: border-box; }
+
+/* Phones: the bar wraps with search on its own row, the panel sits under the diagram (nothing to hide), and the tour
+   card is a sheet along the bottom of the diagram instead of a window to drag. */
+@media (max-width: 860px) {
+  .bar { flex-wrap: wrap; gap: 8px 10px; }
+  .bar .search { order: 10; flex: 1 1 100%; max-width: none; margin-left: 0; }
+  .bar .style-pick { margin-left: auto; }
+  .panel-hide, .panel-btn { display: none !important; }
+  .stage.panel-closed { grid-template-columns: 1fr; }
+  .panel[hidden] { display: block !important; }
+  .stage { grid-template-rows: max(300px, 56vh) auto auto; }
+  .stage > .tour-card { position: relative; left: auto !important; top: auto !important; width: auto; margin: 10px 10px 0; box-shadow: none; }
+  .tour-card .tour-head { cursor: default; }
+  .tours { width: calc(100vw - 24px); max-width: none; }
+}

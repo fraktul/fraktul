@@ -27,18 +27,61 @@ page" marking the section being read. The pages work without it.
   setFold();
   narrow.addEventListener("change", setFold);
 
-  // "On this page": mark the last heading that has scrolled past the top bar.
-  const links = [...document.querySelectorAll<HTMLAnchorElement>(".docs-toc a")];
-  const heads = links.map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1)))).filter((h): h is HTMLElement => !!h);
-  if (heads.length) {
-    let ticking = false;
-    const mark = () => {
-      ticking = false;
-      let current = heads[0];
-      for (const h of heads) if (h.getBoundingClientRect().top < Math.max(140, innerHeight * 0.3)) current = h;
-      for (const a of links) { if (a.hash === `#${current.id}`) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); }
+  // "On this page", the way the Bascik docs do it: the current heading is the last one above the anchor offset; a
+  // clicked entry stays current until the smooth scroll arrives (so the list doesn't flash every heading passed on the
+  // way); the user taking over the scroll releases it; and the current entry is kept in view inside the list.
+  const toc = document.querySelector<HTMLElement>(".docs-toc");
+  const links = new Map<string, HTMLAnchorElement>();
+  for (const a of document.querySelectorAll<HTMLAnchorElement>(".docs-toc a")) links.set(decodeURIComponent(a.hash.slice(1)), a);
+  const heads = [...links.keys()].map((id) => document.getElementById(id)).filter((h): h is HTMLElement => !!h);
+  if (toc && heads.length) {
+    const offset = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--anchor-scroll-offset")) || 96;
+    const reveal = (link: HTMLElement) => {
+      const t = toc.getBoundingClientRect(), l = link.getBoundingClientRect(), pad = 12;
+      if (l.top < t.top + pad) toc.scrollTop += l.top - (t.top + pad);
+      else if (l.bottom > t.bottom - pad) toc.scrollTop += l.bottom - (t.bottom - pad);
     };
-    addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(mark); } }, { passive: true });
-    mark();
+    const setCurrent = (id: string) => {
+      links.forEach((a, k) => { if (k === id) { a.setAttribute("aria-current", "location"); reveal(a); } else a.removeAttribute("aria-current"); });
+    };
+    let holding = "", destination = 0, maxTimer = 0;
+    const update = () => {
+      if (holding) return;
+      // At the very bottom, the last heading wins even if it never reaches the top.
+      if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) { setCurrent(heads[heads.length - 1].id); return; }
+      let current = heads[0];
+      for (const h of heads) if (h.getBoundingClientRect().top <= offset() + 4) current = h;
+      setCurrent(current.id);
+    };
+    const release = () => { clearTimeout(maxTimer); if (!holding) return; holding = ""; update(); };
+    const arrived = () => { if (holding && Math.abs(scrollY - destination) <= 2) release(); };
+    addEventListener("scroll", arrived, { passive: true });
+    addEventListener("scrollend", arrived);
+    for (const type of ["wheel", "touchstart", "keydown", "mousedown"]) {
+      addEventListener(type, (e) => { if ((e.target as Element | null)?.closest?.(".docs-toc")) return; release(); }, { passive: true });
+    }
+    toc.addEventListener("click", (e) => {
+      const a = (e.target as Element).closest("a");
+      if (!a || e.defaultPrevented || (e as MouseEvent).button !== 0 || (e as MouseEvent).metaKey || (e as MouseEvent).ctrlKey || (e as MouseEvent).shiftKey || (e as MouseEvent).altKey) return;
+      const id = decodeURIComponent(a.hash.slice(1));
+      const target = document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      history.pushState(null, "", `#${id}`);
+      setCurrent(id);
+      holding = id;
+      const max = document.documentElement.scrollHeight - innerHeight;
+      destination = Math.min(Math.max(0, target.getBoundingClientRect().top + scrollY - offset()), Math.max(0, max));
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      scrollTo({ top: destination, behavior: reduced ? "auto" : "smooth" });
+      clearTimeout(maxTimer);
+      maxTimer = window.setTimeout(release, reduced ? 0 : 4000);
+    });
+    let pending = false;
+    const schedule = () => { if (pending) return; pending = true; requestAnimationFrame(() => { pending = false; update(); }); };
+    addEventListener("scroll", schedule, { passive: true });
+    addEventListener("resize", schedule);
+    addEventListener("hashchange", update);
+    update();
   }
 </script>

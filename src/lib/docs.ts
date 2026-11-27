@@ -104,7 +104,7 @@ function sidebar(docs: Doc[], slug: string): SafeHtml {
   return html`<nav class="docs-nav" aria-label="Documentation">
     <details class="docs-nav-fold" open>
       <summary><span>Documentation</span><small>${current?.title ?? ""}</small></summary>
-      <a class="docs-home" href="/docs">All docs</a>
+      <ol class="docs-overview"><li><a href="/docs">Overview</a></li></ol>
       ${SECTIONS.filter((s) => docs.some((d) => d.section === s)).map((s) => html`<p class="docs-nav-head">${s}</p>
       <ol>${docs.filter((d) => d.section === s).map((d) => (d.slug === slug ? html`<li><a href="/docs/${d.slug}" aria-current="page">${d.title}</a></li>` : html`<li><a href="/docs/${d.slug}">${d.title}</a></li>`))}</ol>`)}
     </details>
@@ -118,8 +118,9 @@ export function docPage(slug: string): SafeHtml {
   const doc = docs[i];
   const prev = docs[i - 1], next = docs[i + 1];
   const { html: body, headings } = render(doc.body);
-  const toc = headings.filter((h) => h.depth === 2);
-  return html`<div class="docs-layout${toc.length >= 3 ? " has-toc" : ""}">
+  const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+  const hasToc = headings.filter((h) => h.depth === 2).length >= 3;
+  return html`<div class="docs-layout${hasToc ? " has-toc" : ""}">
     ${sidebar(docs, slug)}
     <article class="prose" data-testid="docs-article">
       <header class="docs-title">
@@ -133,9 +134,9 @@ export function docPage(slug: string): SafeHtml {
         ${next ? html`<a class="pg next" href="/docs/${next.slug}"><span><small>Next</small>${next.title}</span>${arrow("r")}</a>` : html`<span></span>`}
       </nav>
     </article>
-    ${toc.length >= 3 ? html`<aside class="docs-toc" aria-label="On this page">
+    ${hasToc ? html`<aside class="docs-toc" aria-label="On this page">
       <p class="docs-nav-head">On this page</p>
-      <ol>${toc.map((h) => html`<li><a href="#${h.id}">${h.text}</a></li>`)}</ol>
+      <ol>${toc.map((h) => html`<li><a href="#${h.id}" data-level="${h.depth}">${h.text}</a></li>`)}</ol>
     </aside>` : ""}
   </div>`;
 }

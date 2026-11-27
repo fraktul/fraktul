@@ -14,7 +14,7 @@ type Item3D = {
 type Group3D = { rid: string; title: string; x: number; y: number; w: number; h: number };
 type Edge3D = { pts: [number, number][]; tone: string };
 type Scene3D = { key: string; items: Item3D[]; groups: Group3D[]; edges: Edge3D[] };
-type Hooks3D = { pick: (rid: string | null) => void; locked?: (on: boolean) => void };
+type Hooks3D = { pick: (rid: string | null) => void; locked?: (on: boolean) => void; slow?: (on: boolean) => void };
 
 // fraktul ships its own three.js beside the page (vendor/); the CDN is only a fallback for hosts that serve the page
 // alone (a claude.ai Artifact), where the local file is not there.
@@ -436,9 +436,10 @@ let T: any = null;
       // in the 2D map) runs across the screen and blocks stand apart instead of behind each other.
       const span = Math.max(spanX, spanZ, 6);
       const yaw = -0.72;
-      const dist = span * 0.95 + 3;
-      const to = new T.Vector3(Math.sin(yaw) * dist, Math.max(4.5, span * 0.45), Math.cos(yaw) * dist);
-      const pitch = -Math.atan2(to.y - 0.8, dist) * 0.92;
+      // Land low, a little above head height of the tallest blocks, looking across the level rather than down on it.
+      const dist = span * 0.8 + 3;
+      const to = new T.Vector3(Math.sin(yaw) * dist, Math.max(2.6, span * 0.22), Math.cos(yaw) * dist);
+      const pitch = -Math.atan2(to.y - 1.2, dist) * 0.9;
       if (o.entry) {
         // Entry: start looking straight down on the flat plan (the 2D map), then tilt down to the street.
         camera.position.set(0, Math.max(spanX / 1.6, spanZ * 1.15, 8), 0.01);
@@ -536,7 +537,7 @@ let T: any = null;
       if (d && !d.moved) { const rid = pickAt(e.clientX, e.clientY); hooks?.pick(rid); }
     });
     cv.addEventListener("pointerleave", () => { if (hover) { hover = null; cv.style.cursor = ""; } });
-    cv.addEventListener("wheel", (e) => { e.preventDefault(); stop(e); fly = null; orbit = null; moveBy(0, -e.deltaY * 0.012, 0); }, { passive: false });
+    cv.addEventListener("wheel", (e) => { e.preventDefault(); stop(e); fly = null; orbit = null; moveBy(0, -e.deltaY * (slow ? 0.012 : 0.03), 0); }, { passive: false });
     // Two fingers: pinch to move forward and back.
     cv.addEventListener("touchmove", (e) => {
       if (e.touches.length !== 2) return;
@@ -554,11 +555,14 @@ let T: any = null;
       }
       if (k === "0") { sceneKey = ""; hooks && rebuildLast(); }
       if (k === "l") lock(!locked());
+      if (k === "z") setSlow(!slow);
     });
     document.addEventListener("keyup", (e) => keys.delete(e.key.toLowerCase()));
     window.addEventListener("blur", () => keys.clear());
   }
   // ───────────── mouse lock (Pointer Lock): look with plain mouse moves, Esc or L gives the mouse back ─────────────
+  let slow = (() => { try { return localStorage.getItem("fraktul-3d-slow") === "1"; } catch { return false; } })();
+  function setSlow(on: boolean) { slow = on; try { localStorage.setItem("fraktul-3d-slow", on ? "1" : "0"); } catch { /* private window */ } hooks?.slow?.(on); }
   let lockCv: HTMLCanvasElement | null = null;
   const locked = () => !!lockCv && document.pointerLockElement === lockCv;
   function lock(on: boolean) {
@@ -683,7 +687,8 @@ let T: any = null;
       aim(orbit.c);
     }
     if (keys.size) {
-      const sp = (keys.has("shift") ? 16 : 7) * dt;
+      // Fast by default; Shift, or the Slow switch, for fine moves.
+      const sp = (slow || keys.has("shift") ? 5 : 20) * dt;
       const fw = (keys.has("w") || keys.has("arrowup") ? 1 : 0) - (keys.has("s") || keys.has("arrowdown") ? 1 : 0);
       const st = (keys.has("d") ? 1 : 0) - (keys.has("a") ? 1 : 0);
       const up = (keys.has("e") ? 1 : 0) - (keys.has("q") ? 1 : 0);
@@ -741,6 +746,7 @@ let T: any = null;
     show, hide, focus, flyTo, dive,
     stopOrbit() { orbit = null; },
     lock, get locked() { return locked(); },
+    setSlow, get slow() { return slow; },
     build(s: Scene3D, o?: { entry?: boolean }) { lastScene = s; build(s, o); },
     get shown() { return shown; },
   };

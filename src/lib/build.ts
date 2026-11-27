@@ -16,7 +16,7 @@ export type FileInfo = { key: string; repo: string; path: string; lang: string; 
 export type FnInfo = { key: string; file: string; name: string; line: number; end: number; doc: string; params: string; exported: boolean; code: string; calls: string[]; calledBy: string[]; url: string | null };
 export type NodeInfo = Omit<ModelNode, "diagram" | "anchors"> & { id: string; anchors: { kind: string; key: string; label: string; missing?: boolean }[]; usedIn: string[] };
 export type Site = {
-  meta: { built: string; commit: string | null; root: string; repos: Record<string, SiteRepo>; defaultRepo: string; title: string; brand: string; voice: unknown };
+  meta: { built: string; commit: string | null; root: string; home: string | null; repos: Record<string, SiteRepo>; defaultRepo: string; title: string; brand: string; voice: unknown };
   nodes: Record<string, NodeInfo>;
   diagrams: Record<string, Diagram>;
   files: Record<string, FileInfo>;
@@ -170,7 +170,7 @@ export async function buildSite(model: Model = loadModel()): Promise<Site> {
   }
   const recDir = join(model.dir, "recordings");
   const recordings = existsSync(recDir) ? readdirSync(recDir).filter((f) => f.endsWith(".json")).map((f) => JSON.parse(readFileSync(join(recDir, f), "utf8"))).filter((r) => r.file && existsSync(join(recDir, r.file))).map((r) => ({ ...r, file: `recordings/${r.file}` })) : [];
-  return { voice, recordings, meta: { built: new Date().toISOString(), commit: headOf(model, D), root: model.root, repos, defaultRepo: D, title: model.title ?? "System map", brand: model.brand ?? model.title ?? "System map", voice: model.voice ?? null }, nodes, diagrams, files, fns, live, tours: model.tours };
+  return { voice, recordings, meta: { built: new Date().toISOString(), commit: headOf(model, D), root: model.root, home: model.home ?? (process.env.FRAKTUL_SITE ? "/" : null), repos, defaultRepo: D, title: model.title ?? "System map", brand: model.brand ?? model.title ?? "System map", voice: model.voice ?? null }, nodes, diagrams, files, fns, live, tours: model.tours };
 }
 
 function fnLabel(f: FnInfo, withFile = false): string {

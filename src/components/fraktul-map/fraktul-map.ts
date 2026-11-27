@@ -23,6 +23,10 @@ type View = { key: string; expanded: string[] };
 type Box = { rid: string; target: string | null; box: string; title: string; expandable: boolean; expanded: boolean };
 
 declare const mermaid: any;
+/** A touch screen without a mouse: no hover, no keyboard shortcuts, no mouse lock, no recording. */
+const touchy = matchMedia("(hover: none) and (pointer: coarse)").matches;
+if (touchy) (document.getElementById("search") as HTMLInputElement).placeholder = "Find a block, file or function";
+
 
 const SITE: Site = JSON.parse((document.getElementById("fraktul-data") as HTMLElement).textContent || "{}");
 const board = (document.getElementById("board") as HTMLElement), canvas = (document.getElementById("canvas") as HTMLElement), panel = (document.getElementById("panel") as HTMLElement), peek = (document.getElementById("peek") as HTMLElement), crumbsEl = (document.getElementById("crumbs") as HTMLElement);
@@ -329,7 +333,7 @@ function fit() {
   svg.style.height = `${h}px`;
   svg.style.maxWidth = "none";
   const r = canvas.getBoundingClientRect();
-  const pad = 40;
+  const pad = r.width < 600 ? 14 : 40;
   // While a tour card is open on a wide screen, fit the diagram into the space beside it.
   const left = !tourCard.hidden && !tourCard.classList.contains("is-min") && !tourCard.classList.contains("is-moved") && r.width > 900 ? tourCard.offsetWidth + 24 : 0;
   const s = Math.max(0.15, Math.min(1.25, (r.width - left - pad * 2) / w, (r.height - pad * 2 - 40) / h));
@@ -350,11 +354,28 @@ canvas.addEventListener("wheel", (e) => {
   else { zoom.x -= e.deltaX; zoom.y -= e.deltaY; applyZoom(); }
 }, { passive: false });
 let drag: { x: number; y: number; zx: number; zy: number; moved: boolean } | null = null;
+// Two fingers on a touch screen: pinch to zoom around the point between them.
+const touches = new Map<number, { x: number; y: number }>();
+let pinch: { d: number; s: number } | null = null;
+const spread = () => { const [a, b] = [...touches.values()]; return { d: Math.hypot(a.x - b.x, a.y - b.y), cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2 }; };
 canvas.addEventListener("pointerdown", (e) => {
   if ((e.target as Element).closest(".tour-card, .legend, .peek")) return;
+  if (e.pointerType === "touch") {
+    touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (touches.size === 2 && !in3d) { pinch = { d: spread().d, s: zoom.s }; if (drag) drag.moved = true; return; }
+  }
   drag = { x: e.clientX, y: e.clientY, zx: zoom.x, zy: zoom.y, moved: false };
 });
+const dropTouch = (e: PointerEvent) => { touches.delete(e.pointerId); if (touches.size < 2) pinch = null; };
+window.addEventListener("pointerup", dropTouch);
+window.addEventListener("pointercancel", dropTouch);
 window.addEventListener("pointermove", (e) => {
+  if (touches.has(e.pointerId)) touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pinch && touches.size === 2) {
+    const p = spread(), r = canvas.getBoundingClientRect();
+    zoomAt((pinch.s * (p.d / pinch.d)) / zoom.s, p.cx - r.left, p.cy - r.top);
+    return;
+  }
   if (!drag) return;
   const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
   if (Math.abs(dx) + Math.abs(dy) > 4) { drag.moved = true; canvas.classList.add("is-panning"); hidePeek(); }
@@ -405,6 +426,8 @@ function markSelected(rid?: string) {
 const peekCache = new Map<string, string>();
 let peekTimer = 0, peekFor = "";
 board.addEventListener("pointerover", (e) => {
+  // A preview on hover needs a mouse: on a touch screen the tap opens the block instead.
+  if ((e as PointerEvent).pointerType !== "mouse") return;
   const b = boxFromEvent(e);
   if (!b || !b.target || b.expanded || drag?.moved) return;
   if (peekFor === b.rid) return;
@@ -532,11 +555,11 @@ function intro(): HTMLElement {
   const box = el("details", "intro",
     el("summary", null, el("h3", null, "How to explore")),
     el("ul", null,
-      el("li", null, el("strong", null, "Click"), " a box with the ", el("i", "sw sw-drill"), " badge to open it. Keep going down to files, functions and their source."),
-      el("li", null, el("strong", null, "Hover"), " a box to peek inside before you open it."),
-      el("li", null, el("strong", null, "↑ Up"), " (top left), the breadcrumbs, ", el("kbd", null, "Esc"), " or ", el("kbd", null, "Backspace"), " take you back up."),
+      el("li", null, el("strong", null, touchy ? "Tap" : "Click"), " a box with the ", el("i", "sw sw-drill"), " badge to open it. Keep going down to files, functions and their source."),
+      touchy ? null : el("li", null, el("strong", null, "Hover"), " a box to peek inside before you open it."),
+      touchy ? el("li", null, el("strong", null, "↑ Up"), " or the breadcrumbs take you back up.") : el("li", null, el("strong", null, "↑ Up"), " (top left), the breadcrumbs, ", el("kbd", null, "Esc"), " or ", el("kbd", null, "Backspace"), " take you back up."),
       el("li", null, el("strong", null, "Tours"), " (top right) follow one piece of data through the system, with branches."),
-      el("li", null, "Drag to pan, scroll to zoom, ", el("kbd", null, "/"), " to search. ", el("kbd", null, "\\"), " hides this panel.")),
+      touchy ? el("li", null, "Drag to pan, pinch to zoom.") : el("li", null, "Drag to pan, scroll to zoom, ", el("kbd", null, "/"), " to search. ", el("kbd", null, "\\"), " hides this panel.")),
     meta()) as HTMLDetailsElement;
   box.open = pref("fraktul-intro", "1") === "1";
   box.addEventListener("toggle", () => savePref("fraktul-intro", box.open ? "1" : "0"));
@@ -1083,7 +1106,7 @@ function scene3d() {
     const st = b.target ? statusOf(b.target) : undefined;
     const lines = linesOf(b.target);
     const drill = openable(b.target) && b.target !== view().key;
-    const sub = [st && st !== "built" ? st : "", lines ? `${lines.toLocaleString()} lines` : "", drill ? "click to enter" : ""].filter(Boolean).join(" · ");
+    const sub = [st && st !== "built" ? st : "", lines ? `${lines.toLocaleString()} lines` : "", drill ? (touchy ? "tap to enter" : "click to enter") : ""].filter(Boolean).join(" · ");
     const tone = cls ?? SHAPE_TONE[family] ?? (b.target ? "code" : "plain");
     items.push({ rid, title, sub, family, status: st, tone, ...p, size: lines ? Math.max(0.08, Math.min(1, Math.log10(lines + 1) / 4)) : null, hash: fnv(b.target ?? rid), drill });
   }
@@ -1120,18 +1143,22 @@ async function set3d(on: boolean) {
         if (b?.target && openable(b.target) && b.target !== view().key) { F3D.dive(rid, () => { entry3d = true; clickBox(b); }); return; }
         clickBox(b);
       },
+      slow: (on: boolean) => slowBtn.setAttribute("aria-pressed", String(on)),
       locked: (on: boolean) => { lockBtn.setAttribute("aria-pressed", String(on)); lockBtn.textContent = on ? "Unlock mouse (Esc)" : "Lock mouse"; },
     });
   } catch {
     space.append(el("p", "space-error", "The 3D view could not load three.js (vendor/three.module.min.js beside this page). Rebuild the map and try again."));
     return;
   }
+  slowBtn.setAttribute("aria-pressed", String(F3D.slow));
   entry3d = true;
   if (current.svg) after3d();
 }
 btn3d.addEventListener("click", () => set3d(!in3d));
 const lockBtn = document.getElementById("lock-btn") as HTMLButtonElement;
 lockBtn.addEventListener("click", (e) => { e.stopPropagation(); F3D.lock(!F3D.locked); });
+const slowBtn = document.getElementById("slow-btn") as HTMLButtonElement;
+slowBtn.addEventListener("click", (e) => { e.stopPropagation(); F3D.setSlow(!F3D.slow); });
 
 // ───────────── details panel: hide and show (remembered) ─────────────
 const stageEl = document.getElementById("main") as HTMLElement, panelBtn = document.getElementById("panel-btn") as HTMLButtonElement;
@@ -1148,6 +1175,14 @@ panelBtn.addEventListener("click", () => setPanel(panel.hidden));
 setPanel(pref("fraktul-panel", "1") === "1");
 
 // ───────────── tour card: drag it by its title bar, fold it to the bar ─────────────
+const narrowScreen = matchMedia("(max-width: 860px)");
+// On a phone the tour card leaves the diagram and sits in the page right under it, so it never covers the map.
+function homeCard() {
+  if (narrowScreen.matches) { if (tourCard.parentElement !== stageEl) stageEl.insertBefore(tourCard, panel); }
+  else if (tourCard.parentElement !== canvas) canvas.append(tourCard);
+}
+homeCard();
+narrowScreen.addEventListener("change", homeCard);
 function placeCard(x: number, y: number) {
   const r = canvas.getBoundingClientRect();
   const w = tourCard.offsetWidth, h = tourCard.offsetHeight;
@@ -1160,6 +1195,7 @@ function placeCard(x: number, y: number) {
   let d: { x: number; y: number; ox: number; oy: number } | null = null;
   tourCard.addEventListener("pointerdown", (e) => {
     const head = (e.target as Element).closest(".tour-head");
+    if (narrowScreen.matches) return;
     if (!head || (e.target as Element).closest("button, a, input, select")) return;
     e.preventDefault();
     d = { x: e.clientX, y: e.clientY, ox: tourCard.offsetLeft, oy: tourCard.offsetTop };
@@ -1203,7 +1239,11 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight" && tour) { const n = nextOf(); if (n) go(n); }
 });
 (document.getElementById("back") as HTMLElement).addEventListener("click", back);
-(document.getElementById("home") as HTMLElement).addEventListener("click", (e) => { e.preventDefault(); endTour(); goTo(SITE.meta.root); });
+// The logo goes to the project's home page when the model names one (fraktul.dev's map: the fraktul.dev home page),
+// else to the top of the map.
+const homeLink = document.getElementById("home") as HTMLAnchorElement;
+if (SITE.meta.home) homeLink.href = SITE.meta.home;
+else homeLink.addEventListener("click", (e) => { e.preventDefault(); endTour(); goTo(SITE.meta.root); });
 function fromHash() {
   const h = location.hash.slice(1).replace(/-/g, "_");
   if (h && SITE.nodes[h] && hasDiagram(`node:${h}`)) { if (view()?.key !== `node:${h}`) goTo(h); }

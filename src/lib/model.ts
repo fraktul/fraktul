@@ -74,6 +74,8 @@ export type Model = {
   root: string;
   title?: string;
   brand?: string;
+  /** Where the logo in the map's top bar goes (a URL); default: the top of the map. */
+  home?: string;
   /** Relative to the model file; default: the git checkout that holds the model. */
   project_root?: string;
   /** Repo key for anchors that name no repo; default: the repo whose path is ".". */

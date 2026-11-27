@@ -38,8 +38,12 @@ Styles live in src/pages/css/explorer.css (global), because most of what they st
     <section class="canvas" id="canvas" aria-label="Diagram" tabindex="0" data-testid="fraktul-map-canvas">
       <div class="board" id="board"><p class="loading">Drawing the map…</p></div>
       <div class="space" id="space" hidden data-testid="fraktul-map-space">
+        <div class="space-tools">
+        <button class="btn small slow-btn" id="slow-btn" type="button" aria-pressed="false" title="Move slowly for fine positioning (Z; hold Shift for a moment)" data-testid="fraktul-map-slow">Slow</button>
         <button class="btn small lock-btn" id="lock-btn" type="button" aria-pressed="false" title="Lock the mouse: move it to look, no dragging (L; Esc unlocks)" data-testid="fraktul-map-mouse-lock">Lock mouse</button>
-        <p class="space-hint" id="space-hint"><kbd>L</kbd> lock the mouse · Drag to look · <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to move · <kbd>Q</kbd><kbd>E</kbd> down, up · <kbd>Shift</kbd> faster · click to open · <kbd>0</kbd> replay</p>
+        </div>
+        <p class="space-hint touch-hint">Drag to look · pinch to move · tap a block to fly in</p>
+        <p class="space-hint" id="space-hint"><kbd>L</kbd> lock the mouse · Drag to look · <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to move · <kbd>Q</kbd><kbd>E</kbd> down, up · <kbd>Shift</kbd> or <kbd>Z</kbd> slow · click to open · <kbd>0</kbd> replay</p>
       </div>
       <div class="legend" id="legend" aria-label="Legend">
         <span><i class="sw sw-model"></i>a model does it</span>
