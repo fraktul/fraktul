@@ -7,10 +7,14 @@ name: CI
 #   a push to main                     → no tests (the pull request's branch was tested before the merge); deploys
 #                                       fraktul.dev only when the commit came from a merged pull request and is still
 #                                       the newest commit on main, then smoke-tests production
+#   a pull request from a fork         → tests only. It gets no secrets and a read-only token, and never deploys.
+#                                       (A pull request from a branch of this repository is tested by its push.)
 #   a tag v*.*.*                       → release.yml publishes to npm
 on:
   push:
     branches: ["**"]
+  pull_request:
+    branches: [main]
 
 concurrency:
   # Branch runs cancel an older run of the same branch; main runs never wait or get canceled (see deploy).
@@ -23,10 +27,14 @@ permissions:
 jobs:
   test:
     name: Test
-    if: github.ref != 'refs/heads/main'
+    if: >-
+      (github.event_name == 'push' && github.ref != 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository)
     runs-on: ubuntu-latest
     steps:
+      # This job runs code from the branch (a fork's, for a pull request): it keeps no git credentials.
       - uses: actions/checkout@v5
+        with: { persist-credentials: false }
       - uses: actions/setup-node@v5
         with: { node-version: 24, cache: npm }
       - run: npm ci
@@ -64,8 +72,9 @@ jobs:
     name: Deploy fraktul.dev
     needs: test
     # Branch pushes deploy after the tests pass; main deploys without them (see the merged pull request check).
+    # Only pushes to this repository deploy: a pull request never does, so a fork cannot reach the Cloudflare token.
     if: >-
-      !cancelled() && github.repository == 'rinsesoft/fraktul' &&
+      !cancelled() && github.event_name == 'push' && github.repository == 'rinsesoft/fraktul' &&
       (github.ref == 'refs/heads/main' || needs.test.result == 'success')
     runs-on: ubuntu-latest
     permissions:

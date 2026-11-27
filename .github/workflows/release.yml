@@ -7,6 +7,9 @@ on:
   push:
     tags: ["v*.*.*"]
 
+# Nothing by default; the one job asks for what it needs.
+permissions: {}
+
 jobs:
   release:
     name: Publish fraktul to npm
@@ -16,7 +19,7 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v5
-        with: { fetch-depth: 0 }
+        with: { fetch-depth: 0, persist-credentials: false }
 
       # Before anything is built or published: fails unless the tagged commit is on main.
       - name: Check the tagged commit is on main

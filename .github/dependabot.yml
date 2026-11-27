@@ -1,0 +1,30 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    # Wait a week before proposing a new version: most bad releases are pulled within days.
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    ignore:
+      # Mermaid and three.js are served to the browser as they are, and the map is tested against these versions:
+      # upgrade them on purpose, not on a schedule.
+      - dependency-name: mermaid
+      - dependency-name: three
+    groups:
+      dev-dependencies:
+        dependency-type: development
+      production-dependencies:
+        dependency-type: production
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns:
+          - "*"

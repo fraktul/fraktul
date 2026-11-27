@@ -74,7 +74,7 @@ export async function buildSite(model: Model = loadModel()): Promise<Site> {
     const lang = langOf(r.path);
     const info: FileInfo = { key, repo: r.repo, path: r.path, lang, lines: 0, doc: "", functions: [], imports: [], importedBy: [], url: urlOf(r.repo, r.path), exists };
     files[key] = info;
-    // Private folders: the site names the file, never its contents.
+    // Repos marked private: the site names the file, never its contents.
     if (!exists || !root || model.repos[r.repo]?.private) continue;
     const text = readFileSync(join(root, r.path), "utf8");
     if (lang === "other") {

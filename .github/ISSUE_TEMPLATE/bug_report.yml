@@ -1,0 +1,52 @@
+name: Bug report
+description: Something in fraktul does not work as documented.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Report security problems privately through the Security tab, not here.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you expected and what you saw instead. Paste the output of the command.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: The smallest model.yaml that shows it, and the command you ran. Remove anything private first.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: fraktul version
+      description: Output of `npx fraktul --version`.
+    validations:
+      required: true
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js version and operating system
+      placeholder: Node 24.21.0 on macOS 15
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - The check
+        - The map page (2D)
+        - The map page (3D)
+        - Tours, narration, recordings
+        - Traces
+        - init, skill, example
+        - Docs or website
+        - Something else
+    validations:
+      required: true

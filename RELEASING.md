@@ -32,3 +32,29 @@ and adds it by itself once the repo is public.
 - `CHANGELOG.md` has a section for the version.
 - `npm test` and `npm run package` pass; CI installs the package into an empty project and builds a map with it.
 - fraktul.dev's install instructions name the package, so publish soon after the site deploys.
+
+## Making the repository public
+
+The repository's protections are written down in `.github/scripts/secure-repo.sh`. GitHub refuses some of them on a
+private repository of a free organization, so the order matters:
+
+1. Check what will become visible: every commit (author names and email addresses included), every past Actions
+   log, every issue and pull request with its comments, and the Preview URLs in those comments.
+2. Make the repository public (Settings, Danger Zone).
+3. Straight away, run `.github/scripts/secure-repo.sh`. It adds what it had to skip: the rulesets on `main` and on
+   `v*` tags, secret scanning with push protection, private vulnerability reporting, and approval for workflows on
+   outside contributors' pull requests. It should end with "Every setting is applied."
+4. Open a pull request from a fork (or ask someone to) and confirm it runs the tests, waits for approval first, and
+   does not deploy.
+5. Drop `FRAKTUL_PUBLIC=1` from the `site:build` scripts so fraktul's own map shows its source (DEPLOYMENT.md), and
+   remove the `REPO_PRIVATE` note above once a release has published with provenance.
+
+What the protections are:
+
+| Protects | How |
+|---|---|
+| `main` | No deletion or force push. Changes arrive by pull request, with an approval from a code owner (`.github/CODEOWNERS`) and a passing `Test` check. Admins can bypass, so a sole maintainer can merge their own work. |
+| Releases | Only an admin can create, move or delete a `v*` tag, and `release.yml` refuses a tag that is not on `main`. npm trusts only that workflow (trusted publishing): there is no npm token to steal. |
+| Secrets | The Cloudflare token is used only by the deploy job, which runs only for pushes to this repository. Pull requests from forks run the tests with a read-only token and no secrets, after a maintainer approves the run. |
+| Workflows | Only GitHub's own actions are allowed. The workflow token is read-only unless a job asks for more. CodeQL scans the workflows and the code. |
+| Dependencies | Dependabot opens weekly, grouped updates after a seven-day cooldown, and security updates as they come. |

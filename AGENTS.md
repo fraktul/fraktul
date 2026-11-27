@@ -35,6 +35,12 @@ npm run package          # the npm package (JavaScript) into package/
   `node .claude/skills/bascik-seo/scripts/audit-seo.mjs --dist site-dist`).
 - After changing how the map looks: retake the site's screenshots (`npm run site:shots -- <url>`).
 
+## Security
+
+`SECURITY.md` is the policy; `.github/scripts/secure-repo.sh` applies the repository's settings and rulesets
+(RELEASING.md, "Making the repository public"). Workflows may use only GitHub's own actions, and a job that runs
+code from a pull request must not have secrets or a writable token.
+
 ## Agent skills
 
 The Bascik agent skills live in `.agents/skills/` and `.claude/skills/` (pinned in `skills-lock.json`): `bascik`,

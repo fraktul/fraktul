@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security problem
+    url: https://github.com/rinsesoft/fraktul/security/advisories/new
+    about: Please report vulnerabilities privately, not in a public issue.
+  - name: Documentation
+    url: https://fraktul.dev/docs
+    about: The quickstart, the model file, and answers to common problems.
