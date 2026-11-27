@@ -70,7 +70,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.65.1",
-    "marked": "^15.0.12",
+    "marked": "^18.2.1",
     "wrangler": "^4.165.0"
   }
 }
