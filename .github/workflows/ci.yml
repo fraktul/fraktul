@@ -33,9 +33,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # This job runs code from the branch (a fork's, for a pull request): it keeps no git credentials.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with: { persist-credentials: false }
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with: { node-version: 24, cache: npm }
       - run: npm ci
       # The demo shop's map (/shop/) reads the OpenTelemetry Demo's code for its file and function levels.
@@ -81,9 +81,9 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with: { fetch-depth: 0 }
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with: { node-version: 24, cache: npm }
       - run: npm ci
 

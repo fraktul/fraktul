@@ -18,14 +18,14 @@ jobs:
       contents: write
       id-token: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with: { fetch-depth: 0, persist-credentials: false }
 
       # Before anything is built or published: fails unless the tagged commit is on main.
       - name: Check the tagged commit is on main
         run: node .github/scripts/release-on-main.mjs "$GITHUB_REF_NAME" "$GITHUB_SHA"
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           registry-url: "https://registry.npmjs.org"
