@@ -5,7 +5,7 @@
 //   // docs/arch/live.ts
 //   import type { LiveContext, LiveBlock } from "<fraktul>/src/lib/live.ts";   // types only, optional
 //   export default function (ctx: LiveContext): Record<string, LiveBlock> {
-//     return { run: { title: "Latest run", bar: [{ label: "right", value: 631, tone: "good" }], rows: [["Right", 631]] } };
+//     return { run: { title: "Latest run", bar: [{ label: "passed", value: 631, tone: "good" }], rows: [["Passed", 631]] } };
 //   }
 
 import { existsSync, readdirSync, readFileSync } from "node:fs";
