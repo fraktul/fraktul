@@ -3,6 +3,7 @@ import { test } from "node:test";
 import { buildSite } from "../src/lib/build.ts";
 import { loadModel } from "../src/lib/model.ts";
 import { SHOTS } from "../src/lib/shots.ts";
+import { compareTraces, loadObserved } from "../src/lib/traces.ts";
 
 test("site screenshots: every deep link leads to a view, a box and a tour stop that exist in the example map", async () => {
   const maps = { "/map": await buildSite(loadModel()), "/shop/": await buildSite(loadModel("example/shop/model.yaml")) };
@@ -16,6 +17,17 @@ test("site screenshots: every deep link leads to a view, a box and a tour stop t
     const p = new URLSearchParams(query);
     if (p.get("tour")) { const t = site.tours.find((x) => x.id === p.get("tour")); assert.ok(t?.steps[Number(p.get("step")) - 1], `${s.id}: no such tour stop`); }
   }
+});
+
+test("the demo shop: its model matches its traces, and the links the site makes into it exist", async () => {
+  const model = loadModel("example/shop/model.yaml");
+  const r = compareTraces(model, loadObserved(model)!);
+  assert.deepEqual(r.undrawn, [], "every call the traces saw is drawn");
+  assert.deepEqual(r.unmapped, [], "every service in the traces is on the map");
+  const site = await buildSite(model);
+  for (const id of ["shop", "delivery", "checkout"]) assert.ok(site.diagrams[`node:${id}`], `level ${id}`);
+  assert.ok(site.tours.some((t) => t.id === "the-shop-in-two-minutes") && site.tours.some((t) => t.id === "follow-one-order"));
+  assert.ok(site.live.blocks["traces:checkout"].list!.length >= 8, "checkout's panel lists its callers and callees");
 });
 
 test("big files: fraktul's own map page is drawn as groups, each with its own level", async () => {

@@ -62,6 +62,6 @@ the system is for and how its parts relate, which code can't tell you. fraktul m
 
 - [Quickstart](/docs/getting-started): a map of your own project in a few minutes.
 - [Map it with AI](/docs/ai): have your coding assistant write it.
-- [The demo map](/shop/): an online shop of twenty services, mapped from its code and its traces.
+- [The demo shop](/docs/demo): an online shop of twenty services, mapped from its code and its traces. Open it, or run it yourself.
 - [Core concepts](/docs/concepts): blocks, levels, anchors, the check and tours, in one page.
 - [Open the live map](/map): fraktul's own map, built from the example model in its repo.

@@ -1,0 +1,9 @@
+# Merged into the OpenTelemetry Demo's Collector config by capture.sh: besides sending traces to Jaeger, write every
+# span to a file as OTLP JSON, one export per line. `fraktul traces` reads that file.
+exporters:
+  file/fraktul:
+    path: /tmp/otel-export/traces.jsonl
+service:
+  pipelines:
+    traces:
+      exporters: [otlp, debug, spanmetrics, file/fraktul]

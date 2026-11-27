@@ -61,7 +61,9 @@ functions fraktul reads from the code. `kind: system | service | feature` says w
 model: services, the calls between them, error counts and latency (no payloads). Give each block `service: <name>`
 and its panel shows the real traffic; `fraktul check` lists calls the traces show that no diagram draws, and
 `--strict` fails on them. [Traces](https://fraktul.dev/docs/traces). `example/shop/` is the OpenTelemetry Demo mapped
-this way.
+this way: `npm run shop:setup && npm run shop:dev` shows it, `npm run shop:traces` runs the shop in Docker and reads
+fresh traces, and `npx fraktul example shop` puts the map into anyone's checkout of the demo
+([example/shop/README.md](example/shop/README.md)).
 
 ## The model
 

@@ -60,6 +60,15 @@ counts and latency. A source is an OTLP JSON file, a folder of them, or the addr
 | `--limit <n>` | From Jaeger: traces to read per service. Default `200`. |
 | `--mermaid` | Print the observed service graph as a Mermaid flowchart and write nothing. |
 
+## example
+
+```bash
+fraktul example shop [--force]
+```
+
+Run inside a checkout of the [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo): writes the
+demo shop's map and its traces summary to `docs/arch/`. See [The demo shop](/docs/demo).
+
 ## skill
 
 ```bash

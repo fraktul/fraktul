@@ -32,7 +32,7 @@ jobs:
       - run: npm ci
       # The demo shop's map (/shop/) reads the OpenTelemetry Demo's code for its file and function levels.
       - name: Check out the OpenTelemetry Demo (for /shop/)
-        run: git clone --quiet --depth 1 --branch 2.1.3 https://github.com/open-telemetry/opentelemetry-demo.git .demo/opentelemetry-demo
+        run: npm run shop:setup
       - name: Unit tests and the example model's check
         run: npm test
       - name: Build fraktul.dev
@@ -88,7 +88,7 @@ jobs:
 
       # The demo shop's map (/shop/) reads the OpenTelemetry Demo's code for its file and function levels.
       - name: Check out the OpenTelemetry Demo (for /shop/)
-        run: git clone --quiet --depth 1 --branch 2.1.3 https://github.com/open-telemetry/opentelemetry-demo.git .demo/opentelemetry-demo
+        run: npm run shop:setup
       - name: Build fraktul.dev
         run: |
           if [ "$GITHUB_REF" = "refs/heads/main" ]; then npm run site:build; else npm run site:build:preview; fi

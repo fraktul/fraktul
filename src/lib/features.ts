@@ -143,6 +143,41 @@ export const SITE_PAGES: Record<string, Page> = {
     ],
     end: START,
   },
+  demo: {
+    eyebrow: "The demo", title: "A real system, mapped: twenty services and their traces",
+    lede: "fraktul's own map is one small tool. This one is the OpenTelemetry Demo, an open-source online shop that teams everywhere use to try out observability tools: about twenty services, a dozen languages, a database, a cache and a queue. Open it, or run it yourself in five commands.",
+    ctas: [["Open the shop's map", "/shop/"], ["Run it yourself", "/docs/demo"]],
+    sections: [
+      {
+        id: "top", eyebrow: "30,000 feet", title: "Nine boxes explain twenty services",
+        body: ["The top level is what you would tell someone who has never seen the code: a shopper, a storefront, and the six things the shop does. Browsing, the cart, checkout, paying, delivery, and what happens after the order.", "Each box opens. A feature shows the services that make it happen; a service shows what it does and what it talks to."],
+        shots: ["shop"],
+      },
+      {
+        id: "traffic", eyebrow: "From its traces", title: "Every service shows the traffic it really had",
+        body: ["The shop was run in Docker with its load generator, and its OpenTelemetry traces were read into the map: 315 traces, 17 services, 24 kinds of call. Select checkout and the panel lists who calls it and the eight things it calls for every order, with counts and latency.", "The check compares those calls with the arrows in the diagrams. Nothing was missing, and it found three arrows the short capture never saw."],
+        shots: ["traces"], doc: ["Traces", "/docs/traces"],
+      },
+      {
+        id: "down", eyebrow: "All the way down", title: "From the shop to a function in four clicks",
+        body: ["Open the storefront, then one of its API routes, then a function. The file and function levels are read from the demo's source, so they show the code as it is at the pinned release, linked to GitHub."],
+        code: { label: "The way down", text: "Astronomy Shop            system\n  └ Storefront            service\n      └ pages/api/checkout.ts   file\n          └ handler()            function, with its source" },
+      },
+      {
+        id: "tours", eyebrow: "For everyone", title: "Two tours: one for anyone, one for engineers",
+        body: ["\"The shop in two minutes\" stays at the top level and explains the whole system in six stops, in words a shopper would understand. \"Follow one order\" goes down into checkout and walks a purchase through the services, to the message on the queue."],
+        code: { label: "Links", text: "/shop/#shop?tour=the-shop-in-two-minutes&step=1\n/shop/#shop?tour=follow-one-order&step=1" },
+        doc: ["Tours and narration", "/docs/tours"],
+      },
+      {
+        id: "run", eyebrow: "Yours to run", title: "Five commands, no Docker",
+        body: ["Clone the demo, let fraktul put the map in it, and open it. Then break it: rename a file the map names, or delete an arrow the traces can see, and watch the check fail.", "The map and its traces are also in fraktul's repository, with a script that runs the shop in Docker and reads fresh traces."],
+        code: { label: "Shell", text: "git clone --depth 1 --branch 2.1.3 \\\n  https://github.com/open-telemetry/opentelemetry-demo.git\ncd opentelemetry-demo\nnpx fraktul example shop\nnpx fraktul check\nnpx fraktul dev" },
+        doc: ["The demo shop", "/docs/demo"],
+      },
+    ],
+    end: START,
+  },
   "living-docs": {
     eyebrow: "Documentation that stays true", title: "Every architecture diagram is out of date. This one tells you.",
     lede: "A diagram is right the day it is drawn. Then a service is split, a queue is added, a module is renamed, and nothing tells anyone to update the picture. fraktul makes the map fail when it is wrong, so it gets fixed in the pull request that broke it.",
@@ -246,4 +281,18 @@ export function showcase(): SafeHtml {
       ? html`<div class="show-panel" role="tabpanel" aria-label="${s.tab}" data-show-panel="${s.shot}">${inner}</div>`
       : html`<div class="show-panel" role="tabpanel" aria-label="${s.tab}" data-show-panel="${s.shot}" hidden>${inner}</div>`;
   })}`;
+}
+
+/** The home page's demo band: the shop's top level, what it is, and the two ways in. */
+export function demoBand(): SafeHtml {
+  return html`<div class="show-panel demo-band">
+    <div class="show-copy">
+      <p class="docs-eyebrow">See it on a real system</p>
+      <h2 class="show-head y2k-head" id="demo-title">Twenty services, mapped from code and traces</h2>
+      <p>This is the OpenTelemetry Demo, the open-source shop teams use to try out observability tools. Its map goes from nine boxes anyone can follow down to the function that charges the card, and every service shows the traffic its traces recorded.</p>
+      <p>Open it here, or run it on your own machine in five commands.</p>
+      <div class="docs-hero-ctas"><a class="pill main" href="/shop/" data-testid="home-demo-open">Open the shop's map</a><a class="pill" href="/demo" data-testid="home-demo-page">About the demo</a></div>
+    </div>
+    <div class="show-screen y2k-screen">${shot("traces", "(max-width: 900px) 92vw, 700px")}</div>
+  </div>`;
 }

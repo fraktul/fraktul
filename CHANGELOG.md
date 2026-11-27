@@ -14,6 +14,8 @@ The first release on npm.
 - **Levels.** `kind: system | service | feature` names the level of a block; files and functions come from the code.
 - **Traces.** `fraktul traces` reads OpenTelemetry traces (a Jaeger address or OTLP JSON) into `traces.json`. Service
   panels show real traffic, and the check lists calls and services the map does not draw.
+- **A demo.** `fraktul example shop` puts a finished map of the OpenTelemetry Demo, with its traces, into a checkout
+  of the demo.
 - **Big files stay readable.** A file with more than 20 functions is drawn as named groups, with one line between two
   groups and no lines to helpers used everywhere.
 - **Tours.** Step-by-step paths with branches, narrated by a local neural voice (Kokoro on MLX, Apple silicon), and

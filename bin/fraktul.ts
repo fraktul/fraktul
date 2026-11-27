@@ -9,6 +9,7 @@
 //   fraktul voice  [model] [--tour id] [--voice name] [--setup]   speak the tours' narration (local, Kokoro on MLX)
 //   fraktul import-recording <file.json> [model] a walkthrough saved from the map's recorder → recordings/
 //   fraktul traces <file|folder|jaeger-url>... [--model path] [--mermaid]   what OpenTelemetry traces saw → traces.json
+//   fraktul example shop                         put the demo shop's map into a checkout of the OpenTelemetry Demo
 //   fraktul skill  [--dir path]                  install the fraktul agent skill, so an AI assistant can write the map
 //
 // [model] defaults to ./model.yaml, then ./docs/arch/model.yaml.  --version prints the version.
@@ -156,6 +157,20 @@ switch (cmd) {
     console.log(`fraktul: ${relative(process.cwd(), out)}: ${real} services, ${observed.edges.length} calls between them, from ${observed.traces.toLocaleString("en")} traces (${observed.spans.toLocaleString("en")} spans)\n\n  Give each block its service name (service: <name>), then:\n    fraktul check   lists calls the traces show that no diagram draws`);
     break;
   }
+  case "example": {
+    // The demo shop's map (example/shop), written into a checkout of the OpenTelemetry Demo so anyone can run it.
+    if (args[0] !== "shop") { console.error("Usage: fraktul example shop   (run it inside a checkout of github.com/open-telemetry/opentelemetry-demo)"); process.exit(2); }
+    if (!existsSync(join("src", "checkout")) || !existsSync(join("src", "frontend"))) { console.error("fraktul example shop: this does not look like the OpenTelemetry Demo (no src/checkout and src/frontend here).\n  git clone --depth 1 --branch 2.1.3 https://github.com/open-telemetry/opentelemetry-demo.git && cd opentelemetry-demo"); process.exit(2); }
+    const dir = join("docs", "arch");
+    if (existsSync(join(dir, "model.yaml")) && !flags.has("force")) { console.error(`fraktul: ${join(dir, "model.yaml")} already exists. Pass --force to replace it.`); process.exit(2); }
+    mkdirSync(dir, { recursive: true });
+    // In fraktul's own repo the demo sits in .demo/ and the map links home to fraktul.dev; here the repo is this folder.
+    const model = readFileSync(join(FRAKTUL, "example", "shop", "model.yaml"), "utf8").replace('path: ".demo/opentelemetry-demo"', 'path: "."').replace(/^home: .*\n/m, "");
+    writeFileSync(join(dir, "model.yaml"), model);
+    cpSync(join(FRAKTUL, "example", "shop", "traces.json"), join(dir, "traces.json"));
+    console.log(`fraktul: wrote ${join(dir, "model.yaml")} and ${join(dir, "traces.json")}\n\n    fraktul check   the map against the code and the traces\n    fraktul dev     open the map\n\n  About this map: https://fraktul.dev/demo`);
+    break;
+  }
   case "skill": {
     // The agent skill ships with fraktul; this copies it where coding assistants look for skills.
     const from = join(FRAKTUL, "skills", "fraktul");
@@ -185,6 +200,6 @@ switch (cmd) {
     break;
   }
   default:
-    console.log(readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").slice(1, 15).map((l) => l.replace(/^\/\/ ?/, "")).join("\n"));
+    console.log(readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").slice(1, 16).map((l) => l.replace(/^\/\/ ?/, "")).join("\n"));
     process.exit(cmd ? 2 : 0);
 }

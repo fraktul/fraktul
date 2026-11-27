@@ -196,7 +196,11 @@ html:has(body.site) { height: auto; scroll-padding-top: 72px; }
 .show-copy h3 { margin: 0 0 10px; font: 700 22px/1.3 var(--body); color: var(--ink); }
 .show-copy p { margin: 0; font: 400 17px/1.6 var(--body); color: var(--ink-2); }
 .show-more { margin: 32px 0 0; }
-@media (max-width: 900px) { .show-panel { grid-template-columns: 1fr; } .show { padding-top: 56px; padding-bottom: 48px; } }
+/* The demo band puts the words first and the picture second. */
+.demo-band { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); }
+.demo-band .show-copy p { margin: 0 0 14px; }
+.demo-band .show-head { margin-bottom: 16px; }
+@media (max-width: 900px) { .show-panel, .demo-band { grid-template-columns: 1fr; } .show { padding-top: 56px; padding-bottom: 48px; } }
 
 /* The features page: a hero, then one section per feature with copy and pictures on alternating sides. */
 .feat-main { background: var(--paper); }

@@ -1,0 +1,10 @@
+<!-- @bascik
+The demo shop, featured on the home page: a screenshot of its map with real traffic in the panel, and the two ways in
+(open it, or read how to run it). Markup and global classes come from src/lib/features.ts and site.css.
+-->
+<section class="show" id="demo" data-bascik-preserve="id" data-testid="home-demo" aria-labelledby="demo-title">
+  <script data-bascik-build-once type="text/typescript">
+    import { demoBand } from "@/lib/features.ts";
+    export default function () { return demoBand(); }
+  </script>
+</section>

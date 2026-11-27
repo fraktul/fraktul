@@ -52,7 +52,10 @@
     "site:images": "node scripts/site-images.ts",
     "site:shots": "node scripts/site-shots.ts",
     "shop:build": "node bin/fraktul.ts build example/shop/model.yaml --out site-dist/shop",
-    "shop:dev": "node bin/fraktul.ts dev example/shop/model.yaml --port 8094"
+    "shop:dev": "node bin/fraktul.ts dev example/shop/model.yaml --port 8094",
+    "shop:setup": "example/shop/setup.sh",
+    "shop:check": "node bin/fraktul.ts check example/shop/model.yaml",
+    "shop:traces": "example/shop/capture.sh"
   },
   "dependencies": {
     "@bascik/bascik": "^1.0.1",

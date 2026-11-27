@@ -13,8 +13,8 @@ You get two things:
 - **A check against reality:** `fraktul check` lists calls the traces show that no diagram draws, and services that
   are on no diagram at all.
 
-[The demo map](/shop/) is the OpenTelemetry Demo, a shop of about twenty services, mapped with fraktul from its
-code and its traces.
+[The demo shop](/docs/demo) is the OpenTelemetry Demo, about twenty services, mapped with fraktul from its code and
+its traces. You can open it or run it yourself.
 
 ## 1. Read the traces
 
