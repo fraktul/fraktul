@@ -10,11 +10,13 @@ The map is live at [fraktul.dev/shop](https://fraktul.dev/shop/). It shows what 
 - **Traces.** `traces.json` was read from the running shop. Each service's panel shows who really calls it, how
   often and how fast, and `fraktul check` compares those calls with the arrows in the diagrams.
 - **Tours.** "The shop in two minutes" explains the system to someone who has never seen the code; "Follow one
-  order" walks a purchase through the services.
+  order" walks a purchase through the services. Two more cover how a page is built and what keeps the shop
+  running. All four are narrated: press **Listen**.
 
 | File | What it is |
 |---|---|
-| `model.yaml` | The map: 26 blocks, 9 diagrams, 2 tours |
+| `model.yaml` | The map: 26 blocks, 9 diagrams, 4 narrated tours |
+| `.fraktul/voice/` | The tours' narration, spoken by `fraktul voice` on a Mac |
 | `traces.json` | What the traces saw: 17 services and 24 kinds of call between them, from 315 traces |
 | `setup.sh` | Fetches the demo's source, for the code levels |
 | `capture.sh` | Runs the shop in Docker and reads fresh traces |

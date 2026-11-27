@@ -26,7 +26,9 @@ test("the demo shop: its model matches its traces, and the links the site makes 
   assert.deepEqual(r.unmapped, [], "every service in the traces is on the map");
   const site = await buildSite(model);
   for (const id of ["shop", "delivery", "checkout"]) assert.ok(site.diagrams[`node:${id}`], `level ${id}`);
-  assert.ok(site.tours.some((t) => t.id === "the-shop-in-two-minutes") && site.tours.some((t) => t.id === "follow-one-order"));
+  assert.deepEqual(site.tours.map((t) => t.id), ["the-shop-in-two-minutes", "follow-one-order", "how-a-page-is-built", "keeping-the-shop-running"]);
+  // Every stop of every tour is narrated, and the audio for it is in the repo.
+  for (const t of site.tours) for (const s of t.steps) assert.ok(site.voice[t.id]?.steps[s.id!]?.file, `${t.id} ${s.id} has no narration: run fraktul voice on example/shop/model.yaml`);
   assert.ok(site.live.blocks["traces:checkout"].list!.length >= 8, "checkout's panel lists its callers and callees");
 });
 

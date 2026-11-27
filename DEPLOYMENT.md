@@ -19,6 +19,9 @@ whom, but leaves out source code and links into the repo. Drop it from the `site
 Its code levels need the demo's source at `.demo/opentelemetry-demo` (git-ignored); CI fetches the pinned tag with
 `npm run shop:setup` before building. Without the checkout the map still builds, with its service levels and traces but no code below them.
 
+The shop's narration (`example/shop/.fraktul/voice/`) is committed, like the main map's, because CI cannot speak.
+After changing a tour's `say:` text, run `node bin/fraktul.ts voice example/shop/model.yaml` on an Apple silicon Mac.
+
 `example/shop/traces.json` was captured from the running demo. `npm run shop:traces` refreshes it: it starts the demo
 in Docker, lets the load generator shop, reads the traces and stops it again (`example/shop/README.md`).
 

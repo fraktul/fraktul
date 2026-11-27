@@ -18,7 +18,7 @@ database, a cache and a queue.
 - **[Real traffic](/shop/#shop/checkout):** select checkout and its panel lists who calls it and what it calls,
   with counts and latency from traces.
 - **[A tour](/shop/#shop?tour=the-shop-in-two-minutes&step=1):** the shop in two minutes, for someone who has
-  never seen the code.
+  never seen the code. Press **Listen** to hear it. There are four tours under **Tours**, all narrated.
 - **Code:** open the storefront, then one of its API routes, then a function.
 
 ## Run it yourself
