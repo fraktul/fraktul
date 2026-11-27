@@ -2,8 +2,6 @@
 <html lang="en">
   <head>
     <site-head />
-    <title>Documentation · fraktul</title>
-    <meta name="description" content="How to map a system with fraktul: a quickstart, the concepts, the model file, tours and narration, publishing, and every command." />
   </head>
   <body class="site">
     <site-header />
@@ -21,10 +19,11 @@
           </div>
           <div class="code-block docs-hero-code">
             <div class="code-bar"><span>Shell</span><button class="copy" type="button" aria-label="Copy code">Copy</button></div>
-            <pre><code class="language-bash">git clone git@github.com:rinsesoft/fraktul.git ~/github/fraktul
-<span class="c"># then, in the project you want to map</span>
-node ~/github/fraktul/bin/fraktul.ts check docs/arch/model.yaml
-node ~/github/fraktul/bin/fraktul.ts dev   docs/arch/model.yaml</code></pre>
+            <pre><code class="language-bash">npm install --save-dev fraktul
+<span class="c"># in the project you want to map</span>
+npx fraktul init
+npx fraktul check
+npx fraktul dev</code></pre>
           </div>
         </div>
       </header>

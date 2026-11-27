@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // fraktul: an explorable map of a software system, drawn from one model file and the code itself.
 //
+//   fraktul init   [model] [--force]             a starter model from the project's folders (default docs/arch/model.yaml)
 //   fraktul check  [model] [--strict] [--json]   every anchor, diagram box and tour step must exist
 //   fraktul dev    [model] [--port 8080]         live map, rebuilt when the model or the code changes
 //   fraktul build  [model] [--out dir]           one self-contained page (+ voice/ and recordings/)
@@ -8,18 +9,20 @@
 //   fraktul voice  [model] [--tour id] [--voice name] [--setup]   speak the tours' narration (local, Kokoro on MLX)
 //   fraktul import-recording <file.json> [model] a walkthrough saved from the map's recorder → recordings/
 //
-// [model] defaults to ./model.yaml, then ./docs/arch/model.yaml.
-// Installed from npm: `npx fraktul check`, or `fraktul` from a package.json script.
+// [model] defaults to ./model.yaml, then ./docs/arch/model.yaml.  --version prints the version.
+// Installed from npm: `npx fraktul check`, or `fraktul` from a package.json script. Docs: https://fraktul.dev/docs
 
-import { spawnSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { basename, dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const FRAKTUL = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const [cmd, ...rest] = process.argv.slice(2);
+const [first, ...rest] = process.argv.slice(2);
+// `fraktul --help` and `fraktul help` print the commands; `--version` and `-v` the version.
+const cmd = first === "--help" || first === "-h" || first === "help" ? undefined : first === "-v" ? "--version" : first;
 const flags = new Map<string, string | true>();
 const args: string[] = [];
 for (let i = 0; i < rest.length; i++) {
@@ -68,6 +71,24 @@ function build(model: string, out: string) {
 }
 
 switch (cmd) {
+  case "--version": {
+    console.log(JSON.parse(readFileSync(join(FRAKTUL, "package.json"), "utf8")).version);
+    break;
+  }
+  case "init": {
+    const target = resolve(args[0] ?? "docs/arch/model.yaml");
+    if (existsSync(target) && !flags.has("force")) { console.error(`fraktul: ${relative(process.cwd(), target)} already exists. Pass --force to replace it.`); process.exit(2); }
+    const git = (...a: string[]) => execFileSync("git", a, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+    let top: string;
+    try { top = git("rev-parse", "--show-toplevel"); } catch { console.error("fraktul: this folder is not in a git repository. fraktul reads only files git tracks: run `git init` and commit first."); process.exit(2); }
+    const { starterModel } = await import(`../src/lib/init${EXT}`);
+    mkdirSync(dirname(target), { recursive: true });
+    writeFileSync(target, starterModel(basename(top), git("-C", top, "ls-files").split("\n").filter(Boolean)));
+    const shown = relative(process.cwd(), target);
+    const arg = ["model.yaml", join("docs", "arch", "model.yaml")].includes(shown) ? "" : ` ${shown}`;
+    console.log(`fraktul: wrote ${shown}\n\n  Replace the TODOs and draw the arrows, then:\n    fraktul check${arg}   every file it names must exist\n    fraktul dev${arg}     open the map\n\n  The model file: https://fraktul.dev/docs/model`);
+    break;
+  }
   case "check": {
     const model = modelPath(args[0]);
     const r = spawnSync(process.execPath, [join(FRAKTUL, "scripts", `check-model${EXT}`), ...rest.filter((a) => a.startsWith("--"))], { stdio: "inherit", env: { ...process.env, FRAKTUL_MODEL: model } });
@@ -90,10 +111,9 @@ switch (cmd) {
     const page = readFileSync(join(out, "index.html"), "utf8");
     const head = (page.match(/<head[^>]*>([\s\S]*?)<\/head>/i)?.[1] ?? "").replace(/<meta charset[^>]*>/i, "").replace(/<meta name="viewport"[^>]*>/i, "");
     const body = page.match(/<body[^>]*>([\s\S]*?)<\/body>/i)?.[1] ?? "";
-    // An Artifact runs its page alone, so Mermaid is inlined instead of served beside it.
+    // An Artifact runs its page alone, so Mermaid goes inside it (a map on a host loads it from vendor/ after painting).
     const mermaidJs = readFileSync(join(out, "vendor", "mermaid.min.js"), "utf8").replace(/<\/script/gi, "<\\/script");
-    const inline = (html: string) => html.replace(/<script src="vendor\/mermaid\.min\.js"><\/script>/, () => `<script>${mermaidJs}</script>`);
-    writeFileSync(join(out, "artifact.html"), `${inline(head)}\n${inline(body)}\n`);
+    writeFileSync(join(out, "artifact.html"), `${head}\n<script>${mermaidJs}</script>\n${body}\n`);
     console.log(`fraktul: ${join(out, "artifact.html")} (Mermaid inlined); publish voice/ and recordings/ beside it`);
     break;
   }
@@ -128,6 +148,6 @@ switch (cmd) {
     break;
   }
   default:
-    console.log(readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").slice(1, 12).map((l) => l.replace(/^\/\/ ?/, "")).join("\n"));
+    console.log(readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").slice(1, 13).map((l) => l.replace(/^\/\/ ?/, "")).join("\n"));
     process.exit(cmd ? 2 : 0);
 }

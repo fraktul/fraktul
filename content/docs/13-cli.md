@@ -7,11 +7,26 @@ section: Reference
 fraktul <command> [model] [flags]
 ```
 
-From a checkout, `fraktul` means `node ~/github/fraktul/bin/fraktul.ts`. From npm (once published), `npx fraktul`.
-Running `fraktul` with no command prints the list of commands.
+Install it with `npm install --save-dev fraktul` and run it as `npx fraktul`, or as `fraktul` inside a `package.json`
+script. Running `fraktul` with no command, or `fraktul --help`, prints the list of commands. `fraktul --version` prints
+the version.
 
 **The model argument** is optional. Without it, fraktul uses `./model.yaml`, then `./docs/arch/model.yaml`. When neither
 exists it stops with exit code `2` and says so.
+
+## init
+
+```bash
+fraktul init [model] [--force]
+```
+
+Writes a starter model from the folders git tracks: one block per big folder with its files anchored, one diagram that
+shows the blocks, and a short tour. The result passes the check as written. Replace each `TODO` and draw the arrows.
+Without a path it writes `docs/arch/model.yaml`.
+
+| Flag | Does |
+|---|---|
+| `--force` | Replace a model file that already exists. Without it, `init` stops with exit code `2`. |
 
 ## check
 

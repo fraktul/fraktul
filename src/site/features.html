@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <site-head />
+  </head>
+  <body class="site">
+    <site-header />
+    <main id="main" class="docs-main feat-main">
+      <script data-bascik-build-once type="text/typescript">
+        import { featuresPage } from "@/lib/features.ts";
+        export default function () { return featuresPage(); }
+      </script>
+    </main>
+    <site-footer />
+    <docs-enhance />
+  </body>
+</html>

@@ -4,9 +4,10 @@
 import { existsSync } from "node:fs";
 import { dirname, join, normalize } from "node:path";
 
+import { sectionsOf, type Section } from "./groups.ts";
 export type Fn = { name: string; line: number; end: number; indent: number; exported: boolean; doc: string; params: string };
 export type ImportRef = { local: string; remote: string; from: string; ns?: boolean };
-export type CodeFile = { lang: "ts" | "py" | "other"; lines: number; doc: string; functions: Fn[]; imports: ImportRef[]; importFiles: string[] };
+export type CodeFile = { lang: "ts" | "py" | "other"; lines: number; doc: string; functions: Fn[]; imports: ImportRef[]; importFiles: string[]; sections: Section[] };
 
 const indentOf = (s: string) => s.match(/^\s*/)![0].length;
 export const langOf = (path: string): CodeFile["lang"] => (/\.(ts|mts|js|mjs)$/.test(path) ? "ts" : /\.py$/.test(path) ? "py" : "other");
@@ -168,7 +169,7 @@ export function readCode(root: string, path: string, text: string): CodeFile {
   }
   const imports = lang === "ts" ? tsImports(text, path) : lang === "py" ? pyImports(text) : [];
   const importFiles = [...new Set(imports.map((r) => resolveImport(root, path, r.from, lang)).filter((x): x is string => !!x))];
-  return { lang, lines: src.length, doc: fileDoc(src, lang), functions, imports, importFiles };
+  return { lang, lines: src.length, doc: fileDoc(src, lang), functions, imports, importFiles, sections: sectionsOf(src) };
 }
 
 /** Comments and string contents removed, so a call is only counted where code makes it. */

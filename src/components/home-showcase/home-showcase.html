@@ -1,0 +1,30 @@
+<!-- @bascik
+Real screenshots of the live map, as tabs: the map, one level down, a tour, a big file, the code, 3D. Each picture is a
+link that opens the same view in the map. The markup and its global classes come from src/lib/features.ts and site.css.
+-->
+<section class="show" id="look" data-bascik-preserve="id" data-testid="home-showcase" aria-labelledby="look-title">
+  <h2 class="show-head y2k-head" id="look-title">See it before you install it</h2>
+  <p class="show-sub">These are screenshots of fraktul's own map, built from one model file. Click any of them to open that exact view, live.</p>
+  <script data-bascik-build-once type="text/typescript">
+    import { showcase } from "@/lib/features.ts";
+    export default function () { return showcase(); }
+  </script>
+  <p class="show-more"><a class="pill" href="/features" data-testid="home-showcase-features">See every feature</a></p>
+</section>
+<script type="text/typescript">
+  // Tabs: click or arrow keys pick a screenshot. Without this script the first one simply stays on screen.
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>("[data-show-tab]")];
+  const panels = [...document.querySelectorAll<HTMLElement>("[data-show-panel]")];
+  const pick = (tab: HTMLButtonElement, focus = false) => {
+    for (const t of tabs) { const on = t === tab; t.setAttribute("aria-selected", String(on)); t.tabIndex = on ? 0 : -1; }
+    for (const p of panels) p.hidden = p.dataset.showPanel !== tab.dataset.showTab;
+    if (focus) tab.focus();
+  };
+  tabs.forEach((tab, i) => {
+    tab.addEventListener("click", () => pick(tab));
+    tab.addEventListener("keydown", (e) => {
+      const step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (step) { e.preventDefault(); pick(tabs[(i + step + tabs.length) % tabs.length], true); }
+    });
+  });
+</script>

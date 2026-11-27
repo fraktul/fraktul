@@ -124,7 +124,7 @@ nodes:
         %% @link refs src/lib/check.ts#checkModel
         %% @link depth src/lib/check.ts#modelDepth
     anchors:
-      files: [scripts/check-model.ts]
+      files: [scripts/check-model.ts, src/lib/init.ts]
       functions: ["src/lib/check.ts#checkModel", "src/lib/check.ts#modelDepth"]
 
   build:
@@ -134,16 +134,17 @@ nodes:
     summary: Reads the model, every git-tracked code file it points at (functions, imports, calls) and the project's live facts, into one JSON block in a Bascik page.
     diagram: |
       flowchart LR
-        read["Read the model"] --> code["Read the code"] --> calls["Who calls whom"] --> diagrams["Generate file and function diagrams"]
+        read["Read the model"] --> code["Read the code"] --> calls["Who calls whom"] --> groups["Group big files"] --> diagrams["Generate file and function diagrams"]
         live["Live facts"] --> site[("Site data")]
         diagrams --> site
         %% @link read src/lib/model.ts#loadModel
         %% @link code src/lib/code.ts#readCode
         %% @link calls src/lib/code.ts#callsOf
+        %% @link groups src/lib/groups.ts#groupFile
         %% @link diagrams src/lib/build.ts#buildSite
         %% @link live src/lib/live.ts#readLive
     anchors:
-      files: [src/lib/build.ts, src/lib/code.ts, src/lib/live.ts, bin/fraktul.ts]
+      files: [src/lib/build.ts, src/lib/code.ts, src/lib/groups.ts, src/lib/live.ts, bin/fraktul.ts]
 
   page:
     title: The map page
@@ -174,7 +175,7 @@ nodes:
         %% @link board src/components/fraktul-map/fraktul-map.ts
         %% @link space src/components/fraktul-map/map3d.ts
     anchors:
-      files: [src/components/fraktul-map/fraktul-map.ts, src/components/fraktul-map/map3d.ts, scripts/copy-media.ts]
+      files: [src/components/fraktul-map/fraktul-map.ts, src/components/fraktul-map/map3d.ts, scripts/copy-media.ts, src/lib/fonts.ts]
 
   voice:
     title: Voice tours
@@ -217,7 +218,7 @@ nodes:
         public -.-> static
         %% @link cli bin/fraktul.ts#build
     anchors:
-      files: [bin/fraktul.ts, scripts/build-package.ts, scripts/release.ts, src/lib/head.ts, src/lib/docs.ts]
+      files: [bin/fraktul.ts, scripts/build-package.ts, scripts/release.ts, src/lib/head.ts, src/lib/docs.ts, src/lib/seo.ts, src/lib/features.ts, src/lib/shots.ts, scripts/llms-txt.ts, scripts/site-images.ts, scripts/site-shots.ts]
 
 tours:
   - id: how-it-works

@@ -35,6 +35,8 @@ jobs:
 
       - name: Publish to npm
         working-directory: package
+        env:
+          REPO_PRIVATE: ${{ github.event.repository.private }}
         run: ${{ github.workspace }}/.github/scripts/publish-npm.sh v
 
       - name: GitHub release

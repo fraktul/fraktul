@@ -73,6 +73,8 @@ bubble plays and pauses, and the transcript below follows along. The voice is ge
   const track = document.getElementById("track") as HTMLElement;
   const lists = Array.from(lines.children).filter((x) => x.tagName === "OL") as HTMLElement[];
   const audio = new Audio();
+  // Nothing is downloaded until someone presses play.
+  audio.preload = "none";
   let i = 0;
   const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
   const load = (n: number) => { i = n; audio.src = lists[n].dataset.src ?? ""; track.textContent = `Track ${n + 1}/${lists.length}`; };

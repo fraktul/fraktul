@@ -1,10 +1,41 @@
 {
   "name": "fraktul",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "description": "An explorable map of a software system: one model file, diagrams you dive into down to the source, guided and voiced tours.",
+  "keywords": [
+    "architecture",
+    "architecture-diagrams",
+    "software-architecture",
+    "system-map",
+    "diagrams",
+    "mermaid",
+    "documentation",
+    "living-documentation",
+    "docs-as-code",
+    "c4",
+    "onboarding",
+    "knowledge-transfer",
+    "code-map",
+    "tours",
+    "cli"
+  ],
+  "homepage": "https://fraktul.dev",
+  "bugs": {
+    "url": "https://github.com/rinsesoft/fraktul/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rinsesoft/fraktul.git"
+  },
+  "license": "MIT",
+  "author": "Rinsesoft (https://fraktul.dev)",
   "engines": {
     "node": ">=24.21.0"
+  },
+  "bin": {
+    "fraktul": "bin/fraktul.ts"
   },
   "scripts": {
     "dev": "node bin/fraktul.ts dev example/model.yaml",
@@ -17,27 +48,24 @@
     "deploy": "npm run site:build && wrangler deploy",
     "deploy:preview": "npm run site:build:preview && wrangler versions upload --preview-alias \"$(node .github/scripts/preview-alias.mjs \"$(git rev-parse --abbrev-ref HEAD)\" fraktul)\"",
     "package": "node scripts/build-package.ts",
-    "release": "node scripts/release.ts"
-  },
-  "version": "0.1.0",
-  "bin": {
-    "fraktul": "bin/fraktul.ts"
+    "release": "node scripts/release.ts",
+    "site:images": "node scripts/site-images.ts",
+    "site:shots": "node scripts/site-shots.ts"
   },
   "dependencies": {
     "@bascik/bascik": "^1.0.1",
-    "marked": "^15.0.12",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource/michroma": "^5.3.0",
+    "@fontsource/syncopate": "^5.3.0",
     "mermaid": "11.12.0",
     "three": "0.170.0",
     "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@playwright/test": "1.65.1",
+    "marked": "^15.0.12",
     "wrangler": "^4.165.0"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/rinsesoft/fraktul.git"
-  },
-  "homepage": "https://fraktul.dev"
+  }
 }

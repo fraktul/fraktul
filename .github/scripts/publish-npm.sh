@@ -28,5 +28,9 @@ if [ "$(npm view "${name}@${version}" version 2>/dev/null || true)" = "${version
   exit 0
 fi
 
-echo "Publishing ${version} with dist-tag ${channel}"
-npm publish --provenance --access public --tag "${channel}"
+# npm can only attest provenance for a public source repository; from a private one --provenance fails the publish.
+provenance=""
+if [ "${REPO_PRIVATE:-false}" != "true" ]; then provenance="--provenance"; fi
+
+echo "Publishing ${version} with dist-tag ${channel}${provenance:+ and provenance}"
+npm publish ${provenance} --access public --tag "${channel}"

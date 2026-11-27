@@ -2,15 +2,6 @@
 <html lang="en">
   <head>
     <site-head />
-    <script data-bascik-build type="text/typescript">
-      import { html } from "@bascik/bascik/html";
-      import { loadDocs } from "@/lib/docs.ts";
-      export default function () {
-        const { slug } = JSON.parse(process.env.BASCIK_ROUTE || "{}").params ?? {};
-        const doc = loadDocs().find((d) => d.slug === slug);
-        return html`<title>${doc?.title ?? "Docs"} · fraktul</title><meta name="description" content="${doc?.summary ?? ""}" />`;
-      }
-    </script>
   </head>
   <body class="site">
     <site-header />

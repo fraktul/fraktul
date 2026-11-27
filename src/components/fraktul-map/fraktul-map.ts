@@ -16,6 +16,7 @@ type Site = {
   diagrams: Record<string, Diagram>;
   files: Record<string, FileInfo>;
   fns: Record<string, FnInfo>;
+  parts: Record<string, { key: string; file: string; title: string; note: string; functions: string[] }>;
   live: any;
   tours: Tour[];
 };
@@ -57,6 +58,7 @@ function titleOf(key: string): string {
   if (k === "node") return SITE.nodes[key.slice(5)]?.title ?? key;
   if (k === "file") return SITE.files[key]?.path.split("/").pop() ?? key;
   if (k === "fn") return `${SITE.fns[key]?.name ?? key.split("#")[1]}()`;
+  if (k === "part") return SITE.parts?.[key]?.title ?? key.split("#")[1];
   if (k === "adr") { const a = adrOf(key); return a ? `ADR ${a.num}` : key; }
   return key;
 }
@@ -74,7 +76,7 @@ function theme() {
   const box = (n: string, extra = "") => `fill:${v(`n-${n}`)},stroke:${v(`n-${n}-line`)},color:${v("ink")}${extra}`;
   return {
     model: box("model"), code: box("code"), human: box("human"), data: box("data"), ext: box("ext"),
-    fn: box("fn"), fnx: box("fn", ",stroke-width:2px"), file: box("file"),
+    fn: box("fn"), fnx: box("fn", ",stroke-width:2px"), file: box("file"), part: box("file", ",stroke-width:2px,font-weight:600"),
     focus: box("focus", ",stroke-width:3px"), district: box("district", ",stroke-width:2px,font-weight:600"),
     planned: "stroke-dasharray:6 4", drill: "stroke-width:2.2px",
     base: { primaryColor: v("n-plain"), primaryBorderColor: v("n-plain-line"), primaryTextColor: v("ink"), lineColor: v("ink-2"), clusterBkg: v("paper-2"), clusterBorder: v("line"), edgeLabelBackground: v("paper"), tertiaryColor: v("paper"), fontFamily: v("body"), fontSize: "14px" },
@@ -165,6 +167,7 @@ async function render(text: string): Promise<string> {
 let stack: View[] = [];
 let selected: string | null = null; // a target key, or null for the view itself
 let selectedRid: string | null = null; // the box it was selected from
+let linkRid: string | null = null; // a box named by the link, selected once its level is drawn
 let tour: { t: Tour; step: Step; trail: string[] } | null = null;
 let current: { boxes: Map<string, Box>; svg: SVGSVGElement | null; els: Map<string, Element> } = { boxes: new Map(), svg: null, els: new Map() };
 const view = () => stack[stack.length - 1];
@@ -204,10 +207,37 @@ function goTo(nodeId: string, expanded?: string[]): Promise<void> {
 function back() {
   if (stack.length > 1) { stack.pop(); selected = null; syncHash(); draw(); }
 }
+// The address always says where you are, so any moment of the map can be shared as a link:
+//   #<view>[/<box>][?tour=<id>&step=<n>][&view=3d[&cam=bird]]
+// <view> is a block's id (with - for _) or, for a file or function level, its key; <box> is the selected box;
+// tour and step put the reader on that stop of a tour.
+const viewSlug = (k: string) => (kindOf(k) === "node" ? k.slice(5).replace(/_/g, "-") : encodeURIComponent(k));
 function syncHash() {
-  const k = view().key;
-  const want = kindOf(k) === "node" ? k.slice(5).replace(/_/g, "-") : "";
-  if (want && location.hash.slice(1) !== want) history.replaceState(null, "", `#${want}`);
+  if (!stack.length) return;
+  let want = viewSlug(view().key);
+  if (selectedRid && current.boxes.has(selectedRid)) want += `/${encodeURIComponent(selectedRid)}`;
+  const q: string[] = [];
+  if (tour) q.push(`tour=${encodeURIComponent(tour.t.id)}`, `step=${tour.t.steps.indexOf(tour.step) + 1}`);
+  if (in3d) q.push("view=3d");
+  if (in3d && F3D.bird) q.push("cam=bird");
+  if (q.length) want += `?${q.join("&")}`;
+  if (location.hash.slice(1) !== want) history.replaceState(null, "", `#${want}`);
+}
+/** The way down to any level: through the model's diagrams, then through files and functions. */
+function stackTo(key: string): string[] {
+  if (kindOf(key) === "node") return pathTo(key.slice(5));
+  const start = `node:${SITE.meta.root}`;
+  const prev = new Map<string, string | null>([[start, null]]);
+  const q = [start];
+  while (q.length) {
+    const k = q.shift()!;
+    if (k === key) break;
+    for (const t of Object.values(SITE.diagrams[k]?.targets ?? {})) if (hasDiagram(t) && !prev.has(t)) { prev.set(t, k); q.push(t); }
+  }
+  if (!prev.has(key)) return [start, key];
+  const path: string[] = [];
+  for (let k: string | null = key; k; k = prev.get(k) ?? null) path.unshift(k);
+  return path;
 }
 
 // ───────────── drawing ─────────────
@@ -244,6 +274,10 @@ async function draw(keepZoom = false) {
   board.replaceChildren(svg);
   current = { boxes, svg, els: new Map() };
   decorate(svg, boxes);
+  // A link can name a box on this level: select it, as a click on a plain box would.
+  if (linkRid) { const b = boxes.get(linkRid); linkRid = null; if (b) { selected = b.target ?? `box:${b.box}`; selectedRid = b.rid; } }
+  if (selectedRid) current.els.get(selectedRid)?.classList.add("is-selected");
+  syncHash();
   if (!keepZoom) fit(); else applyZoom();
   applyTourFocus();
   drawPanel();
@@ -420,6 +454,8 @@ board.addEventListener("keydown", (e) => {
 function markSelected(rid?: string) {
   current.svg?.querySelectorAll(".is-selected").forEach((x) => x.classList.remove("is-selected"));
   if (rid) current.els.get(rid)?.classList.add("is-selected");
+  selectedRid = rid ?? null;
+  syncHash();
 }
 
 // ───────────── peek: hover a box to see what is inside ─────────────
@@ -502,7 +538,7 @@ function drawCrumbs() {
 function chip(key: string): HTMLElement {
   const st = statusOf(key);
   const k = kindOf(key);
-  const label = st ?? (k === "fn" ? "function" : k === "file" ? (SITE.files[key]?.lang === "other" ? "file" : "code") : k === "adr" ? "decision" : "");
+  const label = st ?? (k === "fn" ? "function" : k === "file" ? (SITE.files[key]?.lang === "other" ? "file" : "code") : k === "adr" ? "decision" : k === "part" ? "group" : "");
   return el("span", `chip chip-${st ?? k}`, label);
 }
 function summaryOf(key: string): string {
@@ -510,6 +546,7 @@ function summaryOf(key: string): string {
   if (k === "node") return SITE.nodes[key.slice(5)]?.summary ?? "";
   if (k === "file") return SITE.files[key]?.doc ?? "";
   if (k === "fn") return SITE.fns[key]?.doc ?? "";
+  if (k === "part") { const p = SITE.parts?.[key]; return p ? `${p.functions.length} functions of ${titleOf(p.file)}. ${p.note}` : ""; }
   if (k === "adr") { const a = adrOf(key); return a ? `${a.title}. ${a.status}` : ""; }
   return "";
 }
@@ -543,12 +580,24 @@ function drawPanel() {
   if (k === "node") parts.push(...nodePanel(SITE.nodes[key.slice(5)], isView));
   if (k === "file") parts.push(...filePanel(SITE.files[key]));
   if (k === "fn") parts.push(...fnPanel(SITE.fns[key]));
+  if (k === "part" && SITE.parts?.[key]) parts.push(...partPanel(SITE.parts[key]));
   if (k === "adr") parts.push(...adrPanel(adrOf(key)));
   if (!isView) parts.push(el("div", "panel-actions", button(`Back to ${titleOf(view().key)}`, "btn", () => { selected = null; selectedRid = null; drawPanel(); markSelected(); })));
   if (isView && stack.length === 1 && k === "node") parts.push(intro());
   panel.replaceChildren(...parts.filter(Boolean) as HTMLElement[]);
   (document.getElementById("main") as HTMLElement).classList.toggle("code-view", k === "fn");
   panel.scrollTop = 0;
+}
+
+/** A group of a big file's functions: what the group is, and its functions as links. */
+function partPanel(p: Site["parts"][string]): HTMLElement[] {
+  return [
+    el("h2", null, p.title),
+    el("p", "muted", `${p.functions.length} functions of `, link(titleOf(p.file), p.file, "a mono"), `. ${p.note}`),
+    el("p", "muted small", "Big files are drawn as groups so the lines stay readable. Calls to helpers used all over the file are not drawn; each function's own page lists every call."),
+    el("h3", null, "Functions"),
+    el("ul", "anchors cols", ...p.functions.map((k) => el("li", null, link(titleOf(k), k, "a mono")))),
+  ];
 }
 
 function intro(): HTMLElement {
@@ -840,7 +889,7 @@ audio.addEventListener("ended", () => {
 });
 
 function endTour() {
-  clearTimeout(autoTimer); audio.pause(); tour = null; tourCard.hidden = true; applyTourFocus();
+  clearTimeout(autoTimer); audio.pause(); tour = null; tourCard.hidden = true; applyTourFocus(); syncHash();
   // Pull the camera back to see the whole level again.
   if (in3d) F3D.flyTo([...current.boxes.keys()]);
 }
@@ -1022,8 +1071,8 @@ type Family = "database" | "server" | "screen" | "terminal" | "gear" | "neural" 
 const F3D = (window as any).Fraktul3D;
 const space = document.getElementById("space") as HTMLElement;
 const btn3d = document.getElementById("view-3d") as HTMLButtonElement;
+// The flat map is the default; 3D is on when the link says so (?view=3d) or the reader switches it on.
 let in3d = false, entry3d = false, want3d = false;
-try { want3d = localStorage.getItem("fraktul-3d") === "1"; } catch { /* private window */ }
 
 /** FNV-1a: a block's identity in 3D (crown, setbacks, windows) comes from its id, so it survives code changes. */
 function fnv(str: string): number {
@@ -1073,6 +1122,7 @@ function shapeOf(b: Box, cls: string | undefined, title: string): Family {
   if (b.target?.startsWith("adr:")) return "tablet";
   if (b.target?.startsWith("fn:")) return "gear";
   if (b.target?.startsWith("file:")) return "document";
+  if (b.target?.startsWith("part:")) return "folder";
   if (n?.status === "external" || cls === "ext") return "cloud";
   if (cls === "human") return "person";
   if (n?.kind === "district") return "terrain";
@@ -1132,8 +1182,8 @@ async function set3d(on: boolean) {
   btn3d.title = on ? "Back to the flat map (3)" : "Fly through this level in 3D (3)";
   canvas.classList.toggle("is-3d", on);
   space.hidden = !on;
-  try { localStorage.setItem("fraktul-3d", on ? "1" : "0"); } catch { /* private window */ }
   hidePeek();
+  syncHash();
   if (!on) { F3D.hide(); return; }
   try {
     await F3D.show(space, {
@@ -1144,6 +1194,7 @@ async function set3d(on: boolean) {
         clickBox(b);
       },
       slow: (on: boolean) => slowBtn.setAttribute("aria-pressed", String(on)),
+      bird: (on: boolean) => { birdBtn.setAttribute("aria-pressed", String(on)); syncHash(); },
       locked: (on: boolean) => { lockBtn.setAttribute("aria-pressed", String(on)); lockBtn.textContent = on ? "Unlock mouse (Esc)" : "Lock mouse"; },
     });
   } catch {
@@ -1151,6 +1202,7 @@ async function set3d(on: boolean) {
     return;
   }
   slowBtn.setAttribute("aria-pressed", String(F3D.slow));
+  birdBtn.setAttribute("aria-pressed", String(F3D.bird));
   entry3d = true;
   if (current.svg) after3d();
 }
@@ -1159,6 +1211,8 @@ const lockBtn = document.getElementById("lock-btn") as HTMLButtonElement;
 lockBtn.addEventListener("click", (e) => { e.stopPropagation(); F3D.lock(!F3D.locked); });
 const slowBtn = document.getElementById("slow-btn") as HTMLButtonElement;
 slowBtn.addEventListener("click", (e) => { e.stopPropagation(); F3D.setSlow(!F3D.slow); });
+const birdBtn = document.getElementById("bird-btn") as HTMLButtonElement;
+birdBtn.addEventListener("click", (e) => { e.stopPropagation(); F3D.setBird(!F3D.bird); });
 
 // ───────────── details panel: hide and show (remembered) ─────────────
 const stageEl = document.getElementById("main") as HTMLElement, panelBtn = document.getElementById("panel-btn") as HTMLButtonElement;
@@ -1245,9 +1299,40 @@ const homeLink = document.getElementById("home") as HTMLAnchorElement;
 if (SITE.meta.home) homeLink.href = SITE.meta.home;
 else homeLink.addEventListener("click", (e) => { e.preventDefault(); endTour(); goTo(SITE.meta.root); });
 function fromHash() {
-  const h = location.hash.slice(1).replace(/-/g, "_");
-  if (h && SITE.nodes[h] && hasDiagram(`node:${h}`)) { if (view()?.key !== `node:${h}`) goTo(h); }
-  else if (!stack.length) goTo(SITE.meta.root);
+  const [path, query = ""] = location.hash.slice(1).split("?");
+  const [slug = "", box = ""] = path.split("/");
+  const decode = (s: string) => { try { return decodeURIComponent(s); } catch { return s; } };
+  const params = new URLSearchParams(query);
+  const key = decode(slug).includes(":") ? decode(slug) : slug ? `node:${slug.replace(/-/g, "_")}` : "";
+  const rid = box ? decode(box) : null;
+  const to3d = params.get("view") === "3d";
+  // A link that opens in 3D also says which camera; without one, the reader's own last choice stands.
+  if (to3d) F3D.setBird(params.get("cam") === "bird");
+  // A link to a stop on a tour: the tour takes the reader to its own level.
+  const linked = SITE.tours.find((t) => t.id === params.get("tour"));
+  const stop = linked?.steps[Math.max(1, Number(params.get("step")) || 1) - 1];
+  if (linked && stop && (tour?.t !== linked || tour.step !== stop)) {
+    want3d = to3d && !in3d;
+    if (in3d && !to3d) set3d(false);
+    stopReplay();
+    tour = { t: linked, step: stop, trail: [], listen: false } as any;
+    showStep();
+    return;
+  }
+  const known = !!key && hasDiagram(key) && (kindOf(key) !== "node" || !!SITE.nodes[key.slice(5)]);
+  if (known && view()?.key !== key) {
+    want3d = to3d && !in3d;
+    if (in3d && !to3d) set3d(false);
+    const path = stackTo(key);
+    stack = path.map((k) => ({ key: k, expanded: [...(SITE.diagrams[k]?.expand ?? [])] }));
+    selected = null;
+    linkRid = rid;
+    draw();
+    return;
+  }
+  if (!stack.length) { want3d = to3d; goTo(SITE.meta.root); return; }
+  if (known && rid !== selectedRid) { const b = rid ? current.boxes.get(rid) : null; if (b) { selected = b.target ?? `box:${b.box}`; drawPanel(); markSelected(b.rid); } else if (!rid && selected) { selected = null; drawPanel(); markSelected(); } }
+  if (to3d !== in3d) set3d(to3d);
 }
 window.addEventListener("hashchange", fromHash);
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { mermaidReady = false; peekCache.clear(); if (stack.length) draw(true); });
@@ -1280,13 +1365,24 @@ function start() {
   const brand = document.getElementById("brand-text") as HTMLElement;
   brand.textContent = SITE.meta.brand;
   document.title = SITE.meta.title;
+  // A page that carries Mermaid itself (a claude.ai Artifact, where nothing can be served beside it) draws at once.
   if (typeof mermaid !== "undefined") { fromHash(); return; }
-  // The page did not include Mermaid: load fraktul's own copy, served beside the page, so the map works on any page.
+  // Otherwise the page paints first, then loads fraktul's own copy of Mermaid from beside it (2.9 MB is too much to
+  // hold the first paint for).
+  // Meanwhile the breadcrumbs and the details panel already say where the link leads.
+  try {
+    const slug = location.hash.slice(1).split("?")[0].split("/")[0];
+    let key = `node:${SITE.meta.root}`;
+    try { const d = decodeURIComponent(slug); if (d.includes(":") ? hasDiagram(d) : !!SITE.nodes[slug.replace(/-/g, "_")] && hasDiagram(`node:${slug.replace(/-/g, "_")}`)) key = d.includes(":") ? d : `node:${slug.replace(/-/g, "_")}`; } catch { /* a malformed link opens the top */ }
+    stack = stackTo(key).map((k) => ({ key: k, expanded: [] }));
+    drawCrumbs();
+    drawPanel();
+  } catch { /* the map still draws once Mermaid is here */ }
   const s = document.createElement("script");
   s.src = MERMAID_URL;
-  s.addEventListener("load", () => fromHash());
+  s.addEventListener("load", () => { stack = []; fromHash(); });
   s.addEventListener("error", () => board.replaceChildren(el("p", "error", "Mermaid did not load (vendor/mermaid.min.js is missing next to this page). Rebuild the map.")));
   document.head.append(s);
 }
 const MERMAID_URL = "vendor/mermaid.min.js";
-if (document.readyState === "complete") start(); else window.addEventListener("load", start);
+if (document.readyState !== "loading") start(); else document.addEventListener("DOMContentLoaded", start);

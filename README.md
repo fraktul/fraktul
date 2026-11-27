@@ -1,29 +1,44 @@
 # fraktul
 
-Maps of software you can dive into. One model file describes a system as blocks and how they connect; fraktul checks it
-against the code, generates the file and function levels from the code itself, and serves one page where you click
-down from the whole system to a line of source, follow tours, listen to narrated walkthroughs, and record your own.
+Maps of software you can dive into. One model file describes a system as blocks and how they connect. fraktul checks
+it against the code, reads the files, functions and calls below each block from the code itself, and builds one page
+where you click from the whole system down to a line of source, follow tours, listen to narrated walkthroughs, and
+record your own.
 
-fraktul.dev (coming). Built with [Bascik](https://bascik.dev).
+**[fraktul.dev](https://fraktul.dev)** · [Features](https://fraktul.dev/features) ·
+[Docs](https://fraktul.dev/docs) · [The live map](https://fraktul.dev/map) (fraktul, mapped with fraktul)
 
-## Use it on a project
+## Why
 
-Keep the model in your project (for example `docs/arch/model.yaml`) and a fraktul checkout next to it:
+Understanding a system is now the slow part of building software: taking over a project, teaching a design to a team,
+learning someone else's service before building beside it, and keeping up with code that AI writes faster than anyone
+reads it. Diagrams drawn by hand go stale, and reading the code shows every detail but not how the pieces fit.
+fraktul keeps both in one place: a person draws the top, the code fills in everything below, and a check fails the
+build when the two stop agreeing.
+
+## Install
 
 ```bash
-git clone git@github.com:rinsesoft/fraktul.git ~/github/fraktul
-cd your-project
-node ~/github/fraktul/bin/fraktul.ts check docs/arch/model.yaml    # every anchor, box, cue and step must exist
-node ~/github/fraktul/bin/fraktul.ts dev   docs/arch/model.yaml    # the live map at http://localhost:8080
-node ~/github/fraktul/bin/fraktul.ts build docs/arch/model.yaml --out fraktul-dist
-node ~/github/fraktul/bin/fraktul.ts artifact docs/arch/model.yaml # page without <html>/<head>, for a claude.ai Artifact
-node ~/github/fraktul/bin/fraktul.ts voice docs/arch/model.yaml    # speak the tours (local, first run sets up the engine)
+npm install --save-dev fraktul
 ```
 
-Node 24.21+. fraktul installs its own two dependencies (`@bascik/bascik`, `yaml`) on first run. It runs as a checkout
-rather than an npm package because Node does not strip TypeScript inside `node_modules`.
+Node 24.21 or newer, and a project in git (fraktul reads only files git tracks). Narrated tours also need an Apple
+silicon Mac with [uv](https://docs.astral.sh/uv/) and ffmpeg.
 
-The example in `example/model.yaml` is fraktul's own map: `npm run dev` here shows it.
+```bash
+npx fraktul init       # a starter model at docs/arch/model.yaml, from your project's folders
+npx fraktul check      # every file, function, diagram box and tour step it names must exist
+npx fraktul dev        # the live map at http://localhost:8080
+npx fraktul build      # a static folder (fraktul-dist/) for any host
+npx fraktul artifact   # one HTML file, for a claude.ai Artifact
+npx fraktul voice      # speak the tours (local; the first run sets up the voice engine)
+```
+
+Every command takes the model's path; without one, fraktul looks for `./model.yaml`, then `./docs/arch/model.yaml`.
+The full guide is at [fraktul.dev/docs](https://fraktul.dev/docs/getting-started).
+
+The map is a static page. Mermaid, three.js and its fonts ship with fraktul and are served beside it, so it loads
+nothing from a CDN and nothing about your code leaves your machine.
 
 ## The model
 
@@ -98,15 +113,27 @@ host instead, pinned to the commit that was read, so a deployed map keeps pointi
   asks them to sign in. This is separate from `private: true`, which keeps a repo's contents out of the page.
 - A repo that is not checked out links to its default branch, since there is no commit to pin to.
 
+### Big files
+
+A file with more than 20 functions is drawn as named groups (its own section headings when it has them, the call flow
+when it does not), with one line between two groups and no lines to helpers used all over the file. Open a group to
+see its functions. Details: [Diagrams](https://fraktul.dev/docs/diagrams#big-files-stay-readable).
+
+### Links
+
+The address always says where you are, so any view can be shared:
+`#check` (a level), `#check/refs` (a box on it), `#fraktul?tour=how-it-works&step=2` (a tour stop),
+`#check?view=3d` (3D, from the ground), `#check?view=3d&cam=bird` (3D, from above). The flat map is the default.
+
 ### The 3D view
 
-**3D** (or the <kbd>3</kbd> key) shows the level on screen as a place you can fly through: the same boxes and arrows,
-standing where Mermaid drew them. Drag to look, <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to move,
-<kbd>Q</kbd>/<kbd>E</kbd> down and up, click a block to go inside, <kbd>Esc</kbd> to come back out, <kbd>0</kbd> to replay
-the level rising. Shape follows `kind` (towers, data crystals, people as pillars of light, external systems as sealed
-monoliths), height follows lines of code, planned blocks are holograms, and each block's crown and windows come from a
-hash of its id, so it keeps its silhouette when the code changes. Tour steps light their boxes with a beam.
-three.js ships with fraktul (served beside the map, like Mermaid) and loads the first time 3D is switched on. The design is in `docs/3d-view.md`.
+**3D** (or the <kbd>3</kbd> key) shows the level on screen as a place you can walk through: the same boxes and arrows,
+standing where Mermaid drew them. You start on the ground with every block in view; **Bird's eye** (<kbd>B</kbd>)
+starts from above instead. Drag to look, <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to move,
+<kbd>Q</kbd>/<kbd>E</kbd> down and up, click a block to go inside, <kbd>Esc</kbd> to come back out. Shape follows what
+a block is (towers, data disks, people, clouds), height follows lines of code, planned blocks are holograms, and each
+block's details come from a hash of its id, so it keeps its silhouette when the code changes. three.js ships with
+fraktul and loads the first time 3D is switched on. The design is in `docs/3d-view.md`.
 
 ### Tours, narration and recordings
 
@@ -170,13 +197,26 @@ ratio, in a pastel iridescent foil (`--mark-shape` and `--foil` in tokens.css). 
 
 ## fraktul.dev
 
-`npm run site:dev` serves the home page, the documentation (`content/docs/*.md`), the design system and fraktul's
-own map; `npm run site:build` writes `site-dist/`. Every branch deploys a preview and `main` deploys production on
+`npm run site:dev` serves the home page, the features page, the documentation (`content/docs/*.md`), the design system
+and fraktul's own map; `npm run site:build` writes `site-dist/`. The site's screenshots of the map and its social card
+are committed (`npm run site:shots -- <url of a running build>`, `npm run site:images`). Every branch deploys a preview and `main` deploys production on
 Cloudflare: see [DEPLOYMENT.md](DEPLOYMENT.md). Tags `v*.*.*` publish to npm: see [RELEASING.md](RELEASING.md).
 
 ## Develop
 
+fraktul is TypeScript run by Node's own type stripping; the npm package is a JavaScript build of it
+(`npm run package`), because Node does not strip types inside `node_modules`.
+
 ```bash
-npm test            # parser, code reader, the example model, and a broken model the check must catch
-npm run dev         # fraktul's own map
+npm ci
+npm test            # parser, code reader, grouping, init, the example model, and a broken model the check must catch
+npm run dev         # fraktul's own map (example/model.yaml)
+npm run site:dev    # fraktul.dev
+npm run package     # the npm package, in package/
 ```
+
+Bascik's agent skills are in `.claude/skills` and `.agents/skills` (see `AGENTS.md`).
+
+## License
+
+MIT

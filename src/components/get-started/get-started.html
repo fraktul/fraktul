@@ -9,13 +9,14 @@ How to run fraktul on a project.
   .c { color: #7f8792; }
   .more { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 28px auto 0; }
 </style>
-<section class="sec" data-testid="get-started">
+<section class="sec" id="start" data-bascik-preserve="id" data-testid="get-started">
   <h2 class="head y2k-head">Map your own system</h2>
-  <p>fraktul runs from a checkout next to your project. Node 24 and, for voices, an Apple silicon Mac.</p>
-  <pre class="y2k-screen">git clone git@github.com:rinsesoft/fraktul.git ~/github/fraktul
-node ~/github/fraktul/bin/fraktul.ts check docs/arch/model.yaml   <span class="c"># every anchor, box and step must exist</span>
-node ~/github/fraktul/bin/fraktul.ts dev   docs/arch/model.yaml   <span class="c"># the live map</span>
-node ~/github/fraktul/bin/fraktul.ts voice docs/arch/model.yaml   <span class="c"># speak the tours, locally</span></pre>
+  <p>fraktul is one npm package. It needs Node 24 and a project in git; voices also need an Apple silicon Mac.</p>
+  <pre class="y2k-screen">npm install --save-dev fraktul
+npx fraktul init    <span class="c"># a starter model, from your project's folders</span>
+npx fraktul check   <span class="c"># every file, function and tour step must exist</span>
+npx fraktul dev     <span class="c"># the live map</span>
+npx fraktul voice   <span class="c"># speak the tours, locally</span></pre>
   <div class="more">
     <a class="pill main" href="/docs/getting-started">Read the quickstart</a>
     <a class="pill" href="/docs">All documentation</a>

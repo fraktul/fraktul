@@ -1,6 +1,6 @@
 ---
 title: Quickstart
-summary: Install fraktul, write a first model, check it, and open the map.
+summary: Install fraktul from npm, write a first model, check it, and open the map.
 section: Start
 ---
 This page takes you from nothing to a map of your own project. You need about ten minutes and a project in a git
@@ -13,33 +13,34 @@ repository.
 - **For narrated tours only:** a Mac with Apple silicon, plus [uv](https://docs.astral.sh/uv/) and ffmpeg. Everything
   else works on any system.
 
-## 1. Get fraktul
+## 1. Install fraktul
 
-There are two ways to run fraktul. They take the same commands and flags.
-
-**From a checkout** (works today). Clone fraktul once, next to your projects:
-
-```bash
-git clone git@github.com:rinsesoft/fraktul.git ~/github/fraktul
-```
-
-Then run it from your project with `node ~/github/fraktul/bin/fraktul.ts <command>`. The first run installs fraktul's
-own dependencies inside the checkout.
-
-**From npm.** Once fraktul is published, add it to the project and use `npx`:
+Add fraktul to the project you want to map, as a dev dependency:
 
 ```bash
 npm install --save-dev fraktul
-npx fraktul check
 ```
 
-> [!NOTE]
-> The npm package is not published yet. Until it is, use the checkout. Every example in these docs writes
-> `fraktul <command>`: from a checkout that means `node ~/github/fraktul/bin/fraktul.ts <command>`.
+Every example in these docs writes `fraktul <command>`. In a project that installed it, that is
+`npx fraktul <command>`, or plain `fraktul <command>` inside a `package.json` script.
+
+> [!TIP]
+> No `package.json` in the project? `npx fraktul@latest <command>` runs it without installing anything into the
+> project, and `npm install --global fraktul` puts `fraktul` on your path.
 
 ## 2. Write a first model
 
-Create `docs/arch/model.yaml` in your project. fraktul looks for `./model.yaml` and then `./docs/arch/model.yaml`, so
+The fast way is to let fraktul write a starting point from your project's folders:
+
+```bash
+fraktul init
+```
+
+It writes `docs/arch/model.yaml` with one block per big folder, the files in each, one diagram that shows the blocks,
+and a short tour. It passes the check as it is. Your part is what code can't say: replace each `TODO` with a plain
+sentence, and draw the arrows between the boxes.
+
+Or write the model by hand. Create `docs/arch/model.yaml` in your project. fraktul looks for `./model.yaml` and then `./docs/arch/model.yaml`, so
 with either location you can leave the path off every command.
 
 ```yaml

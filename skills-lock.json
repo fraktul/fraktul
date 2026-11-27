@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "skills": {
+    "bascik": {
+      "source": "bascikdev/bascik",
+      "ref": "v1.0.1",
+      "sourceType": "github",
+      "skillPath": "skills/bascik/SKILL.md",
+      "computedHash": "2515526cdb6c8b36f1f6bb0da74d7a1fa07cf07b2fc90a2b5af49756dcd6435f"
+    },
+    "bascik-compatibility": {
+      "source": "bascikdev/bascik",
+      "ref": "v1.0.1",
+      "sourceType": "github",
+      "skillPath": "skills/bascik-compatibility/SKILL.md",
+      "computedHash": "6c4bf3a78640c376f7bf52de7e5bbd71fa3803c27e0f6735d13ddc926ccb1b99"
+    },
+    "bascik-components": {
+      "source": "bascikdev/bascik",
+      "ref": "v1.0.1",
+      "sourceType": "github",
+      "skillPath": "skills/bascik-components/SKILL.md",
+      "computedHash": "631d742596bbca14de8c84000e5761ec712f0021763958eb48589724d608a9e9"
+    },
+    "bascik-config": {
+      "source": "bascikdev/bascik",
+      "ref": "v1.0.1",
+      "sourceType": "github",
+      "skillPath": "skills/bascik-config/SKILL.md",
+      "computedHash": "0681b62662a098fab19978e06f2203e9cae62b1d6610bc616705a87c17e4a74d"
+    },
+    "bascik-images": {
+      "source": "bascikdev/bascik",
+      "ref": "v1.0.1",
+      "sourceType": "github",
+      "skillPath": "skills/bascik-images/SKILL.md",
+      "computedHash": "199e7e999522ec5a662375572963db53f5586ee7672b94e39be5b8e23bb17129"
+    },
+    "bascik-migrate": {
+      "source": "bascikdev/bascik",
+      "ref": "v1.0.1",
+      "sourceType": "github",
+      "skillPath": "skills/bascik-migrate/SKILL.md",
+      "computedHash": "cc164365384dce2f3e65a4f7964a2ef5d2078648af77c4af99f8c0bfc28b9a62"
+    },
+    "bascik-scripts": {
+      "source": "bascikdev/bascik",
+      "ref": "v1.0.1",
+      "sourceType": "github",
+      "skillPath": "skills/bascik-scripts/SKILL.md",
+      "computedHash": "4cf5c317a735bf2c3be248e19103a8443a4f92345c4226ed752e4ac27098a129"
+    },
+    "bascik-seo": {
+      "source": "bascikdev/bascik",
+      "ref": "v1.0.1",
+      "sourceType": "github",
+      "skillPath": "skills/bascik-seo/SKILL.md",
+      "computedHash": "7421d7f2147e4c544325e47002435dd9667b1d12147874e6fdb230b2403c1b75"
+    },
+    "bascik-testing": {
+      "source": "bascikdev/bascik",
+      "ref": "v1.0.1",
+      "sourceType": "github",
+      "skillPath": "skills/bascik-testing/SKILL.md",
+      "computedHash": "d4678d47bebc5f7a9d02af2e242bea110adf047187f4cccafd82e5e67608c4e3"
+    }
+  }
+}

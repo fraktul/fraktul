@@ -11,11 +11,13 @@ fraktul.dev navigation: the bar (liquid chrome in y2k), the foil star, page link
   .switch { font: 500 13px var(--body); padding: 7px 12px; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); background: var(--btn); color: var(--ink); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); cursor: pointer; transition: border-color 0.15s; }
   .switch:hover { border-color: color-mix(in srgb, var(--ink) 30%, transparent); }
   @media (prefers-reduced-motion: no-preference) { .star { animation: foil 9s linear infinite; } @keyframes foil { to { background-position: 300% 0; } } }
-  @media (max-width: 640px) { .links a.hide-sm { display: none; } }
+  /* A phone: the links sit closer so the theme switch stays on screen. */
+  @media (max-width: 640px) { .links a.hide-sm { display: none; } .nav { gap: 8px; } .logo { gap: 8px; font-size: 16px; } .links { gap: 0; } .links a { padding: 8px 7px; } .switch { flex: none; } }
 </style>
 <header class="nav" data-testid="site-header">
   <a class="logo" href="/" data-testid="site-header-home"><span class="star" aria-hidden="true"></span>fraktul</a>
   <nav class="links" aria-label="Main">
+    <a href="/features" data-testid="site-header-features">Features</a>
     <a href="/docs" data-testid="site-header-docs">Docs</a>
     <a href="/map" data-testid="site-header-map">Map</a>
     <a class="hide-sm" href="/design" data-testid="site-header-design">Design</a>

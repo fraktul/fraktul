@@ -10,10 +10,6 @@
       try { var t = localStorage.getItem("fraktul-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
       try { var s = localStorage.getItem("fraktul-style"); s = s === "chrome" ? "y2k" : s; document.documentElement.dataset.style = s === "y2k" ? "y2k" : "flat"; } catch (e) { document.documentElement.dataset.style = "flat"; }
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" />
-    <script src="vendor/mermaid.min.js"></script>
   </head>
   <body>
     <fraktul-map />

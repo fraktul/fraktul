@@ -33,6 +33,7 @@ page" marking the section being read. The pages work without it.
   const toc = document.querySelector<HTMLElement>(".docs-toc");
   const links = new Map<string, HTMLAnchorElement>();
   for (const a of document.querySelectorAll<HTMLAnchorElement>(".docs-toc a")) links.set(decodeURIComponent(a.hash.slice(1)), a);
+  // bascik-ignore js-dynamic-id-lookup (the ids are the article's headings, written by src/lib/docs.ts)
   const heads = [...links.keys()].map((id) => document.getElementById(id)).filter((h): h is HTMLElement => !!h);
   if (toc && heads.length) {
     const offset = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--anchor-scroll-offset")) || 96;
@@ -64,6 +65,7 @@ page" marking the section being read. The pages work without it.
       const a = (e.target as Element).closest("a");
       if (!a || e.defaultPrevented || (e as MouseEvent).button !== 0 || (e as MouseEvent).metaKey || (e as MouseEvent).ctrlKey || (e as MouseEvent).shiftKey || (e as MouseEvent).altKey) return;
       const id = decodeURIComponent(a.hash.slice(1));
+      // bascik-ignore js-dynamic-id-lookup
       const target = document.getElementById(id);
       if (!target) return;
       e.preventDefault();

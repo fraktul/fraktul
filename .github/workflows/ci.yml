@@ -34,6 +34,11 @@ jobs:
         run: npm test
       - name: Build fraktul.dev
         run: npm run site:build:preview
+      # Every internal link and #fragment must lead somewhere, and every page needs its head tags.
+      - name: Check the site's links and head tags
+        run: |
+          FRAKTUL_SITE=1 node .claude/skills/bascik/scripts/check-links.mjs --dist site-dist --ignore /map   # links into the map are views, not ids (test/shots.test.ts checks them)
+          FRAKTUL_SITE=1 node .claude/skills/bascik-seo/scripts/audit-seo.mjs --dist site-dist
       # The npm package is JavaScript (Node does not strip TypeScript in node_modules): build it, install it into an
       # empty project, and map the example with the installed CLI.
       - name: Package, install and run
@@ -42,9 +47,15 @@ jobs:
           (cd package && npm pack --silent)
           mkdir -p "$RUNNER_TEMP/try" && cd "$RUNNER_TEMP/try" && npm init -y >/dev/null
           npm i "$GITHUB_WORKSPACE"/package/fraktul-*.tgz --no-audit --no-fund
+          npx fraktul --version
           npx fraktul build "$GITHUB_WORKSPACE/example/model.yaml" --out "$RUNNER_TEMP/try/out"
           test -s "$RUNNER_TEMP/try/out/index.html"
           test -s "$RUNNER_TEMP/try/out/vendor/mermaid.min.js"
+          test -s "$RUNNER_TEMP/try/out/vendor/fonts/inter-latin-wght-normal.woff2"
+          # A new project: init writes a model that passes the check as written.
+          git init -q && mkdir -p src/api && echo 'export function order() { return 1; }' > src/api/orders.ts
+          git add -A && git -c user.name=ci -c user.email=ci@example.com commit -qm init
+          npx fraktul init && npx fraktul check
 
   deploy:
     name: Deploy fraktul.dev
@@ -135,7 +146,7 @@ jobs:
         if: github.ref != 'refs/heads/main' && steps.newest.outputs.newest == 'true'
         env:
           URL: ${{ steps.upload.outputs.url }}
-        run: node .github/scripts/smoke-test.mjs "$URL" /=200 /docs=200 /docs/model=200 /map=200 /design=200 /favicon.svg=200 /no-such-page=404
+        run: node .github/scripts/smoke-test.mjs "$URL" /=200 /features=200 /docs=200 /docs/model=200 /map=200 /design=200 /favicon.svg=200 /og.png=200 /img/top-1280.webp=200 /vendor/fonts/manrope-latin-wght-normal.woff2=200 /no-such-page=404
 
       # Status codes pass a page whose script fails; this opens the pages in Chromium and waits for the map to draw.
       - name: Install Chromium for the render test
@@ -146,7 +157,7 @@ jobs:
         if: github.ref != 'refs/heads/main' && steps.newest.outputs.newest == 'true'
         env:
           URL: ${{ steps.upload.outputs.url }}
-        run: node .github/scripts/render-test.mjs "$URL" /map=map / /docs /docs/model /design
+        run: node .github/scripts/render-test.mjs "$URL" /map=map "/map#check/refs=map" / /features /docs /docs/model /design
 
       - name: Comment the Preview on the pull request
         if: github.ref != 'refs/heads/main' && steps.newest.outputs.newest == 'true' && steps.alias.outputs.pr != ''
@@ -170,8 +181,8 @@ jobs:
 
       - name: Smoke-test production
         if: github.ref == 'refs/heads/main' && steps.newest.outputs.newest == 'true'
-        run: node .github/scripts/smoke-test.mjs https://fraktul.dev /=200 /docs=200 /map=200 /no-such-page=404
+        run: node .github/scripts/smoke-test.mjs https://fraktul.dev /=200 /features=200 /docs=200 /map=200 /llms.txt=200 /sitemap.xml=200 /robots.txt=200 /og.png=200 /no-such-page=404
 
       - name: Render-test production
         if: github.ref == 'refs/heads/main' && steps.newest.outputs.newest == 'true'
-        run: node .github/scripts/render-test.mjs https://fraktul.dev /map=map / /docs
+        run: node .github/scripts/render-test.mjs https://fraktul.dev /map=map / /features /docs

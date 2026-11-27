@@ -16,7 +16,7 @@ fraktul build --out fraktul-dist
 | Path | What it is |
 |---|---|
 | `index.html` | The map: styles, diagrams and all the model and code data in one page. |
-| `vendor/` | Mermaid and three.js, served beside the page. The map loads no code from a CDN. |
+| `vendor/` | fraktul's own copies of Mermaid, three.js and the fonts. The page loads nothing from a CDN or a font service. |
 | `voice/` | Narration audio, when you ran `fraktul voice`. |
 | `recordings/` | Audio of recorded walkthroughs, when the model has any. |
 
@@ -58,7 +58,7 @@ does.
 Building in CI keeps the published map in step with the code. In GitHub Actions, after the check:
 
 ```yaml
-- run: node .fraktul-tool/bin/fraktul.ts build docs/arch/model.yaml --out fraktul-dist
+- run: npx fraktul build --out fraktul-dist
 - uses: actions/upload-pages-artifact@v3
   with: { path: fraktul-dist }
 ```

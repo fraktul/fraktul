@@ -1,14 +1,25 @@
 <!-- @bascik
-Shared <head> tags for fraktul.dev pages: fonts, and the saved theme and style applied before first paint.
+Shared <head> tags for fraktul.dev pages: the title, description and social card of the page being built, fraktul's own fonts, and the saved theme and style applied before first paint.
 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-<meta name="theme-color" content="#f2f3f5" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<meta name="theme-color" content="#f2f3f5" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#050506" media="(prefers-color-scheme: dark)" />
 <script data-bascik-build-once src="./robots.ts"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&family=Syncopate:wght@700&family=Manrope:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+<script data-bascik-build type="text/typescript">
+  // Title, description, canonical URL, social card and structured data for the page being built (src/lib/seo.ts).
+  // Fonts ship with the site (vendor/fonts/); the ones a page shows first are preloaded.
+  import { html } from "@bascik/bascik/html";
+  import { fontTags } from "@/lib/fonts.ts";
+  import { seoTags } from "@/lib/seo.ts";
+  export default function () {
+    const path = process.env.BASCIK_PAGE_PATH ?? "/";
+    const first = path === "/map" ? ["Inter"] : path === "/" ? ["Manrope", "Michroma", "Syncopate"] : ["Manrope", "Michroma"];
+    return html`${seoTags(path, process.env.BASCIK_SITE_URL)}${fontTags("/vendor/fonts/", first)}`;
+  }
+</script>
 <script>
   try { var t = localStorage.getItem("fraktul-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
   // fraktul.dev always wears the y2k style; the map itself defaults to flat.

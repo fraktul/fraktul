@@ -15,3 +15,4 @@ site-dist/
 .out/
 package/
 *.tgz
+.claude/worktrees/

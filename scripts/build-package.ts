@@ -13,8 +13,10 @@ const OUT = join(ROOT, process.argv[2] ?? "package");
 /** Files Node loads: written as .js. */
 const NODE_TS = ["bin/fraktul.ts", "bascik.config.ts", "scripts/check-model.ts", "scripts/copy-media.ts", "scripts/voice.ts", "src/components/fraktul-map/data.ts"];
 const NODE_TS_DIRS = ["src/lib"];
+/** Only fraktul.dev uses these (its documentation pages and head tags): not part of the package. */
+const SITE_ONLY = ["docs.ts", "seo.ts", "shots.ts", "features.ts"];
 /** Copied as they are. */
-const AS_IS = ["src/components/fraktul-map", "src/pages/index.html", "src/pages/favicon.svg", "src/pages/css", "voice/render.py", "voice/requirements.txt", "example/model.yaml", "README.md", "LICENSE"];
+const AS_IS = ["src/components/fraktul-map", "src/pages/index.html", "src/pages/favicon.svg", "src/pages/css", "voice/render.py", "voice/requirements.txt", "example/model.yaml", "README.md", "CHANGELOG.md", "LICENSE"];
 
 const renameImports = (code: string) =>
   code.replace(/(from\s+["'][^"']+)\.ts(["'])/g, "$1.js$2").replace(/(import\(\s*["'][^"']+)\.ts(["']\s*\))/g, "$1.js$2").replace(/(src=["'][^"']+)\.ts(["'])/g, "$1.js$2");
@@ -31,7 +33,7 @@ function writeJs(rel: string) {
 }
 
 rmSync(OUT, { recursive: true, force: true });
-for (const d of NODE_TS_DIRS) for (const f of readdirSync(join(ROOT, d))) if (f.endsWith(".ts") && !f.endsWith(".test.ts")) writeJs(join(d, f));
+for (const d of NODE_TS_DIRS) for (const f of readdirSync(join(ROOT, d))) if (f.endsWith(".ts") && !f.endsWith(".test.ts") && !SITE_ONLY.includes(f)) writeJs(join(d, f));
 for (const p of AS_IS) {
   if (!existsSync(join(ROOT, p))) continue;
   cpSync(join(ROOT, p), join(OUT, p), { recursive: statSync(join(ROOT, p)).isDirectory() });
@@ -51,10 +53,12 @@ const published = {
   description: pkg.description,
   license: pkg.license ?? "MIT",
   type: "module",
-  homepage: "https://fraktul.dev",
+  homepage: pkg.homepage,
   repository: pkg.repository,
-  keywords: ["architecture", "diagrams", "mermaid", "documentation", "system map", "c4", "tours", "bascik"],
-  engines: { node: ">=24.21.0" },
+  bugs: pkg.bugs,
+  author: pkg.author,
+  keywords: pkg.keywords,
+  engines: pkg.engines,
   bin: { fraktul: "bin/fraktul.js" },
   dependencies: pkg.dependencies,
 };

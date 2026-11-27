@@ -24,6 +24,8 @@ export default defineConfig({
     exec: [
       // Narration audio and recorded walkthroughs are copied next to the page.
       { script: existsSync("scripts/copy-media.ts") ? "scripts/copy-media.ts" : "scripts/copy-media.js", phase: "post", watch: [dirname(model)] },
+      // fraktul.dev also publishes llms.txt, its pages as one list for AI assistants.
+      ...(site ? [{ script: "scripts/llms-txt.ts", phase: "post" as const }] : []),
     ],
   },
   scripts: {

@@ -5,7 +5,19 @@ section: Guides
 ---
 **3D** in the map's toolbar, or the **3** key, turns the diagram on screen into a place you can fly through. It shows
 the same boxes and arrows at the positions Mermaid drew them, so 2D and 3D always match. Press **3** again to go back.
-The map remembers your choice in this browser.
+
+The flat map is the default. 3D is on when you switch it on, or when a link says so: the address gains `?view=3d`, so
+a link you copy while in 3D opens in 3D for whoever follows it.
+
+## Where you start
+
+Every level opens **on the ground**, in front of the blocks and off to one side, far enough back that all of them are
+in view. Blocks tower over you, which is the point: a place you stand in is easier to remember than one you look down
+on.
+
+**Bird's eye** (the button at the top right of the 3D view, or <kbd>B</kbd>) starts every level from above instead,
+looking across and down, like the two views of a street map. The map remembers which you prefer in this browser, and
+a link carries it as `&cam=bird`.
 
 ## Moving around
 
@@ -21,6 +33,7 @@ The map remembers your choice in this browser.
 | Click a block | Fly into it and open it |
 | <kbd>L</kbd> or **Lock mouse** | Lock the mouse: plain mouse moves look around, a click opens the block under the crosshair |
 | <kbd>Esc</kbd> | Unlock the mouse; pressed again, come back out a level |
+| <kbd>B</kbd> or **Bird's eye** | Switch between the ground and a bird's eye view |
 | <kbd>0</kbd> | Replay the level rising |
 
 ## What the shapes mean

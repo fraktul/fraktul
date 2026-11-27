@@ -1,6 +1,7 @@
 // Everything the explorer page needs, built from the model and the repos it points at. Diagrams for files and
 // functions are generated here from the code, so the deepest levels never go out of date.
 
+import { GROUP_OVER, groupFile, type Group, type Section } from "./groups.ts";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { callsOf, langOf, readCode, type CodeFile } from "./code.ts";
@@ -14,6 +15,8 @@ export type SiteRepo = { title: string; github: string | null; present: boolean;
 export type Diagram = Parsed & { title: string; targets: Record<string, string>; generated?: boolean };
 export type FileInfo = { key: string; repo: string; path: string; lang: string; lines: number; doc: string; functions: string[]; imports: string[]; importedBy: string[]; url: string | null; excerpt?: string; exists: boolean };
 export type FnInfo = { key: string; file: string; name: string; line: number; end: number; doc: string; params: string; exported: boolean; code: string; calls: string[]; calledBy: string[]; url: string | null };
+/** A group of a big file's functions, drawn as its own level (groups.ts). */
+export type PartInfo = { key: string; file: string; title: string; note: string; functions: string[] };
 export type NodeInfo = Omit<ModelNode, "diagram" | "anchors"> & { id: string; anchors: { kind: string; key: string; label: string; missing?: boolean }[]; usedIn: string[] };
 export type Site = {
   meta: { built: string; commit: string | null; root: string; home: string | null; repos: Record<string, SiteRepo>; defaultRepo: string; title: string; brand: string; voice: unknown };
@@ -21,6 +24,7 @@ export type Site = {
   diagrams: Record<string, Diagram>;
   files: Record<string, FileInfo>;
   fns: Record<string, FnInfo>;
+  parts: Record<string, PartInfo>;
   live: Live;
   tours: Tour[];
   /** Narration audio per tour and step (fraktul voice), when rendered. */
@@ -30,7 +34,6 @@ export type Site = {
 };
 
 const q = (s: string) => `"${s.replace(/"/g, "#quot;").replace(/[<>]/g, (c) => (c === "<" ? "#lt;" : "#gt;"))}"`;
-const MAX_FILE_FNS = 70;
 
 /** Anchor string → the key the explorer opens. */
 export function targetOf(a: string, defaultRepo: string): string {
@@ -128,7 +131,14 @@ export async function buildSite(model: Model = loadModel()): Promise<Site> {
     const keys = anchorsOf(n, D).filter((a) => a.kind === "files" || a.kind === "functions").map((a) => (typeof a.ref === "string" ? "" : a.ref.fn ? fnKey(a.ref) : fileKey(a.ref))).filter((k) => k && (files[k]?.exists || fns[k]));
     if (keys.length) diagrams[`node:${id}`] = genAnchors(n.title, keys, files, fns);
   }
-  for (const f of Object.values(files)) if (f.exists && f.functions.length) diagrams[f.key] = genFile(f, fns);
+  const parts: Record<string, PartInfo> = {};
+  for (const f of Object.values(files)) {
+    if (!f.exists || !f.functions.length) continue;
+    if (f.functions.length <= GROUP_OVER) { diagrams[f.key] = genFile(f, fns); continue; }
+    const g = genGrouped(f, fns, code.get(f.key)?.cf.sections ?? []);
+    Object.assign(diagrams, g.diagrams);
+    for (const p of g.parts) parts[p.key] = p;
+  }
   for (const f of Object.values(fns)) diagrams[f.key] = genFn(f, fns);
 
   // 4. Node panels.
@@ -170,7 +180,7 @@ export async function buildSite(model: Model = loadModel()): Promise<Site> {
   }
   const recDir = join(model.dir, "recordings");
   const recordings = existsSync(recDir) ? readdirSync(recDir).filter((f) => f.endsWith(".json")).map((f) => JSON.parse(readFileSync(join(recDir, f), "utf8"))).filter((r) => r.file && existsSync(join(recDir, r.file))).map((r) => ({ ...r, file: `recordings/${r.file}` })) : [];
-  return { voice, recordings, meta: { built: new Date().toISOString(), commit: headOf(model, D), root: model.root, home: model.home ?? (process.env.FRAKTUL_SITE ? "/" : null), repos, defaultRepo: D, title: model.title ?? "System map", brand: model.brand ?? model.title ?? "System map", voice: model.voice ?? null }, nodes, diagrams, files, fns, live, tours: model.tours };
+  return { voice, recordings, meta: { built: new Date().toISOString(), commit: headOf(model, D), root: model.root, home: model.home ?? (process.env.FRAKTUL_SITE ? "/" : null), repos, defaultRepo: D, title: model.title ?? "System map", brand: model.brand ?? model.title ?? "System map", voice: model.voice ?? null }, nodes, diagrams, files, fns, parts, live, tours: model.tours };
 }
 
 function fnLabel(f: FnInfo, withFile = false): string {
@@ -202,14 +212,10 @@ function genAnchors(title: string, keys: string[], files: Record<string, FileInf
   return make(`${title}: code`, "flowchart LR", body, targets);
 }
 
+/** A file's functions and the calls between them. A big file is drawn as groups instead (genGrouped). */
 function genFile(f: FileInfo, fns: Record<string, FnInfo>): Diagram {
-  const own = f.functions.map((n) => `${f.key.replace(/^file:/, "fn:")}#${n}`).filter((k) => fns[k]);
-  // Big files: functions that call or are called inside the file first, then exported ones.
-  let shown = own;
-  if (own.length > MAX_FILE_FNS) {
-    const linked = own.filter((k) => fns[k].calls.some((c) => own.includes(c)) || fns[k].calledBy.some((c) => own.includes(c)));
-    shown = [...new Set([...linked, ...own.filter((k) => fns[k].exported)])].slice(0, MAX_FILE_FNS);
-  }
+  const mine = f.key.replace(/^file:/, "fn:") + "#";
+  const shown = f.functions.map((n) => mine + n).filter((k) => fns[k]);
   const body: string[] = [];
   const targets: Record<string, string> = {};
   const idOf = new Map<string, string>();
@@ -219,7 +225,7 @@ function genFile(f: FileInfo, fns: Record<string, FnInfo>): Diagram {
   for (const k of shown) body.push(`${idFor(k)}[${fnLabel(fns[k])}]:::${fns[k].exported ? "fnx" : "fn"}`);
   body.push("end");
   const ext = new Map<string, string[]>();
-  for (const k of shown) for (const c of fns[k].calls) if (!c.startsWith(`${f.key.replace(/^file:/, "fn:")}#`)) { const file = fns[c].file; ext.set(file, [...new Set([...(ext.get(file) ?? []), c])]); }
+  for (const k of shown) for (const c of fns[k].calls) if (!c.startsWith(mine)) { const file = fns[c].file; ext.set(file, [...new Set([...(ext.get(file) ?? []), c])]); }
   let e = 0;
   for (const [file, cs] of ext) {
     body.push(`subgraph x${e++}[${q(file.split(":").slice(2).join(":"))}]`);
@@ -230,12 +236,92 @@ function genFile(f: FileInfo, fns: Record<string, FnInfo>): Diagram {
   return make(f.path.split("/").pop()!, "flowchart LR", body, targets);
 }
 
+const plural = (n: number, one: string) => `${n} ${one}${n === 1 ? "" : "s"}`;
+/** A box with a small second line. `title` may come from a source comment, so it is escaped. */
+const twoLine = (title: string, small: string) => `"${title.replace(/"/g, "#quot;").replace(/[<>]/g, (c) => (c === "<" ? "#lt;" : "#gt;"))}<br/><small>${small}</small>"`;
+
+/**
+ * A big file, drawn as a person would draw it (groups.ts): an overview with one box per group of functions and one
+ * line between two groups however many calls there are, then one diagram per group. Lines to helpers used all over
+ * the file are left out; a function's own page still lists every call.
+ */
+function genGrouped(f: FileInfo, fns: Record<string, FnInfo>, sections: Section[]): { diagrams: Record<string, Diagram>; parts: PartInfo[] } {
+  const mine = f.key.replace(/^file:/, "fn:") + "#";
+  const own = f.functions.map((n) => mine + n).filter((k) => fns[k]);
+  const { groups, helpers } = groupFile(own.map((k) => ({ key: k, name: fns[k].name, line: fns[k].line, exported: fns[k].exported, calls: fns[k].calls, calledBy: fns[k].calledBy })), sections);
+  const name = f.path.split("/").pop()!;
+  const partKey = (g: Group) => `part:${f.key.slice(5)}#${g.slug}`;
+  const groupOf = new Map<string, number>();
+  groups.forEach((g, i) => g.fns.forEach((k) => groupOf.set(k, i)));
+  const fileOf = (k: string) => fns[k].file;
+  const fileName = (key: string) => key.split(":").slice(2).join(":").split("/").pop()!;
+  const diagrams: Record<string, Diagram> = {};
+
+  // The overview: groups, and how strongly each leans on another.
+  const weight = new Map<string, number>();
+  const bump = (a: string, b: string) => weight.set(`${a}>${b}`, (weight.get(`${a}>${b}`) ?? 0) + 1);
+  for (const k of own) for (const c of fns[k].calls) {
+    if (helpers.has(c)) continue;
+    if (c.startsWith(mine)) { if (groupOf.get(c) !== groupOf.get(k)) bump(`p${groupOf.get(k)}`, `p${groupOf.get(c)}`); }
+    else bump(`p${groupOf.get(k)}`, `file ${fileOf(c)}`);
+  }
+  const all = [...weight.entries()].map(([k, n]) => ({ from: k.split(">")[0], to: k.split(">")[1], n })).sort((a, b) => b.n - a.n);
+  // Keep the lines that carry the flow: every strong one, and each box's strongest, so nothing floats loose.
+  let floor = 2;
+  const pick = () => { const best = new Set<object>(); for (const end of new Set(all.flatMap((e) => [e.from, e.to]))) { const top = all.find((e) => e.from === end || e.to === end); if (top) best.add(top); } return all.filter((e) => e.n >= floor || best.has(e)); };
+  let lines = pick();
+  while (lines.length > groups.length * 1.6 + 2 && floor < 12) { floor++; lines = pick(); }
+  const body: string[] = [`subgraph here[${q(f.path)}]`];
+  const targets: Record<string, string> = {};
+  groups.forEach((g, i) => { body.push(`p${i}[${twoLine(g.title, plural(g.fns.length, "function"))}]:::part`); targets[`p${i}`] = partKey(g); });
+  body.push("end");
+  const extIds = new Map<string, string>();
+  for (const e of lines) if (e.to.startsWith("file ") && !extIds.has(e.to)) { const id = `x${extIds.size}`; extIds.set(e.to, id); targets[id] = e.to.slice(5); body.push(`${id}[${q(fileName(e.to.slice(5)))}]:::ext`); }
+  for (const e of lines) body.push(`${e.from} ${e.n >= 4 ? "==>" : "-->"} ${extIds.get(e.to) ?? e.to}`);
+  diagrams[f.key] = make(name, groups.length > 6 ? "flowchart TD" : "flowchart LR", body, targets);
+
+  // One diagram per group: its functions and the calls among them, with the rest of the file as single boxes.
+  groups.forEach((g, gi) => {
+    const b: string[] = [`subgraph here[${q(`${g.title} · ${name}`)}]`];
+    const t: Record<string, string> = {};
+    const id = new Map<string, string>();
+    g.fns.forEach((k, i) => { id.set(k, `g${i}`); t[`g${i}`] = k; b.push(`g${i}[${fnLabel(fns[k])}]:::${fns[k].exported ? "fnx" : "fn"}`); });
+    b.push("end");
+    const edges = new Set<string>();
+    const around = new Map<string, string>();
+    const box = (key: string, label: string, cls: string) => { if (!around.has(key)) { const x = `n${around.size}`; around.set(key, x); t[x] = key; b.push(`${x}[${label}]:::${cls}`); } return around.get(key)!; };
+    const groupBox = (o: number) => box(partKey(groups[o]), twoLine(groups[o].title, plural(groups[o].fns.length, "function")), "part");
+    for (const k of g.fns) {
+      for (const c of fns[k].calls) {
+        if (helpers.has(c)) continue;
+        if (!c.startsWith(mine)) edges.add(`${id.get(k)} --> ${box(fileOf(c), q(fileName(fileOf(c))), "ext")}`);
+        else if (groupOf.get(c) === gi) edges.add(`${id.get(k)} --> ${id.get(c)}`);
+        else edges.add(`${id.get(k)} --> ${groupBox(groupOf.get(c)!)}`);
+      }
+      if (!helpers.has(k)) for (const c of fns[k].calledBy) if (c.startsWith(mine) && groupOf.get(c) !== gi) edges.add(`${groupBox(groupOf.get(c)!)} --> ${id.get(k)}`);
+    }
+    b.push(...edges);
+    diagrams[partKey(g)] = make(g.title, "flowchart LR", b, t);
+  });
+  return { diagrams, parts: groups.map((g) => ({ key: partKey(g), file: f.key, title: g.title, note: g.note, functions: g.fns })) };
+}
+
+/** A function with its callers on one side and what it calls on the other. Long lists stand in columns of six. */
 function genFn(f: FnInfo, fns: Record<string, FnInfo>): Diagram {
   const body: string[] = [];
   const targets: Record<string, string> = { me: f.key };
   body.push(`me[${fnLabel(f, true)}]:::focus`);
-  f.calledBy.slice(0, 24).forEach((c, i) => { body.push(`c${i}[${fnLabel(fns[c], fns[c].file !== f.file)}]:::${fns[c].file === f.file ? "fn" : "ext"}`, `c${i} --> me`); targets[`c${i}`] = c; });
-  f.calls.slice(0, 30).forEach((c, i) => { body.push(`k${i}[${fnLabel(fns[c], fns[c].file !== f.file)}]:::${fns[c].file === f.file ? "fn" : "ext"}`, `me --> k${i}`); targets[`k${i}`] = c; });
+  const COL = 6;
+  const side = (keys: string[], id: string, out: boolean) => {
+    keys.forEach((c, i) => {
+      body.push(`${id}${i}[${fnLabel(fns[c], fns[c].file !== f.file)}]:::${fns[c].file === f.file ? "fn" : "ext"}`, out ? `me --> ${id}${i}` : `${id}${i} --> me`);
+      // An invisible link to the box six places back starts a new column instead of one endless row.
+      if (i >= COL) body.push(out ? `${id}${i - COL} ~~~ ${id}${i}` : `${id}${i} ~~~ ${id}${i - COL}`);
+      targets[`${id}${i}`] = c;
+    });
+  };
+  side(f.calledBy.slice(0, 24), "c", false);
+  side(f.calls.slice(0, 30), "k", true);
   return make(`${f.name}()`, "flowchart LR", body, targets);
 }
 

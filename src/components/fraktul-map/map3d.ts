@@ -1,6 +1,6 @@
 // The 3D view (docs/3d-view.md, phase 1): the diagram on screen as a place you can fly through. The map hands over the
 // boxes and arrows it just drew, with their positions read from Mermaid's SVG, so 3D always matches 2D. three.js loads
-// from the CDN the first time 3D is switched on; the 2D page carries only this file.
+// (from vendor/, beside the page) the first time 3D is switched on; the 2D page carries only this file.
 //
 // Meaning comes from data (kind sets the shape family, status sets how solid it is, size comes from line counts);
 // identity comes from a hash of the box's id (crown, setbacks, window pattern), so a block keeps its silhouette when
@@ -14,7 +14,7 @@ type Item3D = {
 type Group3D = { rid: string; title: string; x: number; y: number; w: number; h: number };
 type Edge3D = { pts: [number, number][]; tone: string };
 type Scene3D = { key: string; items: Item3D[]; groups: Group3D[]; edges: Edge3D[] };
-type Hooks3D = { pick: (rid: string | null) => void; locked?: (on: boolean) => void; slow?: (on: boolean) => void };
+type Hooks3D = { pick: (rid: string | null) => void; locked?: (on: boolean) => void; slow?: (on: boolean) => void; bird?: (on: boolean) => void };
 
 // fraktul ships its own three.js beside the page (vendor/); the CDN is only a fallback for hosts that serve the page
 // alone (a claude.ai Artifact), where the local file is not there.
@@ -375,6 +375,7 @@ let T: any = null;
     grid.position.y = -0.005;
     world.add(grid);
 
+    level = { spanX, spanZ, top: 2, pts: s.items.map((i) => [W(i.x), Z(i.y)]) };
     const now = performance.now() / 1000;
     const reveal = !same;
     const base = now + (o.entry ? 0.5 : 0.1);
@@ -392,6 +393,7 @@ let T: any = null;
     }
     for (const it of s.items) {
       const { obj, top } = make(it);
+      level.top = Math.max(level.top, top);
       obj.position.set(W(it.x), 0, Z(it.y));
       obj.userData.rid = it.rid;
       world.add(obj);
@@ -432,14 +434,9 @@ let T: any = null;
     applyFocus();
     if (!same) {
       orbit = null; pending = null;
-      // Stand back from the level, above it and off to the front left, so the flow (left to right or top to bottom
-      // in the 2D map) runs across the screen and blocks stand apart instead of behind each other.
-      const span = Math.max(spanX, spanZ, 6);
-      const yaw = -0.72;
-      // Land low, a little above head height of the tallest blocks, looking across the level rather than down on it.
-      const dist = span * 0.8 + 3;
-      const to = new T.Vector3(Math.sin(yaw) * dist, Math.max(2.6, span * 0.22), Math.cos(yaw) * dist);
-      const pitch = -Math.atan2(to.y - 1.2, dist) * 0.9;
+      // Where this level is seen from: on the ground in front of it, or from above (the Bird's eye switch).
+      const { to, at } = home();
+      const { yaw, pitch } = angles(to, at);
       if (o.entry) {
         // Entry: start looking straight down on the flat plan (the 2D map), then tilt down to the street.
         camera.position.set(0, Math.max(spanX / 1.6, spanZ * 1.15, 8), 0.01);
@@ -556,12 +553,58 @@ let T: any = null;
       if (k === "0") { sceneKey = ""; hooks && rebuildLast(); }
       if (k === "l") lock(!locked());
       if (k === "z") setSlow(!slow);
+      if (k === "b") setBird(!bird);
     });
     document.addEventListener("keyup", (e) => keys.delete(e.key.toLowerCase()));
     window.addEventListener("blur", () => keys.clear());
   }
   // ───────────── mouse lock (Pointer Lock): look with plain mouse moves, Esc or L gives the mouse back ─────────────
   let slow = (() => { try { return localStorage.getItem("fraktul-3d-slow") === "1"; } catch { return false; } })();
+  // ───────────── where a level is seen from: the ground (default) or a bird's eye, like a map's two views ─────────────
+  let bird = (() => { try { return localStorage.getItem("fraktul-3d-bird") === "1"; } catch { return false; } })();
+  let level: { spanX: number; spanZ: number; top: number; pts: number[][] } = { spanX: 10, spanZ: 10, top: 2, pts: [] };
+  /** The camera's place for the whole level, and the point it looks at, far enough back that every block is in frame. */
+  function home(): { to: any; at: any } {
+    // The level fits in a circle of radius r. A narrow screen (a phone held upright) stands further back.
+    const r = Math.hypot(Math.max(level.spanX, 4), Math.max(level.spanZ, 4)) / 2;
+    const v = (camera.fov * Math.PI) / 360;
+    const narrow = Math.max(1, 1.35 / camera.aspect); // bird's eye only: the ground view measures the corners
+    if (bird) {
+      // Stand back from the level and above it, looking across and down: every block in view, none behind another.
+      const span = Math.max(level.spanX, level.spanZ, 6), yaw = -0.72, d = (span * 0.8 + 3) * narrow;
+      const to = new T.Vector3(Math.sin(yaw) * d, Math.max(2.6, span * 0.22), Math.cos(yaw) * d);
+      return { to, at: new T.Vector3(0, to.y - Math.tan(Math.atan2(to.y - 1.2, d) * 0.9) * d, 0) };
+    }
+    // On the ground, off to the front left, so the flow (left to right or top to bottom in the 2D map) runs across
+    // the screen. Eye height is a person's, so blocks tower: close enough that the level fills the view, far enough
+    // that the nearest block's top is still in frame.
+    const yaw = -0.72;
+    // Step back until every block is inside the view, left to right.
+    const side = Math.atan(Math.tan(v) * camera.aspect) * 0.8;
+    const fx = -Math.sin(yaw), fz = -Math.cos(yaw);
+    // Blocks near the camera spread wider than far ones, so the look turns to the middle of what it sees.
+    let dist = r * 0.6 + 1.5, mid = 0;
+    for (let i = 0; i < 60; i++, dist *= 1.06) {
+      const cx = -fx * dist, cz = -fz * dist;
+      const b = level.pts.map(([x, z]) => { const dx = x - cx, dz = z - cz; return dx * fx + dz * fz > 1.5 ? Math.atan2(dx * fz - dz * fx, dx * fx + dz * fz) : NaN; });
+      if (!b.length) break;
+      const lo = Math.min(...b), hi = Math.max(...b);
+      mid = (lo + hi) / 2;
+      if (hi - lo < side * 2) break;
+    }
+    dist = Math.max(dist, r * 0.75 + (level.top * 0.7) / Math.tan(v));
+    const eye = Math.min(2.4, 1.2 + r * 0.04);
+    const to = new T.Vector3(-fx * dist, eye, -fz * dist);
+    const ax = Math.cos(mid) * fx + Math.sin(mid) * fz, az = Math.cos(mid) * fz - Math.sin(mid) * fx;
+    return { to, at: new T.Vector3(to.x + ax * dist, Math.max(eye * 0.9, level.top * 0.33), to.z + az * dist) };
+  }
+  function setBird(on: boolean) {
+    if (on === bird) return;
+    bird = on;
+    try { localStorage.setItem("fraktul-3d-bird", on ? "1" : "0"); } catch { /* private window */ }
+    hooks?.bird?.(on);
+    if (shown && built) { orbit = null; pending = null; const h = home(); flyCam(h.to, h.at, 1.3); }
+  }
   function setSlow(on: boolean) { slow = on; try { localStorage.setItem("fraktul-3d-slow", on ? "1" : "0"); } catch { /* private window */ } hooks?.slow?.(on); }
   let lockCv: HTMLCanvasElement | null = null;
   const locked = () => !!lockCv && document.pointerLockElement === lockCv;
@@ -633,11 +676,12 @@ let T: any = null;
       if (!b) return;
       const at = new T.Vector3(b.c.x, Math.max(0.6, b.height * 0.45), b.c.z);
       const dist = b.span * 1.1 + 5;
-      // Come in from the front-left (where the level's own view stands) and high enough to look over the blocks in
-      // front; each step swings a little left or right of that so moving between steps feels like a camera move.
+      // Come in from the front-left (where the level's own view stands): near the ground by default, or high enough
+      // to look over the blocks in front with Bird's eye on. Each step swings a little left or right of that, so
+      // moving between steps feels like a camera move.
       const swing = ((shot++ % 3) - 1) * 0.38;
       const yaw = -0.72 + swing;
-      const h = at.y + dist * 0.85;
+      const h = at.y + dist * (bird ? 0.85 : 0.22);
       const to = new T.Vector3(at.x + Math.sin(yaw) * dist, h, at.z + Math.cos(yaw) * dist);
       orbit = null;
       flyCam(to, at, Math.min(2.2, 1.1 + camera.position.distanceTo(to) * 0.04), () => {
@@ -747,6 +791,7 @@ let T: any = null;
     stopOrbit() { orbit = null; },
     lock, get locked() { return locked(); },
     setSlow, get slow() { return slow; },
+    setBird, get bird() { return bird; },
     build(s: Scene3D, o?: { entry?: boolean }) { lastScene = s; build(s, o); },
     get shown() { return shown; },
   };

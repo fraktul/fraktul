@@ -1,8 +1,9 @@
-// Post-build: copies fraktul's own Mermaid and three.js (vendor/, no CDN), narration audio (<model dir>/.fraktul/voice/*.mp3) and recorded walkthroughs
+// Post-build: copies fraktul's own Mermaid, three.js and fonts (vendor/, no CDN), narration audio (<model dir>/.fraktul/voice/*.mp3) and recorded walkthroughs
 // (<model dir>/recordings/*.webm) into the built site, beside the page.
 import { cpSync, existsSync, mkdirSync, readdirSync, statSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
+import { FONTS } from "../src/lib/fonts.ts";
 
 const modelDir = dirname(resolve(process.env.FRAKTUL_MODEL ?? "example/model.yaml"));
 const out = process.env.BASCIK_OUT_DIR ?? "dist";
@@ -27,4 +28,10 @@ function vendor(pkg: string, file: string) {
   cpSync(join(dir, file), join(out, "vendor", file.split("/").pop()!));
 }
 vendor("mermaid", "dist/mermaid.min.js");
+// The fonts too (src/lib/fonts.ts), under vendor/fonts/.
+for (const f of FONTS) {
+  let dir = dirname(createRequire(import.meta.url).resolve(`${f.pkg}/package.json`));
+  mkdirSync(join(out, "vendor", "fonts"), { recursive: true });
+  cpSync(join(dir, "files", f.file), join(out, "vendor", "fonts", f.file));
+}
 vendor("three", "build/three.module.min.js");

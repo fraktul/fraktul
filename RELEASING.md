@@ -21,6 +21,14 @@ node --no-warnings scripts/build-package.ts && (cd package && npm publish --acce
 npx npm trust github fraktul --repo rinsesoft/fraktul --file release.yml --yes
 ```
 
-After that, every tag publishes from CI with provenance, and nobody needs an npm token.
+After that, every tag publishes from CI, and nobody needs an npm token.
 
-The first publish makes the code public on npm. fraktul's GitHub repo can stay private; the package cannot.
+The first publish makes the code public on npm. fraktul's GitHub repo can stay private; the package cannot. npm only
+attests provenance for a public repository, so `publish-npm.sh` leaves `--provenance` out while the repo is private
+and adds it by itself once the repo is public.
+
+## Before a release
+
+- `CHANGELOG.md` has a section for the version.
+- `npm test` and `npm run package` pass; CI installs the package into an empty project and builds a map with it.
+- fraktul.dev's install instructions name the package, so publish soon after the site deploys.

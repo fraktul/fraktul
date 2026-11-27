@@ -9,7 +9,11 @@ from the code itself.
 
 ## The problem it solves
 
-Architecture diagrams go stale. They are drawn once, by hand, and nothing tells you when the code moves on. Reading
+Understanding a system is now the slow part of building software. Someone takes over a project and gets an hour of
+handover. An architect explains the same design to every new team. An engineer has to learn another team's service
+before building beside it. And with AI writing much of the code, there is more of it every week than anyone has read.
+
+The usual tools don't hold up. Architecture diagrams go stale. They are drawn once, by hand, and nothing tells you when the code moves on. Reading
 the code instead shows you every detail but not how the pieces fit together.
 
 fraktul keeps both in one place and ties them together:

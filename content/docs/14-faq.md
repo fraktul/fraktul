@@ -49,11 +49,17 @@ Yes. Build with `FRAKTUL_PUBLIC=1` and the page keeps the blocks, files, functio
 source code, file excerpts and links into the repos. For a repo whose contents should never be read at all, set
 `private: true`: the map shows its file names only. See [Publishing](/docs/publishing).
 
-## Can I install fraktul with npm?
+## How do I install fraktul?
 
-Not yet: the package isn't published. Run it from a checkout. fraktul is written in TypeScript and Node does not strip
-TypeScript inside `node_modules`, so the npm package will be a JavaScript build of the same code. The commands and
-flags are the same either way.
+`npm install --save-dev fraktul`, then `npx fraktul init`. It needs Node 24.21 or newer. fraktul is written in
+TypeScript; the npm package is a JavaScript build of the same code, because Node does not strip TypeScript inside
+`node_modules`. See the [Quickstart](/docs/getting-started).
+
+## Does fraktul send my code anywhere?
+
+No. The check, the build and the voice all run on your machine. The map is a static page that loads no code from a
+CDN or a font service: Mermaid, three.js and the fonts ship with fraktul and are served beside the page, so a map works
+on an internal network or offline.
 
 ## `fraktul voice` fails
 

@@ -1,6 +1,7 @@
 # The 3D view: a memory palace for a system
 
-Status: design, not built. Written from a design conversation on Nov 25–26, 2026.
+Status: phase 1 is built (`src/components/fraktul-map/map3d.ts`); the rest is design. Written from a design
+conversation on Nov 25–26, 2026. How to use the view: `content/docs/09-3d-view.md`.
 
 ## Why
 
