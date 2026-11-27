@@ -32,6 +32,7 @@ a link carries it as `&cam=bird`.
 | Scroll | Move forward and back |
 | Click a block | Fly into it and open it |
 | <kbd>L</kbd> or **Lock mouse** | Lock the mouse: plain mouse moves look around, a click opens the block under the crosshair |
+| <kbd>U</kbd> or <kbd>Backspace</kbd> | Up a level, to the diagram this one sits in. Works with the mouse locked |
 | <kbd>Esc</kbd> | Unlock the mouse; pressed again, come back out a level |
 | <kbd>B</kbd> or **Bird's eye** | Switch between the ground and a bird's eye view |
 | <kbd>0</kbd> | Replay the level rising |

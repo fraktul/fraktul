@@ -147,7 +147,7 @@ model. See [Recorded walkthroughs](/docs/recordings).
 |---|---|
 | <kbd>/</kbd> | Search |
 | <kbd>Esc</kbd> | Close the peek, clear the selection, then go up a level |
-| <kbd>Backspace</kbd> | Go up a level |
+| <kbd>U</kbd> or <kbd>Backspace</kbd> | Go up a level (also with the mouse locked in 3D) |
 | <kbd>0</kbd> | Fit the diagram to the screen |
 | <kbd>3</kbd> | Switch the 3D view on or off |
 | <kbd>Space</kbd> | Pause or resume narration |

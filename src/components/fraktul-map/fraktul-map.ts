@@ -1309,7 +1309,9 @@ document.addEventListener("keydown", (e) => {
   const t = e.target as HTMLElement;
   if (t.matches("input, textarea") || toursDlg.open) return;
   if (e.key === "/") { e.preventDefault(); search.focus(); }
-  if (e.key === "Backspace") { e.preventDefault(); back(); }
+  // Up a level: Backspace or U. With the mouse locked in 3D, Esc belongs to the browser (it gives the mouse back),
+  // so these are the keys that climb out of a level there.
+  if (e.key === "Backspace" || ((e.key === "u" || e.key === "U") && !e.metaKey && !e.ctrlKey && !e.altKey)) { e.preventDefault(); back(); }
   if (e.key === "Escape") { if (!peek.hidden) hidePeek(); else if (selected) { selected = null; drawPanel(); markSelected(); } else back(); }
   if (e.key === "0" && !in3d) fit();
   if (e.key === "3") set3d(!in3d);
