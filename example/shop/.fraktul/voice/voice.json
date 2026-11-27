@@ -1,0 +1,928 @@
+{
+ "tours": {
+  "the-shop-in-two-minutes": {
+   "voice": "am_michael",
+   "model": "mlx-community/Kokoro-82M-bf16",
+   "rendered": "2026-11-27T18:25:29.493Z",
+   "steps": {
+    "the-shop-in-two-minutes-1": {
+     "file": "voice/the-shop-in-two-minutes/the-shop-in-two-minutes-1.mp3",
+     "duration": 28.08,
+     "cues": [
+      {
+       "t": 13.77,
+       "focus": [
+        "shopper",
+        "storefront"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 5.28,
+       "text": "This is the Astronomy Shop, an online shop that sells telescopes."
+      },
+      {
+       "t": 5.6,
+       "end": 13.27,
+       "text": "It is the demo application of the OpenTelemetry project, and it is made of about twenty small services."
+      },
+      {
+       "t": 13.77,
+       "end": 17.57,
+       "text": "Everything starts with a shopper opening the website."
+      },
+      {
+       "t": 17.89,
+       "end": 22.41,
+       "text": "The storefront is the only part of the system they ever see."
+      },
+      {
+       "t": 22.73,
+       "end": 27.76,
+       "text": "Everything else on this map exists to answer the storefront's questions."
+      }
+     ]
+    },
+    "the-shop-in-two-minutes-2": {
+     "file": "voice/the-shop-in-two-minutes/the-shop-in-two-minutes-2.mp3",
+     "duration": 19.19,
+     "cues": [
+      {
+       "t": 4.02,
+       "focus": [
+        "browsing"
+       ]
+      },
+      {
+       "t": 12.55,
+       "focus": [
+        "basket"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.52,
+       "text": "The storefront does not know the products itself."
+      },
+      {
+       "t": 4.02,
+       "end": 12.05,
+       "text": "It asks one group of services what is for sale: the catalog, the recommendations, the adverts and the photos."
+      },
+      {
+       "t": 12.55,
+       "end": 16.7,
+       "text": "And it asks another to remember what the shopper has picked."
+      },
+      {
+       "t": 17.02,
+       "end": 18.87,
+       "text": "That is the cart."
+      }
+     ]
+    },
+    "the-shop-in-two-minutes-3": {
+     "file": "voice/the-shop-in-two-minutes/the-shop-in-two-minutes-3.mp3",
+     "duration": 18.23,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "checkout"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.73,
+       "text": "When the shopper presses pay, checkout takes over."
+      },
+      {
+       "t": 4.04,
+       "end": 6.62,
+       "text": "Think of it as the conductor."
+      },
+      {
+       "t": 6.94,
+       "end": 10.14,
+       "text": "It does very little of the work itself."
+      },
+      {
+       "t": 10.46,
+       "end": 17.91,
+       "text": "Every other step of the order happens because checkout asked another service to do it, in the right order."
+      }
+     ]
+    },
+    "the-shop-in-two-minutes-4": {
+     "file": "voice/the-shop-in-two-minutes/the-shop-in-two-minutes-4.mp3",
+     "duration": 16.71,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "paying"
+       ]
+      },
+      {
+       "t": 8.39,
+       "focus": [
+        "delivery"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 1.82,
+       "text": "First the money."
+      },
+      {
+       "t": 2.15,
+       "end": 7.89,
+       "text": "Checkout has the price worked out in the shopper's currency, and has the card charged."
+      },
+      {
+       "t": 8.39,
+       "end": 10.24,
+       "text": "Then the parcel."
+      },
+      {
+       "t": 10.56,
+       "end": 16.39,
+       "text": "Checkout has the delivery booked, and a confirmation sent to the shopper by email."
+      }
+     ]
+    },
+    "the-shop-in-two-minutes-5": {
+     "file": "voice/the-shop-in-two-minutes/the-shop-in-two-minutes-5.mp3",
+     "duration": 15.94,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "back_office"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 5.45,
+       "text": "At this point the shopper is done, and they are not kept waiting for the paperwork."
+      },
+      {
+       "t": 5.77,
+       "end": 15.62,
+       "text": "Checkout announces the order, and two other services pick it up in their own time: accounting, which records it, and fraud detection, which checks it."
+      }
+     ]
+    },
+    "the-shop-in-two-minutes-6": {
+     "file": "voice/the-shop-in-two-minutes/the-shop-in-two-minutes-6.mp3",
+     "duration": 20.61,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "operations"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.48,
+       "text": "One last group is not part of shopping at all."
+      },
+      {
+       "t": 3.79,
+       "end": 12.39,
+       "text": "It holds the switches that change how services behave while they are running, and the pretend shoppers that keep this demo busy."
+      },
+      {
+       "t": 12.71,
+       "end": 14.81,
+       "text": "That is the whole shop."
+      },
+      {
+       "t": 15.13,
+       "end": 20.29,
+       "text": "Every box you have seen opens, so click any of them to go inside."
+      }
+     ]
+    }
+   }
+  },
+  "follow-one-order": {
+   "voice": "am_michael",
+   "model": "mlx-community/Kokoro-82M-bf16",
+   "rendered": "2026-11-27T18:25:36.510Z",
+   "steps": {
+    "follow-one-order-1": {
+     "file": "voice/follow-one-order/follow-one-order-1.mp3",
+     "duration": 21.36,
+     "cues": [
+      {
+       "t": 3.45,
+       "focus": [
+        "storefront"
+       ]
+      },
+      {
+       "t": 6.58,
+       "focus": [
+        "checkout"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.95,
+       "text": "Let's follow one order through the shop."
+      },
+      {
+       "t": 3.45,
+       "end": 6.08,
+       "text": "The shopper presses Place order."
+      },
+      {
+       "t": 6.58,
+       "end": 14.28,
+       "text": "The storefront sends checkout three things: who the shopper is, where the parcel should go, and the card to charge."
+      },
+      {
+       "t": 14.6,
+       "end": 17.7,
+       "text": "It makes that call over gRPC."
+      },
+      {
+       "t": 18.02,
+       "end": 21.04,
+       "text": "From here on, checkout is in charge."
+      }
+     ]
+    },
+    "follow-one-order-2": {
+     "file": "voice/follow-one-order/follow-one-order-2.mp3",
+     "duration": 22.95,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "cart"
+       ]
+      },
+      {
+       "t": 5.33,
+       "focus": [
+        "product_catalog"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 4.83,
+       "text": "First, checkout asks the cart service what the shopper is buying."
+      },
+      {
+       "t": 5.33,
+       "end": 9.65,
+       "text": "Then it asks the product catalog for the price of each item."
+      },
+      {
+       "t": 9.97,
+       "end": 12.52,
+       "text": "Notice what it does not do."
+      },
+      {
+       "t": 12.84,
+       "end": 16.11,
+       "text": "It does not take the prices from the browser."
+      },
+      {
+       "t": 16.43,
+       "end": 22.63,
+       "text": "A browser can be made to say anything, so the catalog's price is the one that counts."
+      }
+     ]
+    },
+    "follow-one-order-3": {
+     "file": "voice/follow-one-order/follow-one-order-3.mp3",
+     "duration": 16.5,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "currency"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.65,
+       "text": "The catalog keeps its prices in one currency."
+      },
+      {
+       "t": 3.97,
+       "end": 6.64,
+       "text": "The shopper may have chosen another."
+      },
+      {
+       "t": 6.96,
+       "end": 12.04,
+       "text": "So checkout hands each price to the currency service, which converts it."
+      },
+      {
+       "t": 12.36,
+       "end": 16.18,
+       "text": "The currency service is written in C++."
+      }
+     ]
+    },
+    "follow-one-order-4": {
+     "file": "voice/follow-one-order/follow-one-order-4.mp3",
+     "duration": 19.51,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "payment"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 1.73,
+       "text": "Now the money."
+      },
+      {
+       "t": 2.04,
+       "end": 9.14,
+       "text": "Checkout adds up the items and the shipping, and asks the payment service to charge the card for the total."
+      },
+      {
+       "t": 9.46,
+       "end": 15.12,
+       "text": "If the charge fails, the order stops here, and nothing after this step happens."
+      },
+      {
+       "t": 15.44,
+       "end": 19.19,
+       "text": "In this demo no real card is ever charged."
+      }
+     ]
+    },
+    "follow-one-order-5": {
+     "file": "voice/follow-one-order/follow-one-order-5.mp3",
+     "duration": 13.36,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "shipping"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 4.4,
+       "text": "With the money taken, checkout goes back to the shipping service."
+      },
+      {
+       "t": 4.72,
+       "end": 7.52,
+       "text": "Earlier it asked shipping for a price."
+      },
+      {
+       "t": 7.84,
+       "end": 13.04,
+       "text": "Now it asks shipping to book the delivery, and gets a tracking number back."
+      }
+     ]
+    },
+    "follow-one-order-6": {
+     "file": "voice/follow-one-order/follow-one-order-6.mp3",
+     "duration": 17.71,
+     "cues": [
+      {
+       "t": 2.52,
+       "focus": [
+        "email"
+       ]
+      },
+      {
+       "t": 8.1,
+       "focus": [
+        "order_events"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.02,
+       "text": "Two things are left."
+      },
+      {
+       "t": 2.52,
+       "end": 7.6,
+       "text": "Checkout asks the email service to send the shopper a confirmation."
+      },
+      {
+       "t": 8.1,
+       "end": 13.07,
+       "text": "And it puts one message on a queue, saying that this order was placed."
+      },
+      {
+       "t": 13.39,
+       "end": 17.39,
+       "text": "Checkout does not know or care who reads that message."
+      }
+     ]
+    },
+    "follow-one-order-7": {
+     "file": "voice/follow-one-order/follow-one-order-7.mp3",
+     "duration": 24.36,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "order_events"
+       ]
+      },
+      {
+       "t": 4.2,
+       "focus": [
+        "accounting"
+       ]
+      },
+      {
+       "t": 9.7,
+       "focus": [
+        "fraud_detection"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.7,
+       "text": "The queue is where the order leaves checkout's hands."
+      },
+      {
+       "t": 4.2,
+       "end": 9.2,
+       "text": "Accounting reads the message and records the order in its database."
+      },
+      {
+       "t": 9.7,
+       "end": 14.75,
+       "text": "Fraud detection reads the very same message and checks the order."
+      },
+      {
+       "t": 15.07,
+       "end": 20.34,
+       "text": "Neither of them made the shopper wait, and checkout never called either one."
+      },
+      {
+       "t": 20.66,
+       "end": 24.04,
+       "text": "That is one order, from the click to the books."
+      }
+     ]
+    }
+   }
+  },
+  "how-a-page-is-built": {
+   "voice": "am_michael",
+   "model": "mlx-community/Kokoro-82M-bf16",
+   "rendered": "2026-11-27T18:25:42.823Z",
+   "steps": {
+    "how-a-page-is-built-1": {
+     "file": "voice/how-a-page-is-built/how-a-page-is-built-1.mp3",
+     "duration": 18.07,
+     "cues": [
+      {
+       "t": 4.17,
+       "focus": [
+        "browser"
+       ]
+      },
+      {
+       "t": 7.28,
+       "focus": [
+        "proxy"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 3.67,
+       "text": "What happens when a shopper opens a product page?"
+      },
+      {
+       "t": 4.17,
+       "end": 6.78,
+       "text": "The browser asks for the page."
+      },
+      {
+       "t": 7.28,
+       "end": 10.35,
+       "text": "But it never talks to a service directly."
+      },
+      {
+       "t": 10.67,
+       "end": 17.75,
+       "text": "Every request goes through one door first: a proxy, which decides where each request should go."
+      }
+     ]
+    },
+    "how-a-page-is-built-2": {
+     "file": "voice/how-a-page-is-built/how-a-page-is-built-2.mp3",
+     "duration": 23.63,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "pages"
+       ]
+      },
+      {
+       "t": 9.89,
+       "focus": [
+        "api"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 4.75,
+       "text": "The proxy hands the request to the web app, which draws the page."
+      },
+      {
+       "t": 5.07,
+       "end": 9.39,
+       "text": "The page needs data, and the web app does not own any."
+      },
+      {
+       "t": 9.89,
+       "end": 12.59,
+       "text": "So it calls its own API routes."
+      },
+      {
+       "t": 12.91,
+       "end": 18.86,
+       "text": "There is one for products, one for the cart, one for recommendations, and so on."
+      },
+      {
+       "t": 19.18,
+       "end": 23.31,
+       "text": "Click any of them on this map and you can read its code."
+      }
+     ]
+    },
+    "how-a-page-is-built-3": {
+     "file": "voice/how-a-page-is-built/how-a-page-is-built-3.mp3",
+     "duration": 21.01,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "storefront",
+        "product_catalog"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 4.5,
+       "text": "The first question is the obvious one: what is this product?"
+      },
+      {
+       "t": 4.82,
+       "end": 12.14,
+       "text": "The storefront asks the product catalog, which is the one place in the system that knows what the shop sells."
+      },
+      {
+       "t": 12.46,
+       "end": 16.09,
+       "text": "The storefront asks no other service as often."
+      },
+      {
+       "t": 16.41,
+       "end": 20.69,
+       "text": "Select the catalog and its panel shows you how often."
+      }
+     ]
+    },
+    "how-a-page-is-built-4": {
+     "file": "voice/how-a-page-is-built/how-a-page-is-built-4.mp3",
+     "duration": 21.33,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "recommendation"
+       ]
+      },
+      {
+       "t": 7.34,
+       "focus": [
+        "product_catalog"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.9,
+       "text": "Next, what else might this shopper like?"
+      },
+      {
+       "t": 3.22,
+       "end": 6.84,
+       "text": "The storefront asks the recommendation service."
+      },
+      {
+       "t": 7.34,
+       "end": 11.14,
+       "text": "And recommendations has a question of its own."
+      },
+      {
+       "t": 11.46,
+       "end": 16.24,
+       "text": "It asks the catalog which products exist, before it picks some."
+      },
+      {
+       "t": 16.56,
+       "end": 21.01,
+       "text": "So one page view has already caused two calls to the catalog."
+      }
+     ]
+    },
+    "how-a-page-is-built-5": {
+     "file": "voice/how-a-page-is-built/how-a-page-is-built-5.mp3",
+     "duration": 20.81,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "ad"
+       ]
+      },
+      {
+       "t": 7.39,
+       "focus": [
+        "image_provider"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 1.52,
+       "text": "Two more."
+      },
+      {
+       "t": 1.84,
+       "end": 6.89,
+       "text": "The advert service picks an advert that matches what is on the page."
+      },
+      {
+       "t": 7.39,
+       "end": 12.42,
+       "text": "And the photos come from a plain web server with a folder of images."
+      },
+      {
+       "t": 12.74,
+       "end": 20.49,
+       "text": "That is one product page: one request from the browser, and four services answering behind the storefront."
+      }
+     ]
+    }
+   }
+  },
+  "keeping-the-shop-running": {
+   "voice": "am_michael",
+   "model": "mlx-community/Kokoro-82M-bf16",
+   "rendered": "2026-11-27T18:25:48.739Z",
+   "steps": {
+    "keeping-the-shop-running-1": {
+     "file": "voice/keeping-the-shop-running/keeping-the-shop-running-1.mp3",
+     "duration": 23.81,
+     "cues": [
+      {
+       "t": 6.88,
+       "focus": [
+        "cart"
+       ]
+      },
+      {
+       "t": 10.93,
+       "focus": [
+        "cart_store"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 6.38,
+       "text": "Let's look at the parts of the shop a shopper never thinks about, starting with where things are kept."
+      },
+      {
+       "t": 6.88,
+       "end": 10.43,
+       "text": "The cart service does not store carts itself."
+      },
+      {
+       "t": 10.93,
+       "end": 15.78,
+       "text": "It keeps them in a fast store that lives in memory, called Valkey."
+      },
+      {
+       "t": 16.09,
+       "end": 17.67,
+       "text": "That fits."
+      },
+      {
+       "t": 17.99,
+       "end": 23.49,
+       "text": "A cart is read and written constantly, and losing one costs the shop little."
+      }
+     ]
+    },
+    "keeping-the-shop-running-2": {
+     "file": "voice/keeping-the-shop-running/keeping-the-shop-running-2.mp3",
+     "duration": 12.96,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "accounting"
+       ]
+      },
+      {
+       "t": 5.39,
+       "focus": [
+        "ledger_db"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2.35,
+       "text": "An order is different."
+      },
+      {
+       "t": 2.67,
+       "end": 4.89,
+       "text": "An order is money."
+      },
+      {
+       "t": 5.39,
+       "end": 12.64,
+       "text": "So accounting writes every order to a real database, PostgreSQL, where it will still be after a restart."
+      }
+     ]
+    },
+    "keeping-the-shop-running-3": {
+     "file": "voice/keeping-the-shop-running/keeping-the-shop-running-3.mp3",
+     "duration": 19.96,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "checkout",
+        "order_events"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 4.35,
+       "text": "And notice what sits between checkout and accounting: a queue."
+      },
+      {
+       "t": 4.67,
+       "end": 7.77,
+       "text": "They never talk to each other directly."
+      },
+      {
+       "t": 8.09,
+       "end": 14.24,
+       "text": "If accounting is down for an hour, checkout keeps taking orders, and the messages wait."
+      },
+      {
+       "t": 14.56,
+       "end": 19.64,
+       "text": "This is why the traces show the queue calling accounting, and not checkout."
+      }
+     ]
+    },
+    "keeping-the-shop-running-4": {
+     "file": "voice/keeping-the-shop-running/keeping-the-shop-running-4.mp3",
+     "duration": 22.68,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "flags"
+       ]
+      },
+      {
+       "t": 7.42,
+       "focus": [
+        "cart",
+        "payment"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2,
+       "text": "Next, the switches."
+      },
+      {
+       "t": 2.32,
+       "end": 6.92,
+       "text": "Several services ask a flag service how they should behave."
+      },
+      {
+       "t": 7.42,
+       "end": 10.2,
+       "text": "The cart and payment are two of them."
+      },
+      {
+       "t": 10.52,
+       "end": 15.64,
+       "text": "A real shop uses this to turn a new feature on for a few customers."
+      },
+      {
+       "t": 15.96,
+       "end": 22.36,
+       "text": "This demo uses it to break things on purpose, so people can practise finding the fault."
+      }
+     ]
+    },
+    "keeping-the-shop-running-5": {
+     "file": "voice/keeping-the-shop-running/keeping-the-shop-running-5.mp3",
+     "duration": 17.76,
+     "cues": [
+      {
+       "t": 0,
+       "focus": [
+        "load_generator"
+       ]
+      },
+      {
+       "t": 6.42,
+       "focus": [
+        "storefront"
+       ]
+      }
+     ],
+     "captions": [
+      {
+       "t": 0,
+       "end": 2,
+       "text": "Last, the traffic."
+      },
+      {
+       "t": 2.32,
+       "end": 5.92,
+       "text": "A script pretends to be many shoppers at once."
+      },
+      {
+       "t": 6.42,
+       "end": 11.84,
+       "text": "It browses, fills carts and places orders through the storefront, all day."
+      },
+      {
+       "t": 12.16,
+       "end": 17.44,
+       "text": "Every number in the panels of this map came from those pretend shoppers."
+      }
+     ]
+    }
+   }
+  }
+ }
+}

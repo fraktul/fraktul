@@ -10,10 +10,11 @@ brand: Astronomy Shop
 home: /
 root: shop
 default_repo: demo
+voice: { voice: am_michael, speed: 1, say_as: { gRPC: "G R P C", Valkey: "val key", PostgreSQL: "postgres", flagd: "flag D", nginx: "engine X", API: "A P I", "C++": "C plus plus", ".NET": "dot net", "Node.js": "node J S", "Next.js": "next J S", PHP: "P H P" } }
 repos:
   demo: { path: ".demo/opentelemetry-demo", github: open-telemetry/opentelemetry-demo, title: opentelemetry-demo }
 
-expect: { tours: 2 }
+expect: { tours: 4 }
 
 nodes:
   shop:
@@ -312,26 +313,51 @@ tours:
         focus: [shopper, storefront]
         title: A shopper and a website
         text: Everything starts with a shopper opening the website. The storefront is the only part they ever see.
+        say: >-
+          This is the Astronomy Shop, an online shop that sells telescopes. It is the demo application of the
+          OpenTelemetry project, and it is made of about twenty small services. [[shopper, storefront]] Everything
+          starts with a shopper opening the website. The storefront is the only part of the system they ever see.
+          Everything else on this map exists to answer the storefront's questions.
       - view: shop
         focus: [browsing, basket]
         title: Looking, and picking
         text: The storefront does not know the products itself. It asks one group of services what is for sale, and another to remember what the shopper picked.
+        say: >-
+          The storefront does not know the products itself. [[browsing]] It asks one group of services what is for
+          sale: the catalog, the recommendations, the adverts and the photos. [[basket]] And it asks another to
+          remember what the shopper has picked. That is the cart.
       - view: shop
         focus: [checkout]
         title: One service runs the sale
         text: When the shopper pays, checkout takes over. It is the conductor. Every other step of the order happens because checkout asked for it.
+        say: >-
+          [[checkout]] When the shopper presses pay, checkout takes over. Think of it as the conductor. It does very
+          little of the work itself. Every other step of the order happens because checkout asked another service
+          to do it, in the right order.
       - view: shop
         focus: [paying, delivery]
         title: Money and parcels
         text: Checkout has the card charged, then has the parcel booked and a confirmation sent.
+        say: >-
+          [[paying]] First the money. Checkout has the price worked out in the shopper's currency, and has the card
+          charged. [[delivery]] Then the parcel. Checkout has the delivery booked, and a confirmation sent to the
+          shopper by email.
       - view: shop
         focus: [back_office]
         title: The paperwork happens later
         text: The shopper is done. Checkout announces the order, and accounting and fraud detection pick it up in their own time.
+        say: >-
+          [[back_office]] At this point the shopper is done, and they are not kept waiting for the paperwork.
+          Checkout announces the order, and two other services pick it up in their own time: accounting, which
+          records it, and fraud detection, which checks it.
       - view: shop
         focus: [operations]
         title: And someone keeps it running
         text: Off to the side are the switches that change how services behave, and the pretend shoppers that keep this demo busy.
+        say: >-
+          [[operations]] One last group is not part of shopping at all. It holds the switches that change how
+          services behave while they are running, and the pretend shoppers that keep this demo busy. That is the
+          whole shop. Every box you have seen opens, so click any of them to go inside.
   - id: follow-one-order
     title: Follow one order
     summary: From the click on "Place order" to the message on the queue, service by service.
@@ -340,27 +366,144 @@ tours:
         focus: [storefront, checkout]
         title: The click
         text: The shopper presses Place order. The storefront sends the cart's owner, the address and the card to checkout.
+        say: >-
+          Let's follow one order through the shop. [[storefront]] The shopper presses Place order. [[checkout]] The
+          storefront sends checkout three things: who the shopper is, where the parcel should go, and the card to
+          charge. It makes that call over gRPC. From here on, checkout is in charge.
       - view: checkout
         focus: [cart, product_catalog]
         title: What are they buying?
         text: Checkout reads the cart, then asks the catalog for the price of each item. It trusts the catalog's prices, not the browser's.
+        say: >-
+          [[cart]] First, checkout asks the cart service what the shopper is buying. [[product_catalog]] Then it
+          asks the product catalog for the price of each item. Notice what it does not do. It does not take the
+          prices from the browser. A browser can be made to say anything, so the catalog's price is the one that
+          counts.
       - view: checkout
         focus: [currency]
         title: In their currency
         text: Each price is converted to the currency the shopper chose.
+        say: >-
+          [[currency]] The catalog keeps its prices in one currency. The shopper may have chosen another. So
+          checkout hands each price to the currency service, which converts it. The currency service is written in
+          C++.
       - view: checkout
         focus: [payment]
         title: Take the money
         text: Checkout asks payment to charge the card for the total. If this fails, the order stops here.
+        say: >-
+          [[payment]] Now the money. Checkout adds up the items and the shipping, and asks the payment service to
+          charge the card for the total. If the charge fails, the order stops here, and nothing after this step
+          happens. In this demo no real card is ever charged.
       - view: checkout
         focus: [shipping]
         title: Send the parcel
         text: Shipping gave a price earlier; now it books the delivery and returns a tracking number.
+        say: >-
+          [[shipping]] With the money taken, checkout goes back to the shipping service. Earlier it asked shipping
+          for a price. Now it asks shipping to book the delivery, and gets a tracking number back.
       - view: checkout
         focus: [email, order_events]
         title: Tell everyone
         text: The shopper gets a confirmation by email. Then checkout puts one message on the order queue.
+        say: >-
+          Two things are left. [[email]] Checkout asks the email service to send the shopper a confirmation.
+          [[order_events]] And it puts one message on a queue, saying that this order was placed. Checkout does not
+          know or care who reads that message.
       - view: back_office
         focus: [order_events, accounting, fraud_detection]
         title: After the shopper has gone
         text: Accounting reads the message and records the order. Fraud detection reads the same message and checks it. Neither made the shopper wait.
+        say: >-
+          [[order_events]] The queue is where the order leaves checkout's hands. [[accounting]] Accounting reads the
+          message and records the order in its database. [[fraud_detection]] Fraud detection reads the very same
+          message and checks the order. Neither of them made the shopper wait, and checkout never called either one.
+          That is one order, from the click to the books.
+  - id: how-a-page-is-built
+    title: How a product page is built
+    summary: One page in the browser, four services behind the storefront.
+    steps:
+      - view: storefront
+        focus: [browser, proxy]
+        title: Every request goes through one door
+        text: The browser never talks to a service directly. A proxy takes every request and passes it on.
+        say: >-
+          What happens when a shopper opens a product page? [[browser]] The browser asks for the page. [[proxy]]
+          But it never talks to a service directly. Every request goes through one door first: a proxy, which
+          decides where each request should go.
+      - view: storefront
+        focus: [pages, api]
+        title: The web app asks for the parts
+        text: The web app draws the page. For the data, it calls its own API routes, one per kind of thing.
+        say: >-
+          [[pages]] The proxy hands the request to the web app, which draws the page. The page needs data, and the
+          web app does not own any. [[api]] So it calls its own API routes. There is one for products, one for the
+          cart, one for recommendations, and so on. Click any of them on this map and you can read its code.
+      - view: browsing
+        focus: [storefront, product_catalog]
+        title: What is this product?
+        text: The catalog is the one place that knows what the shop sells.
+        say: >-
+          [[storefront, product_catalog]] The first question is the obvious one: what is this product? The
+          storefront asks the product catalog, which is the one place in the system that knows what the shop sells.
+          The storefront asks no other service as often. Select the catalog and its panel shows you how often.
+      - view: browsing
+        focus: [recommendation, product_catalog]
+        title: What else might they like?
+        text: Recommendations picks other products. It has to ask the catalog which products exist.
+        say: >-
+          [[recommendation]] Next, what else might this shopper like? The storefront asks the recommendation
+          service. [[product_catalog]] And recommendations has a question of its own. It asks the catalog which
+          products exist, before it picks some. So one page view has already caused two calls to the catalog.
+      - view: browsing
+        focus: [ad, image_provider]
+        title: Adverts and photos
+        text: An advert that matches the page, and the product photos, come from two more services.
+        say: >-
+          [[ad]] Two more. The advert service picks an advert that matches what is on the page.
+          [[image_provider]] And the photos come from a plain web server with a folder of images. That is one
+          product page: one request from the browser, and four services answering behind the storefront.
+  - id: keeping-the-shop-running
+    title: Keeping the shop running
+    summary: Where the data lives, how services are switched, and where the traffic comes from.
+    steps:
+      - view: basket
+        focus: [cart, cart_store]
+        title: Carts live in memory
+        text: The cart service keeps each cart in a fast in-memory store. Lose the store and the carts are gone, but no order is.
+        say: >-
+          Let's look at the parts of the shop a shopper never thinks about, starting with where things are kept.
+          [[cart]] The cart service does not store carts itself. [[cart_store]] It keeps them in a fast store that
+          lives in memory, called Valkey. That fits. A cart is read and written constantly, and losing one costs
+          the shop little.
+      - view: back_office
+        focus: [accounting, ledger_db]
+        title: Orders live in a database
+        text: An order is money, so accounting writes it to a real database.
+        say: >-
+          [[accounting]] An order is different. An order is money. [[ledger_db]] So accounting writes every order
+          to a real database, PostgreSQL, where it will still be after a restart.
+      - view: back_office
+        focus: [checkout, order_events]
+        title: A queue in between
+        text: Checkout and accounting never talk directly. A queue sits between them, so one can be down without stopping the other.
+        say: >-
+          [[checkout, order_events]] And notice what sits between checkout and accounting: a queue. They never talk
+          to each other directly. If accounting is down for an hour, checkout keeps taking orders, and the messages
+          wait. This is why the traces show the queue calling accounting, and not checkout.
+      - view: operations
+        focus: [flags, cart, payment]
+        title: Switches without a deploy
+        text: Services ask the flag service how to behave. This demo uses the switches to break things on purpose.
+        say: >-
+          [[flags]] Next, the switches. Several services ask a flag service how they should behave. [[cart, payment]]
+          The cart and payment are two of them. A real shop uses this to turn a new feature on for a few customers.
+          This demo uses it to break things on purpose, so people can practise finding the fault.
+      - view: operations
+        focus: [load_generator, storefront]
+        title: Shoppers that never sleep
+        text: A script pretends to be many shoppers, so there is always traffic to look at.
+        say: >-
+          [[load_generator]] Last, the traffic. A script pretends to be many shoppers at once. [[storefront]] It
+          browses, fills carts and places orders through the storefront, all day. Every number in the panels of this
+          map came from those pretend shoppers.

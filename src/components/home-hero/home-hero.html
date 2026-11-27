@@ -21,6 +21,8 @@ The fraktul.dev hero: chrome wordmark, foil star, and a diagram that zooms into 
   .tag { margin: 0 0 14px; font: 600 clamp(20px, 2.4vw, 28px)/1.3 var(--body); color: var(--ink); max-width: 30ch; text-wrap: balance; }
   .lede { margin: 0 0 28px; font: 400 17px/1.6 var(--body); color: var(--ink-2); max-width: 52ch; }
   .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+  .also { margin: 18px 0 0; font: 500 14.5px/1.5 var(--body); color: var(--ink-2); }
+  .also a { color: var(--ink); text-underline-offset: 3px; }
   /* Both calls to action share one size and one chrome rim: the main one polished, the second one brushed satin. */
   .cta { display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-sizing: border-box; height: 48px; padding: 0 24px; border-radius: 999px; font: 600 15px/1 var(--body); text-decoration: none; color: var(--ink); border: 1.5px solid transparent;
     background: linear-gradient(180deg, color-mix(in srgb, var(--sheet) 96%, transparent), color-mix(in srgb, var(--metal-1) 80%, transparent)) padding-box, var(--rim) border-box;
@@ -63,6 +65,7 @@ The fraktul.dev hero: chrome wordmark, foil star, and a diagram that zooms into 
         <a class="cta main" href="/shop/" data-testid="home-hero-map">Open a live map</a>
         <a class="cta" href="#look" data-testid="home-hero-how">See how it works</a>
       </div>
+      <p class="also">Two maps are live: <a href="/shop/" data-testid="home-hero-shop">a demo shop of twenty services</a> and <a href="/map" data-testid="home-hero-own">fraktul itself</a>.</p>
     </div>
     <svg class="art" viewBox="0 0 520 440" role="img" aria-labelledby="art-t">
       <title id="art-t">An online shop as a diagram: Storefront, Checkout and Orders. Checkout opens into Cart, Pay and Ship, and Pay opens into the code that charges the card.</title>

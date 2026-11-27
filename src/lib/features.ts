@@ -146,7 +146,7 @@ export const SITE_PAGES: Record<string, Page> = {
   demo: {
     eyebrow: "The demo", title: "A real system, mapped: twenty services and their traces",
     lede: "fraktul's own map is one small tool. This one is the OpenTelemetry project's demo application, an open-source online shop: about twenty services in a dozen languages, with a database, a cache and a queue. Open it, or run it yourself in five commands.",
-    ctas: [["Open the shop's map", "/shop/"], ["Run it yourself", "/docs/demo"]],
+    ctas: [["Open the shop's map", "/shop/"], ["Run it yourself", "/docs/demo"], ["fraktul's own map", "/map"]],
     sections: [
       {
         id: "top", eyebrow: "30,000 feet", title: "Nine boxes explain twenty services",
@@ -164,9 +164,9 @@ export const SITE_PAGES: Record<string, Page> = {
         code: { label: "The way down", text: "Astronomy Shop            system\n  └ Storefront            service\n      └ pages/api/checkout.ts   file\n          └ handler()            function, with its source" },
       },
       {
-        id: "tours", eyebrow: "For everyone", title: "Two tours: one for anyone, one for engineers",
-        body: ["\"The shop in two minutes\" stays at the top level and explains the whole system in six stops, in words a shopper would understand. \"Follow one order\" goes down into checkout and walks a purchase through the services, to the message on the queue."],
-        code: { label: "Links", text: "/shop/#shop?tour=the-shop-in-two-minutes&step=1\n/shop/#shop?tour=follow-one-order&step=1" },
+        id: "tours", eyebrow: "For everyone", title: "Four narrated tours, from a two-minute overview to one order",
+        body: ["\"The shop in two minutes\" stays at the top level and explains the whole system in six stops, in words a shopper would understand. \"Follow one order\" goes down into checkout and walks a purchase through the services, to the message on the queue.", "Two more cover how a product page is built and what keeps the shop running. Press Listen on any of them: the voice was generated on a Mac, and the highlight moves with it."],
+        code: { label: "Links", text: "/shop/#shop?tour=the-shop-in-two-minutes&step=1\n/shop/#shop?tour=follow-one-order&step=1\n/shop/#storefront?tour=how-a-page-is-built&step=1\n/shop/#basket?tour=keeping-the-shop-running&step=1" },
         doc: ["Tours and narration", "/docs/tours"],
       },
       {
@@ -290,7 +290,7 @@ export function demoBand(): SafeHtml {
       <p class="docs-eyebrow">See it on a real system</p>
       <h2 class="show-head y2k-head" id="demo-title">Twenty services, mapped from code and traces</h2>
       <p>This is the OpenTelemetry project's demo application, an open-source online shop. Its map goes from nine boxes anyone can follow down to the function that charges the card, and every service shows the traffic its traces recorded.</p>
-      <p>Open it here, or run it on your own machine in five commands.</p>
+      <p>Open it here, or run it on your own machine in five commands. There is a second live map too: <a href="/map" data-testid="home-demo-own">fraktul itself, mapped with fraktul</a>, with narrated tours.</p>
       <div class="docs-hero-ctas"><a class="pill main" href="/shop/" data-testid="home-demo-open">Open the shop's map</a><a class="pill" href="/demo" data-testid="home-demo-page">About the demo</a></div>
     </div>
     <div class="show-screen y2k-screen">${shot("traces", "(max-width: 900px) 92vw, 700px")}</div>
